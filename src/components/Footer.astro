@@ -7,7 +7,15 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
   // Elementor's own frontend JS never calls Swiper() on the scraped loop-carousel
   // markup (sectors strip, team carousel) — this replicates just that one call.
   function initLoopCarousels() {
-    if (typeof window.Swiper !== 'function') return;
+    // Elementor injects swiper.min.js asynchronously, so it may not be defined
+    // when this script first runs. Poll briefly until it lands, then init once.
+    if (typeof window.Swiper !== 'function') {
+      if (initLoopCarousels._tries === undefined) initLoopCarousels._tries = 0;
+      if (initLoopCarousels._tries++ < 100) {
+        setTimeout(initLoopCarousels, 100);
+      }
+      return;
+    }
     document
       .querySelectorAll('.elementor-widget-loop-carousel .swiper:not(.swiper-initialized)')
       .forEach((el) => {
