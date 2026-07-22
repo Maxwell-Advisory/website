@@ -3,3 +3,43 @@ import raw from '../chunks/_footer.html?raw';
 const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
 ---
 <Fragment set:html={html} />
+<script>
+  // Elementor's own frontend JS never calls Swiper() on the scraped loop-carousel
+  // markup (sectors strip, team carousel) — this replicates just that one call.
+  function initLoopCarousels() {
+    if (typeof window.Swiper !== 'function') return;
+    document
+      .querySelectorAll('.elementor-widget-loop-carousel .swiper:not(.swiper-initialized)')
+      .forEach((el) => {
+        const widget = el.closest('[data-widget_type="loop-carousel.post"]');
+        let settings = {};
+        try {
+          settings = JSON.parse((widget && widget.getAttribute('data-settings')) || '{}');
+        } catch (e) {
+          settings = {};
+        }
+        new window.Swiper(el, {
+          slidesPerView: Number(settings.slides_to_show) || 3,
+          spaceBetween: settings.image_spacing_custom?.size ?? 10,
+          speed: settings.speed || 500,
+          watchOverflow: true,
+          pagination:
+            settings.pagination === 'progressbar'
+              ? { el: el.querySelector('.swiper-pagination'), type: 'progressbar' }
+              : false,
+          breakpoints: {
+            0: { slidesPerView: Number(settings.slides_to_show_mobile) || 1 },
+            768: {
+              slidesPerView:
+                Number(settings.slides_to_show_tablet) || Number(settings.slides_to_show) || 2,
+            },
+          },
+        });
+      });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLoopCarousels);
+  } else {
+    initLoopCarousels();
+  }
+</script>
