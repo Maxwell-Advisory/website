@@ -1,0 +1,21 @@
+---
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import head from '../../chunks/sectors__industrial-decarbonisation.head.html?raw';
+import pre  from '../../chunks/sectors__industrial-decarbonisation.pre.html?raw';
+import mid  from '../../chunks/sectors__industrial-decarbonisation.mid.html?raw';
+import post from '../../chunks/sectors__industrial-decarbonisation.post.html?raw';
+const B = import.meta.env.BASE_URL;
+const sub = (s) => s.replaceAll('__BASE__/', B);
+---
+<!doctype html>
+<html lang="fr-FR">
+<head><Fragment set:html={sub(head)} /></head>
+<body class="wp-singular sectors-template-default single single-sectors postid-1358 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-kit-6">
+<Fragment set:html={sub(pre)} />
+<Header />
+<Fragment set:html={sub(mid)} />
+<Footer />
+<Fragment set:html={sub(post)} />
+</body>
+</html>

@@ -1,0 +1,188 @@
+
+<div class="elementor elementor-597" data-elementor-id="597" data-elementor-post-type="page" data-elementor-type="wp-page">
+<div class="elementor-element elementor-element-a7ca602 e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="a7ca602" data-settings='{"background_background":"classic"}'>
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-4f9b7be e-con-full e-flex e-con e-child" data-e-type="container" data-element_type="container" data-id="4f9b7be" data-settings='{"background_background":"classic"}'>
+<div class="elementor-element elementor-element-968df47 elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="968df47" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const elements = document.querySelectorAll(".scroll-darken");
+    if (!elements.length) return;
+
+    // Découpe du texte
+    elements.forEach(el => {
+        const text = el.textContent;
+        el.innerHTML = text.split("").map(ch => `<span>${ch}</span>`).join("");
+    });
+
+    // Animation automatique
+    const autoAnimate = () => {
+        elements.forEach(el => {
+            const letters = el.querySelectorAll("span");
+            letters.forEach((letter, i) => {
+                setTimeout(() => {
+                    letter.classList.add("is-dark");
+                }, i * 17); // vitesse (20 ms entre chaque lettre)
+            });
+        });
+    };
+
+    autoAnimate();
+});
+</script>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-f9b6f92 e-con-full e-flex e-con e-child" data-e-type="container" data-element_type="container" data-id="f9b6f92">
+<div class="elementor-element elementor-element-b62fb45 elementor-widget__width-initial elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="b62fb45" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<h1>For investors</h1> </div>
+</div>
+<div class="elementor-element elementor-element-dccf95a elementor-widget__width-initial scroll-darken elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="dccf95a" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Maxwell Advisory partners with investors to accelerate value creation across their energy transition and industrial portfolios. Our team acts as a Value Creation Operating Partner, deploying directly into portfolio companies to deliver tangible improvements in performance, reporting, and strategy execution.</p> </div>
+</div>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-3b3abab e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="3b3abab" data-settings='{"background_background":"classic"}'>
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-7fbfa09 elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="7fbfa09" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<h2>We work on behalf of private equity and infrastructure funds to:</h2> </div>
+</div>
+<div class="elementor-element elementor-element-95f0176 elementor-hidden-desktop elementor-hidden-tablet elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="95f0176" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<div class="text-slider">
+<div class="slider-wrapper">
+<div class="slide">Strengthen portfolio company governance, management, and reporting processes.</div>
+<div class="slide">Develop and execute growth strategies and bolt-on acquisitions.</div>
+<div class="slide">Enhance financial discipline and transparency.</div>
+<div class="slide">Deliver refinancings, divestments, and strategic realignments.</div>
+</div>
+<div class="progress-bar"><span></span></div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const wrapper = document.querySelector(".slider-wrapper");
+    const bar = document.querySelector(".progress-bar span");
+
+    const updateProgress = () => {
+        const maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+        const ratio = wrapper.scrollLeft / maxScroll;
+        bar.style.width = (ratio * 100) + "%";
+    };
+
+    wrapper.addEventListener("scroll", updateProgress);
+
+    // Init
+    updateProgress();
+});
+</script>
+</div>
+</div>
+<div class="elementor-element elementor-element-7cef80c e-con-full elementor-hidden-mobile e-flex e-con e-child" data-e-type="container" data-element_type="container" data-id="7cef80c">
+<div class="elementor-element elementor-element-cf48a6b elementor-widget__width-initial elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="cf48a6b" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Strengthen portfolio company governance, management, and reporting processes.</p> </div>
+</div>
+<div class="elementor-element elementor-element-89e5385 elementor-widget__width-initial elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="89e5385" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Develop and execute growth strategies and bolt-on acquisitions.</p> </div>
+</div>
+<div class="elementor-element elementor-element-871fb72 elementor-widget__width-initial elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="871fb72" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Enhance financial discipline and transparency.</p> </div>
+</div>
+<div class="elementor-element elementor-element-5cc182f elementor-widget__width-initial elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="5cc182f" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Deliver refinancings, divestments, and strategic realignments.</p> </div>
+</div>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-7fe77c7 e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="7fe77c7" data-settings='{"background_background":"classic"}'>
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-cdaf76c elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="cdaf76c" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const el = document.querySelector(".typing-target");
+    if (!el) return;
+
+    const text = el.textContent;
+    el.textContent = ""; 
+    let i = 0;
+    const speed = 10; // ⚡ vitesse (plus petit = plus rapide)
+    let started = false;
+
+    function type() {
+        if (i < text.length) {
+            el.textContent += text[i];
+            i++;
+            setTimeout(type, speed);
+        } else {
+            el.style.borderRight = "none"; 
+        }
+    }
+
+    // Déclenchement quand l'élément devient visible
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !started) {
+                started = true;
+                type();
+                observer.disconnect(); // on stoppe l'observation
+            }
+        });
+    }, { threshold: 0.2 }); // 20% visible -> déclenchement
+
+    observer.observe(el);
+});
+</script>
+</div>
+</div>
+<div class="elementor-element elementor-element-8efd83b elementor-widget__width-initial typing-target elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="8efd83b" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Maxwell Advisory helps investors maximise the value of their existing portfolio companies. By providing dedicated resouces for standalone projects, we allow investors to deliver the full range of value enhancements they would like to undertake.</p> </div>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-06dd73f e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="06dd73f" data-settings='{"background_background":"classic"}'>
+<div class="e-con-inner">
+</div>
+</div>
+<div class="elementor-element elementor-element-6e3428f e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="6e3428f">
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-9448008 elementor-widget__width-initial scroll-title-animate elementor-widget elementor-widget-heading" data-e-type="widget" data-element_type="widget" data-id="9448008" data-widget_type="heading.default">
+<div class="elementor-widget-container">
+<h2 class="elementor-heading-title elementor-size-default"><a href="https://www.maxwelladvisory.eu/contact/">GET IN TOUCH TO KNOW MORE</a></h2> </div>
+</div>
+<div class="elementor-element elementor-element-0de57fe elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="0de57fe" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("scroll", () => {
+    const title = document.querySelector(".scroll-title-animate");
+    if (!title) return;
+
+    const rect = title.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    // progression 0 → 1 selon le scroll (comme avant)
+    const base = 1 - Math.min(Math.max(rect.top / windowHeight, 0), 1);
+
+    // vitesse
+    let progress = base * 1.9; // tu peux ajuster ce facteur
+    progress = Math.min(progress, 1);
+
+    // on envoie dans une variable CSS
+    title.style.setProperty("--scrollProgress", progress);
+});
+</script>
+</div>
+</div>
+</div>
+</div>
+</div>
