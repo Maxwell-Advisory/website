@@ -5,8 +5,11 @@ import head from '../chunks/team.head.html?raw';
 import pre  from '../chunks/team.pre.html?raw';
 import mid  from '../chunks/team.mid.html?raw';
 import post from '../chunks/team.post.html?raw';
+import { team, renderMember } from '../data/team';
 const B = import.meta.env.BASE_URL;
 const sub = (s) => s.replaceAll('__BASE__/', B);
+// Team carousel slides are generated from src/data/team.ts (see <!--LOOP:team--> in the chunk).
+const midWithTeam = sub(mid.replace('<!--LOOP:team-->', team.map(renderMember).join('')));
 ---
 <!doctype html>
 <html lang="fr-FR">
@@ -14,7 +17,7 @@ const sub = (s) => s.replaceAll('__BASE__/', B);
 <body class="wp-singular page-template page-template-elementor_header_footer page page-id-737 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-737">
 <Fragment set:html={sub(pre)} />
 <Header />
-<Fragment set:html={sub(mid)} />
+<Fragment set:html={midWithTeam} />
 <Footer />
 <Fragment set:html={sub(post)} />
 </body>
