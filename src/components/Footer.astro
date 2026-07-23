@@ -99,3 +99,170 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
     }
   })();
 </script>
+<script>
+  // Counters (homepage "Our data"). Replaces Elementor's counter widget +
+  // jquery-numerator: count each .elementor-counter-number up from data-from-value
+  // to data-to-value over data-duration ms, once, when it scrolls into view.
+  (function () {
+    var nums = document.querySelectorAll('.elementor-counter-number');
+    if (!nums.length || !('IntersectionObserver' in window)) return;
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var el = en.target;
+          io.unobserve(el);
+          var from = parseFloat(el.getAttribute('data-from-value')) || 0;
+          var to = parseFloat(el.getAttribute('data-to-value')) || 0;
+          var dur = parseFloat(el.getAttribute('data-duration')) || 2000;
+          var t0 = null;
+          function tick(ts) {
+            if (t0 === null) t0 = ts;
+            var p = Math.min((ts - t0) / dur, 1);
+            var eased = 1 - (1 - p) * (1 - p); // easeOutQuad
+            el.textContent = String(Math.round(from + (to - from) * eased));
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = String(to);
+          }
+          requestAnimationFrame(tick);
+        });
+      },
+      { threshold: 0.6 }
+    );
+    nums.forEach(function (n) {
+      io.observe(n);
+    });
+  })();
+</script>
+<script>
+  // Nav popup (#50) open/close. Replaces the Elementor Pro popup. While Elementor
+  // is still loaded it strips the inline popup markup from the DOM, so this
+  // handler finds nothing and no-ops; once Elementor is removed (E-7) the inline
+  // .elementor-location-popup stays in the page and this drives it: the header
+  // hamburger / menu icon (links to #elementor-action ... popup:open) open it,
+  // the close icon / backdrop click / Esc close it, with the same slideInDown /
+  // fadeInDown animations and scroll lock (prevent_scroll) the popup was set to.
+  (function () {
+    var popup = document.querySelector('.elementor-location-popup');
+    if (!popup) return;
+    var panel = popup.querySelector('.e-con') || popup;
+    function isAction(a, kind) {
+      var h = a.getAttribute('href') || '';
+      try {
+        h = decodeURIComponent(h);
+      } catch (e) {}
+      return h.indexOf('popup:' + kind) !== -1;
+    }
+    function open() {
+      popup.classList.add('mxw-open');
+      document.documentElement.classList.add('mxw-popup-lock');
+      panel.classList.remove('fadeInDown');
+      panel.classList.add('animated', 'slideInDown');
+    }
+    function close() {
+      panel.classList.remove('slideInDown');
+      panel.classList.add('animated', 'fadeInDown');
+      setTimeout(function () {
+        popup.classList.remove('mxw-open');
+        document.documentElement.classList.remove('mxw-popup-lock');
+        panel.classList.remove('animated', 'fadeInDown');
+      }, 400);
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href*="popup"]') : null;
+      if (a) {
+        if (isAction(a, 'open')) {
+          e.preventDefault();
+          open();
+          return;
+        }
+        if (isAction(a, 'close')) {
+          e.preventDefault();
+          close();
+          return;
+        }
+      }
+      if (popup.classList.contains('mxw-open') && e.target === popup) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && popup.classList.contains('mxw-open')) close();
+    });
+  })();
+</script>
+<script>
+  // Footer scroll motion-fx. Reimplements Elementor Pro's motion-fx (translateX
+  // drift + blur, "out-in", desktop/tablet only) for the two footer elements
+  // that carry motion_fx settings, so the effect survives removing Elementor.
+  // Approximation of Elementor's algorithm: blur is heaviest as the element
+  // enters the viewport and clears as it settles; a small horizontal drift is
+  // applied in the configured direction.
+  (function () {
+    if (window.innerWidth <= 767) return; // devices: desktop + tablet only
+    var els = [].slice
+      .call(document.querySelectorAll('[data-settings*="motion_fx_motion_fx_scrolling"]'))
+      .map(function (el) {
+        var s = {};
+        try {
+          s = JSON.parse(el.getAttribute('data-settings') || '{}');
+        } catch (e) {}
+        return {
+          el: el,
+          blur: (s.motion_fx_blur_level && s.motion_fx_blur_level.size) || 0,
+          blurEnd:
+            (s.motion_fx_blur_range &&
+              s.motion_fx_blur_range.sizes &&
+              s.motion_fx_blur_range.sizes.end) ||
+            34,
+          speed: (s.motion_fx_translateX_speed && s.motion_fx_translateX_speed.size) || 0,
+          dir: s.motion_fx_translateX_direction === 'negative' ? -1 : 1,
+        };
+      });
+    if (!els.length) return;
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var vh = window.innerHeight;
+      els.forEach(function (m) {
+        var r = m.el.getBoundingClientRect();
+        // progress 0 (entering at viewport bottom) -> 1 (leaving at top)
+        var p = (vh - r.top) / (vh + r.height);
+        p = Math.max(0, Math.min(1, p));
+        var end = m.blurEnd / 100 || 0.34;
+        var blur = m.blur * (1 - Math.min(p / end, 1)); // out-in: sharpen as it enters
+        var tx = m.dir * m.speed * p; // subtle horizontal drift (px)
+        m.el.style.filter = blur > 0.1 ? 'blur(' + blur.toFixed(2) + 'px)' : '';
+        m.el.style.transform = 'translateX(' + tx.toFixed(2) + 'px)';
+      });
+    }
+    function onScroll() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  })();
+</script>
+<style is:global>
+  /* Nav popup (#50): hidden until opened by the vanilla handler above, then a
+     full-screen scrim with the panel top-centred (mirrors Elementor's modal). */
+  .elementor-location-popup {
+    display: none;
+  }
+  .elementor-location-popup.mxw-open {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.8);
+    align-items: flex-start;
+    justify-content: center;
+    overflow: auto;
+  }
+  html.mxw-popup-lock,
+  html.mxw-popup-lock body {
+    overflow: hidden;
+  }
+</style>

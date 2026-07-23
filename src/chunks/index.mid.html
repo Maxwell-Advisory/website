@@ -108,6 +108,20 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", function () {
     const accordions = document.querySelectorAll("details.e-n-accordion-item");
 
+    // Close an item with the fade-out (shared by manual close and by the
+    // "only one open" rule below).
+    function closeItem(acc) {
+        const images = acc.querySelectorAll(".elementor-widget-image");
+        images.forEach(img => {
+            img.classList.add("fadeout");
+            img.classList.remove("visible");
+        });
+        setTimeout(() => {
+            acc.removeAttribute("open"); // ferme le details
+            images.forEach(img => img.classList.remove("fadeout"));
+        }, 300); // rapid fade-out (0.3s)
+    }
+
     accordions.forEach(acc => {
         const summary = acc.querySelector("summary");
 
@@ -117,6 +131,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (isOpening) {
                 // OUVERTURE
+                // Un seul volet ouvert à la fois (max_items_expended:"one" côté
+                // Elementor) : on ferme les autres, avec le même fondu. Nécessaire
+                // une fois le JS d'Elementor retiré (étape E).
+                accordions.forEach(other => {
+                    if (other !== acc && other.open) closeItem(other);
+                });
                 // laisser le <details> s'ouvrir naturellement
                 setTimeout(() => {
                     images.forEach(img => {
@@ -126,17 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 // FERMETURE — on intercepte pour ajouter le fadeout
                 e.preventDefault(); // empêche la fermeture instantanée
-
-                images.forEach(img => {
-                    img.classList.add("fadeout");
-                    img.classList.remove("visible");
-                });
-
-                // une fois le fade-out terminé → on ferme vraiment l'accordéon
-                setTimeout(() => {
-                    acc.removeAttribute("open"); // ferme le details
-                    images.forEach(img => img.classList.remove("fadeout"));
-                }, 300); // rapid fade-out (0.3s)
+                closeItem(acc);
             }
         });
     });
