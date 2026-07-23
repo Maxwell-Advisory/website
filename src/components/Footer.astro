@@ -190,6 +190,68 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
   })();
 </script>
 <script>
+  // Off-canvas panels (track-record item write-ups). Replaces Elementor Pro's
+  // off-canvas widget. Each toggle icon links to #elementor-action ...
+  // off_canvas:open with a base64 settings id; the matching panel is
+  // <div class="e-off-canvas" id="off-canvas-<id>">. Toggle it open/closed,
+  // lock scroll, close on overlay click or Esc. (These panels are slated for a
+  // UX redesign; this preserves the current behaviour without Elementor.)
+  (function () {
+    function panelFor(a) {
+      var h = a.getAttribute('href') || '';
+      try {
+        h = decodeURIComponent(h);
+      } catch (e) {}
+      if (h.indexOf('off_canvas:open') === -1) return null;
+      var b64 = (h.split('settings=')[1] || '').trim();
+      if (!b64) return null;
+      try {
+        var id = JSON.parse(atob(b64)).id;
+        return document.getElementById('off-canvas-' + id);
+      } catch (e) {
+        return null;
+      }
+    }
+    function open(oc) {
+      oc.removeAttribute('inert');
+      oc.setAttribute('aria-hidden', 'false');
+      oc.classList.add('mxw-oc-open');
+      var main = oc.querySelector('.e-off-canvas__main');
+      if (main) main.classList.add('animated', 'fadeInLeft');
+      document.documentElement.classList.add('mxw-popup-lock');
+    }
+    function close(oc) {
+      oc.setAttribute('inert', '');
+      oc.setAttribute('aria-hidden', 'true');
+      oc.classList.remove('mxw-oc-open');
+      document.documentElement.classList.remove('mxw-popup-lock');
+    }
+    function closeAll() {
+      document.querySelectorAll('.e-off-canvas.mxw-oc-open').forEach(close);
+    }
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest) return;
+      var toggle = e.target.closest('a[href*="off_canvas"]');
+      if (toggle) {
+        var oc = panelFor(toggle);
+        if (oc) {
+          e.preventDefault();
+          oc.classList.contains('mxw-oc-open') ? close(oc) : open(oc);
+          return;
+        }
+      }
+      var overlay = e.target.closest('.e-off-canvas__overlay');
+      if (overlay) {
+        var parent = overlay.closest('.e-off-canvas');
+        if (parent) close(parent);
+      }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeAll();
+    });
+  })();
+</script>
+<script>
   // Footer scroll motion-fx. Reimplements Elementor Pro's motion-fx (translateX
   // drift + blur, "out-in", desktop/tablet only) for the two footer elements
   // that carry motion_fx settings, so the effect survives removing Elementor.
@@ -264,5 +326,12 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
   html.mxw-popup-lock,
   html.mxw-popup-lock body {
     overflow: hidden;
+  }
+  /* Off-canvas open state: Elementor keeps .e-off-canvas at visibility:hidden;
+     opacity:0; pointer-events:none and reveals it from JS. This restores it. */
+  .e-off-canvas.mxw-oc-open {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 </style>
