@@ -1,0 +1,32 @@
+---
+// Shared page scaffold for every page.
+// A page supplies its four HTML chunks (head/pre/mid/post) and its <body> class;
+// this layout owns the doctype/<html>/<head>/<body> structure, the Header and
+// Footer, and the __BASE__ URL substitution (so it lives in one place).
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  head: string;
+  pre: string;
+  mid: string;
+  post: string;
+  bodyClass: string;
+  lang?: string;
+}
+
+const { head, pre, mid, post, bodyClass, lang = 'fr-FR' } = Astro.props;
+const B = import.meta.env.BASE_URL;
+const sub = (s: string) => s.replaceAll('__BASE__/', B);
+---
+<!doctype html>
+<html lang={lang}>
+<head><Fragment set:html={sub(head)} /></head>
+<body class={bodyClass}>
+<Fragment set:html={sub(pre)} />
+<Header />
+<Fragment set:html={sub(mid)} />
+<Footer />
+<Fragment set:html={sub(post)} />
+</body>
+</html>

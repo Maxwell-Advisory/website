@@ -1,0 +1,47 @@
+
+<div class="elementor elementor-1405" data-elementor-id="1405" data-elementor-post-type="page" data-elementor-type="wp-page">
+<div class="elementor-element elementor-element-fd2a63f e-con-full e-flex e-con e-child" data-e-type="container" data-element_type="container" data-id="fd2a63f" data-settings='{"background_background":"classic"}'>
+<div class="elementor-element elementor-element-359e007 elementor-widget__width-initial scroll-darken elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="359e007" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Legal Notice</p> </div>
+</div>
+<div class="elementor-element elementor-element-3a28de8 elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="3a28de8" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const elements = document.querySelectorAll(".scroll-darken");
+    if (!elements.length) return;
+
+    // Découpe du texte
+    elements.forEach(el => {
+        const text = el.textContent;
+        el.innerHTML = text.split("").map(ch => `<span>${ch}</span>`).join("");
+    });
+
+    // Animation automatique
+    const autoAnimate = () => {
+        elements.forEach(el => {
+            const letters = el.querySelectorAll("span");
+            letters.forEach((letter, i) => {
+                setTimeout(() => {
+                    letter.classList.add("is-dark");
+                }, i * 17); // vitesse (20 ms entre chaque lettre)
+            });
+        });
+    };
+
+    autoAnimate();
+});
+</script>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-e1f58b1 e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="e1f58b1">
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-fec82e4 elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="fec82e4" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p><span style="color: #003300;"><em>Last updated: December 2025</em></span></p><p>This Legal Notice applies to the website (“Website”) operated by:</p><p><strong>Maxwell Advisory Limited</strong><br/>Private limited Company<br/>63-65 Heworth Road, York, England, YO31 0AA<br/>16215360<br/>contact@maxwelladvisory.eu<br/><br/></p><p> </p><h2>1. Ownership of the Website</h2><p>This Website is owned and operated by <strong>Maxwell Advisory Limited</strong>. All content displayed on the Website, including text, images, logos, graphics, and design, is the property of the Company unless otherwise stated.</p><p> </p><h2>2. Purpose of the Website</h2><p>The Website provides general information about our company, services, and activities. The information on this Website is for informational purposes only and does not constitute legal, financial, or professional advice.</p><p> </p><h2>3. Intellectual Property Rights</h2><p>All intellectual property rights related to the content and design of the Website are reserved. Certain images or media used on the Website are sourced from open-source or public-domain providers and are subject to their respective licences. Any reproduction, distribution, or modification of proprietary Website content without prior written consent from <strong>Maxwell Advisory Limited</strong> is prohibited.</p><h2>4. Liability</h2><p>We strive to keep the information on the Website accurate and up to date. However, we do not guarantee the completeness, accuracy, or reliability of the content.</p><p>To the fullest extent permitted by law, we disclaim any liability for damages or losses arising from:</p><ul><li>Use of or inability to use the Website</li><li>Reliance on information provided on the Website</li><li>Technical issues, interruptions, or cyberattacks</li></ul><p> </p><h2>5. Links to Third-Party Websites</h2><p>Our Website may contain links to external websites operated by third parties. We have no control over and assume no responsibility for the content or practices of these websites.</p><p> </p><h2>6. Applicable Law and Jurisdiction</h2><p>This Legal Notice is governed by the laws of <strong>France</strong>. Any disputes arising from the use of this Website shall be subject to the exclusive jurisdiction of the courts of <strong>Paris, France</strong>.</p><p> </p><h2>7. Contact</h2><p>If you have any questions regarding this Legal Notice, please contact us at:</p><p><strong>contact@maxwelladvisory.eu</strong><br/><br/></p> </div>
+</div>
+</div>
+</div>
+</div>

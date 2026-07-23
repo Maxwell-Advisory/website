@@ -1,0 +1,245 @@
+
+<div class="elementor elementor-9" data-elementor-id="9" data-elementor-post-type="page" data-elementor-type="wp-page">
+<div class="elementor-element elementor-element-161c30d hero-blur e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="161c30d" data-settings='{"background_background":"classic"}'>
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-8a4f2de logo-animated elementor-widget elementor-widget-image" data-e-type="widget" data-element_type="widget" data-id="8a4f2de" data-widget_type="image.default">
+<div class="elementor-widget-container">
+<img alt="" class="attachment-large size-large wp-image-201" decoding="async" height="480" sizes="(max-width: 480px) 100vw, 480px" src="__BASE__/wp-content/uploads/2025/12/Pictogramme.png" srcset="__BASE__/wp-content/uploads/2025/12/Pictogramme.png 480w, __BASE__/wp-content/uploads/2025/12/Pictogramme-300x300.png 300w, __BASE__/wp-content/uploads/2025/12/Pictogramme-150x150.png 150w" width="480"/> </div>
+</div>
+<div class="elementor-element elementor-element-e0a070a elementor-widget elementor-widget-heading" data-e-type="widget" data-element_type="widget" data-id="e0a070a" data-widget_type="heading.default">
+<div class="elementor-widget-container">
+<h1 class="elementor-heading-title elementor-size-default">Bridging climate companies and infrastructure investors</h1> </div>
+</div>
+<div class="elementor-element elementor-element-53d6735 elementor-widget-mobile__width-initial elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="53d6735" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Advisors for the energy transition and industrial decarbonisation</p> </div>
+</div>
+<div class="elementor-element elementor-element-07128c1 e-con-full e-flex e-con e-child" data-e-type="container" data-element_type="container" data-id="07128c1">
+<div class="elementor-element elementor-element-a2da434 shine elementor-widget elementor-widget-button" data-e-type="widget" data-element_type="widget" data-id="a2da434" data-widget_type="button.default">
+<div class="elementor-widget-container">
+<div class="elementor-button-wrapper">
+<a class="elementor-button elementor-button-link elementor-size-sm" href="__BASE__/for-companies/">
+<span class="elementor-button-content-wrapper">
+<span class="elementor-button-text">For Companies</span>
+</span>
+</a>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-53d91fc shine elementor-widget elementor-widget-button" data-e-type="widget" data-element_type="widget" data-id="53d91fc" data-widget_type="button.default">
+<div class="elementor-widget-container">
+<div class="elementor-button-wrapper">
+<a class="elementor-button elementor-button-link elementor-size-sm" href="__BASE__/for-investors/">
+<span class="elementor-button-content-wrapper">
+<span class="elementor-button-text">For Investors</span>
+</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-9c27dfc e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="9c27dfc" data-settings='{"background_background":"classic"}'>
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-91b230f elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="91b230f" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const elements = document.querySelectorAll(".scroll-darken");
+    if (!elements.length) return;
+
+    // 1) On découpe le texte en lettres une seule fois
+    elements.forEach(el => {
+        const text = el.textContent;
+        const chars = text.split("");
+        el.innerHTML = chars.map(ch => `<span>${ch}</span>`).join("");
+    });
+
+    const updateLetters = () => {
+        const maxScroll = window.innerHeight * 1.1; // plus lent, plus fluide
+        const ratio = Math.min(window.scrollY / maxScroll, 1);
+
+        elements.forEach(el => {
+            const letters = el.querySelectorAll("span");
+            const total = letters.length;
+            const activeCount = Math.floor(ratio * total);
+
+            letters.forEach((letter, i) => {
+                if (i <= activeCount) {
+                    letter.classList.add("is-dark");
+                } else {
+                    letter.classList.remove("is-dark");
+                }
+            });
+        });
+    };
+
+    // 2) On optimise le scroll avec requestAnimationFrame
+    let ticking = false;
+
+    window.addEventListener("scroll", () => {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(() => {
+                updateLetters();
+                ticking = false;
+            });
+        }
+    });
+
+    // État initial
+    updateLetters();
+});
+</script>
+</div>
+</div>
+<div class="elementor-element elementor-element-5641104 elementor-widget__width-initial scroll-darken elementor-widget-mobile__width-inherit elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="5641104" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Maxwell Advisory helps capex‑intensive climate businesses align projects with infrastructure investor requirements and run capital raises to secure long‑term investment</p> </div>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-710ed7f e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="710ed7f">
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-76e6dbc elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="76e6dbc" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const accordions = document.querySelectorAll("details.e-n-accordion-item");
+
+    accordions.forEach(acc => {
+        const summary = acc.querySelector("summary");
+
+        summary.addEventListener("click", function (e) {
+            const isOpening = !acc.open;
+            const images = acc.querySelectorAll(".elementor-widget-image");
+
+            if (isOpening) {
+                // OUVERTURE
+                // laisser le <details> s'ouvrir naturellement
+                setTimeout(() => {
+                    images.forEach(img => {
+                        img.classList.add("visible");
+                    });
+                }, 10);
+            } else {
+                // FERMETURE — on intercepte pour ajouter le fadeout
+                e.preventDefault(); // empêche la fermeture instantanée
+
+                images.forEach(img => {
+                    img.classList.add("fadeout");
+                    img.classList.remove("visible");
+                });
+
+                // une fois le fade-out terminé → on ferme vraiment l'accordéon
+                setTimeout(() => {
+                    acc.removeAttribute("open"); // ferme le details
+                    images.forEach(img => img.classList.remove("fadeout"));
+                }, 300); // rapid fade-out (0.3s)
+            }
+        });
+    });
+});
+</script>
+</div>
+</div>
+<div class="elementor-element elementor-element-a2abcda elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="a2abcda" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Three service cards</p> </div>
+</div>
+<div class="elementor-element elementor-element-303ce2e elementor-widget elementor-widget-n-accordion" data-e-type="widget" data-element_type="widget" data-id="303ce2e" data-settings='{"default_state":"all_collapsed","max_items_expended":"one","n_accordion_animation_duration":{"unit":"ms","size":400,"sizes":[]}}' data-widget_type="nested-accordion.default">
+<div class="elementor-widget-container">
+<div aria-label="Accordion. Open links with Enter or Space, close with Escape, and navigate with Arrow Keys" class="e-n-accordion">
+<!--LOOP:services-->
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-afd902e elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="afd902e" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Sectors strip</p> </div>
+</div>
+<div class="elementor-element elementor-element-f1acec2 elementor-pagination-type-progressbar elementor-widget elementor-widget-loop-carousel" data-e-type="widget" data-element_type="widget" data-id="f1acec2" data-settings='{"template_id":355,"pagination":"progressbar","_skin":"post","slides_to_show":"3","slides_to_show_tablet":"2","slides_to_show_mobile":"1","slides_to_scroll":"1","edit_handle_selector":".elementor-loop-container","speed":500,"image_spacing_custom":{"unit":"px","size":10,"sizes":[]},"image_spacing_custom_tablet":{"unit":"px","size":"","sizes":[]},"image_spacing_custom_mobile":{"unit":"px","size":"","sizes":[]}}' data-widget_type="loop-carousel.post">
+<div class="elementor-widget-container">
+<div class="swiper elementor-loop-container elementor-grid" dir="ltr" role="list">
+<div aria-live="polite" class="swiper-wrapper">
+<style id="loop-355">.elementor-355 .elementor-element.elementor-element-2c3b4c1{--display:flex;--min-height:530px;--flex-direction:column;--container-widget-width:100%;--container-widget-height:initial;--container-widget-flex-grow:0;--container-widget-align-self:initial;--flex-wrap-mobile:wrap;--justify-content:center;--overlay-opacity:0.2;}.elementor-355 .elementor-element.elementor-element-2c3b4c1::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-background-video-container::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .e-con-inner > .elementor-background-video-container::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-background-slideshow::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .e-con-inner > .elementor-background-slideshow::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-motion-effects-container > .elementor-motion-effects-layer::before{background-color:var( --e-global-color-primary );--background-overlay:'';}.elementor-355 .elementor-element.elementor-element-2c3b4c1:not(.elementor-motion-effects-element-type-background), .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-motion-effects-container > .elementor-motion-effects-layer{background-position:center center;background-repeat:no-repeat;background-size:cover;}.elementor-widget-theme-post-title .elementor-heading-title{font-family:var( --e-global-typography-primary-font-family ), Sans-serif;font-size:var( --e-global-typography-primary-font-size );font-weight:var( --e-global-typography-primary-font-weight );text-transform:var( --e-global-typography-primary-text-transform );color:var( --e-global-color-primary );}.elementor-355 .elementor-element.elementor-element-727bde1{text-align:center;}.elementor-355 .elementor-element.elementor-element-727bde1 .elementor-heading-title{font-family:var( --e-global-typography-41f1e0f-font-family ), Sans-serif;font-size:var( --e-global-typography-41f1e0f-font-size );color:var( --e-global-color-secondary );}@media(max-width:1024px){.elementor-widget-theme-post-title .elementor-heading-title{font-size:var( --e-global-typography-primary-font-size );}.elementor-355 .elementor-element.elementor-element-727bde1 .elementor-heading-title{font-size:var( --e-global-typography-41f1e0f-font-size );}}@media(min-width:768px){.elementor-355 .elementor-element.elementor-element-2c3b4c1{--content-width:440px;}}@media(max-width:767px){.elementor-355 .elementor-element.elementor-element-2c3b4c1{--min-height:380px;}.elementor-widget-theme-post-title .elementor-heading-title{font-size:var( --e-global-typography-primary-font-size );}.elementor-355 .elementor-element.elementor-element-727bde1 .elementor-heading-title{font-size:var( --e-global-typography-41f1e0f-font-size );}}</style><style id="elementor-post-355">.elementor-355 .elementor-element.elementor-element-2c3b4c1{--display:flex;--min-height:530px;--flex-direction:column;--container-widget-width:100%;--container-widget-height:initial;--container-widget-flex-grow:0;--container-widget-align-self:initial;--flex-wrap-mobile:wrap;--justify-content:center;--overlay-opacity:0.2;}.elementor-355 .elementor-element.elementor-element-2c3b4c1::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-background-video-container::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .e-con-inner > .elementor-background-video-container::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-background-slideshow::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .e-con-inner > .elementor-background-slideshow::before, .elementor-355 .elementor-element.elementor-element-2c3b4c1 > .elementor-motion-effects-container > .elementor-motion-effects-layer::before{background-color:var( --e-global-color-primary );--background-overlay:'';}.elementor-widget-theme-post-title .elementor-heading-title{font-family:var( --e-global-typography-primary-font-family ), Sans-serif;font-size:var( --e-global-typography-primary-font-size );font-weight:var( --e-global-typography-primary-font-weight );text-transform:var( --e-global-typography-primary-text-transform );color:var( --e-global-color-primary );}.elementor-355 .elementor-element.elementor-element-727bde1{text-align:center;}.elementor-355 .elementor-element.elementor-element-727bde1 .elementor-heading-title{font-family:var( --e-global-typography-41f1e0f-font-family ), Sans-serif;font-size:var( --e-global-typography-41f1e0f-font-size );color:var( --e-global-color-secondary );}@media(max-width:1024px){.elementor-widget-theme-post-title .elementor-heading-title{font-size:var( --e-global-typography-primary-font-size );}.elementor-355 .elementor-element.elementor-element-727bde1 .elementor-heading-title{font-size:var( --e-global-typography-41f1e0f-font-size );}}@media(min-width:768px){.elementor-355 .elementor-element.elementor-element-2c3b4c1{--content-width:440px;}}@media(max-width:767px){.elementor-355 .elementor-element.elementor-element-2c3b4c1{--min-height:380px;}.elementor-widget-theme-post-title .elementor-heading-title{font-size:var( --e-global-typography-primary-font-size );}.elementor-355 .elementor-element.elementor-element-727bde1 .elementor-heading-title{font-size:var( --e-global-typography-41f1e0f-font-size );}}</style><!--LOOP:sectors-->
+</div>
+</div>
+<div class="swiper-pagination"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="elementor-element elementor-element-be35681 e-flex e-con-boxed e-con e-parent" data-e-type="container" data-element_type="container" data-id="be35681">
+<div class="e-con-inner">
+<div class="elementor-element elementor-element-1115ef1 elementor-widget elementor-widget-text-editor" data-e-type="widget" data-element_type="widget" data-id="1115ef1" data-widget_type="text-editor.default">
+<div class="elementor-widget-container">
+<p>Our data</p> </div>
+</div>
+<div class="elementor-element elementor-element-88c36ed e-con-full stats-section e-flex e-con e-child" data-e-type="container" data-element_type="container" data-id="88c36ed">
+<!--LOOP:stats-->
+</div>
+<div class="elementor-element elementor-element-0f22250 elementor-widget elementor-widget-html" data-e-type="widget" data-element_type="widget" data-id="0f22250" data-widget_type="html.default">
+<div class="elementor-widget-container">
+<script>
+document.addEventListener("scroll", () => {
+    const section = document.querySelector(".stats-section");
+    if (!section) return;
+
+    const rect = section.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    // progression 0 → 1 selon le scroll
+    const base = 1 - Math.min(Math.max(rect.top / windowHeight, 0), 1);
+
+    // vitesses différentes
+    let topProgress = base * 1.5;     // rapide
+    let bottomProgress = base * 1.2;  // plus lent
+
+    // limiter à 1
+    topProgress = Math.min(topProgress, 1);
+    bottomProgress = Math.min(bottomProgress, 1);
+
+    section.style.setProperty("--scaleTop", topProgress);
+    section.style.setProperty("--scaleBottom", bottomProgress);
+});
+
+// CSS dynamique
+const style = document.createElement("style");
+style.innerHTML = `
+.stats-section {
+    position: relative;
+}
+
+/* Bordures */
+.stats-section::before,
+.stats-section::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: #787575;
+}
+
+/* TOP → rempli de gauche vers droite */
+.stats-section::before {
+    top: 0;
+    transform-origin: left;
+    transform: scaleX(var(--scaleTop));
+}
+
+/* BOTTOM → rempli de droite vers gauche */
+.stats-section::after {
+    bottom: 0;
+    transform-origin: right;  /* <-- direction inverse */
+    transform: scaleX(var(--scaleBottom));
+}
+`;
+document.head.appendChild(style);
+</script>
+</div>
+</div>
+</div>
+</div>
+</div>

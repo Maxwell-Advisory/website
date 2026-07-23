@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import head from '../chunks/index.head.html?raw';
+import pre  from '../chunks/index.pre.html?raw';
+import mid  from '../chunks/index.mid.html?raw';
+import post from '../chunks/index.post.html?raw';
+import { services, renderService } from '../data/services';
+import { sectors, renderSector } from '../data/sectors';
+import { stats, renderStat } from '../data/stats';
+// Homepage collections are generated from src/data/*.ts (see the <!--LOOP:*--> markers in the chunk).
+const midHtml = mid
+  .replace('<!--LOOP:services-->', services.map(renderService).join(''))
+  .replace('<!--LOOP:sectors-->', sectors.map(renderSector).join(''))
+  .replace('<!--LOOP:stats-->', stats.map(renderStat).join(''));
+---
+<Base
+  head={head}
+  pre={pre}
+  mid={midHtml}
+  post={post}
+  bodyClass="home wp-singular page-template page-template-elementor_header_footer page page-id-9 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-9"
+/>
