@@ -51,3 +51,35 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
     initLoopCarousels();
   }
 </script>
+<script>
+  // Reveal elements Elementor keeps hidden until its own JS runs. Elementor puts
+  // .elementor-invisible { visibility:hidden } on any widget with an entrance
+  // animation and only unhides it from frontend.min.js. As that JS is removed
+  // (Step E), this shim takes over: strip the class and apply the configured
+  // entrance animation (from data-settings) so the logo and popup icons don't
+  // stay permanently invisible. Idempotent, so it's harmless while Elementor is
+  // still loaded.
+  (function () {
+    function run() {
+      document.querySelectorAll('.elementor-invisible').forEach(function (el) {
+        var s = {};
+        try {
+          s = JSON.parse(el.getAttribute('data-settings') || '{}');
+        } catch (e) {
+          s = {};
+        }
+        var reveal = function () {
+          el.classList.remove('elementor-invisible');
+          if (s._animation) el.classList.add('animated', s._animation);
+        };
+        if (s._animation_delay) setTimeout(reveal, s._animation_delay);
+        else reveal();
+      });
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+  })();
+</script>
