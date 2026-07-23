@@ -18,15 +18,65 @@ interface Props {
 const { head, pre, mid, post, bodyClass, lang = 'fr-FR' } = Astro.props;
 const B = import.meta.env.BASE_URL;
 const sub = (s: string) => s.replaceAll('__BASE__/', B);
+
+// --- Step E: strip the jQuery/Elementor runtime -----------------------------
+// Every behaviour these scripts provided has been reimplemented in vanilla JS
+// (carousels, .elementor-invisible reveal, counters, accordion, nav popup,
+// footer motion-fx — see Footer.astro and the homepage accordion script). We
+// remove the scripts here, in one place, rather than editing all 17 scraped
+// chunks. Kept: cookie-notice (vanilla), the JSON-LD/schema blocks, Swiper
+// (loaded on demand by Footer.astro), and our own scripts.
+// To restore Elementor, delete this block and the stripRuntime() calls below.
+const RUNTIME_SRC = [
+  'wp-includes/js/jquery/jquery.min.js',
+  'wp-includes/js/jquery/jquery-migrate.min.js',
+  'wp-includes/js/jquery/ui/core.min.js',
+  'themes/hello-elementor/assets/js/hello-frontend.js',
+  'plugins/elementor/assets/js/webpack.runtime.min.js',
+  'plugins/elementor/assets/js/frontend-modules.min.js',
+  'plugins/elementor/assets/js/frontend.min.js',
+  'plugins/elementor-pro/assets/lib/smartmenus/jquery.smartmenus.min.js',
+  'wp-includes/js/imagesloaded.min.js',
+  'plugins/elementor/assets/lib/jquery-numerator/jquery-numerator.min.js',
+  'plugins/elementor-pro/assets/js/webpack-pro.runtime.min.js',
+  'wp-includes/js/dist/hooks.min.js',
+  'wp-includes/js/dist/i18n.min.js',
+  'plugins/elementor-pro/assets/js/frontend.min.js',
+  'plugins/elementor-pro/assets/js/elements-handlers.min.js',
+];
+const RUNTIME_INLINE_IDS = [
+  'elementor-frontend-js-before',
+  'wp-i18n-js-after',
+  'elementor-pro-frontend-js-before',
+];
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function stripRuntime(html: string): string {
+  for (const p of RUNTIME_SRC) {
+    const re = new RegExp(
+      '[ \\t]*<script\\b[^>]*\\bsrc="[^"]*' + escapeRe(p) + '[^"]*"[^>]*>\\s*</script>\\s*\\n?',
+      'g',
+    );
+    html = html.replace(re, '');
+  }
+  for (const id of RUNTIME_INLINE_IDS) {
+    const re = new RegExp(
+      '[ \\t]*<script\\b[^>]*\\bid="' + escapeRe(id) + '"[^>]*>[\\s\\S]*?</script>\\s*\\n?',
+      'g',
+    );
+    html = html.replace(re, '');
+  }
+  return html;
+}
+const render = (s: string) => sub(stripRuntime(s));
 ---
 <!doctype html>
 <html lang={lang}>
-<head><Fragment set:html={sub(head)} /></head>
+<head><Fragment set:html={render(head)} /></head>
 <body class={bodyClass}>
-<Fragment set:html={sub(pre)} />
+<Fragment set:html={render(pre)} />
 <Header />
-<Fragment set:html={sub(mid)} />
+<Fragment set:html={render(mid)} />
 <Footer />
-<Fragment set:html={sub(post)} />
+<Fragment set:html={render(post)} />
 </body>
 </html>
