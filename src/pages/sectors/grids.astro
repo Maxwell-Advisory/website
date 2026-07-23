@@ -1,21 +1,8 @@
 ---
-import Header from '../../components/Header.astro';
-import Footer from '../../components/Footer.astro';
+import Base from '../../layouts/Base.astro';
 import head from '../../chunks/sectors__grids.head.html?raw';
 import pre  from '../../chunks/sectors__grids.pre.html?raw';
 import mid  from '../../chunks/sectors__grids.mid.html?raw';
 import post from '../../chunks/sectors__grids.post.html?raw';
-const B = import.meta.env.BASE_URL;
-const sub = (s) => s.replaceAll('__BASE__/', B);
 ---
-<!doctype html>
-<html lang="fr-FR">
-<head><Fragment set:html={sub(head)} /></head>
-<body class="wp-singular sectors-template-default single single-sectors postid-1460 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-kit-6">
-<Fragment set:html={sub(pre)} />
-<Header />
-<Fragment set:html={sub(mid)} />
-<Footer />
-<Fragment set:html={sub(post)} />
-</body>
-</html>
+<Base head={head} pre={pre} mid={mid} post={post} bodyClass="wp-singular sectors-template-default single single-sectors postid-1460 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-kit-6" />
