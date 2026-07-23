@@ -215,9 +215,7 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
     function open(oc) {
       oc.removeAttribute('inert');
       oc.setAttribute('aria-hidden', 'false');
-      oc.classList.add('mxw-oc-open');
-      var main = oc.querySelector('.e-off-canvas__main');
-      if (main) main.classList.add('animated', 'fadeInLeft');
+      oc.classList.add('mxw-oc-open'); // CSS slides .e-off-canvas__main in
       document.documentElement.classList.add('mxw-popup-lock');
     }
     function close(oc) {
@@ -240,11 +238,10 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
           return;
         }
       }
-      var overlay = e.target.closest('.e-off-canvas__overlay');
-      if (overlay) {
-        var parent = overlay.closest('.e-off-canvas');
-        if (parent) close(parent);
-      }
+      // Click anywhere outside the content box (the dimmed area / overlay)
+      // closes the open panel — restores Elementor's click-outside behaviour.
+      var openOc = e.target.closest('.e-off-canvas.mxw-oc-open');
+      if (openOc && !e.target.closest('.e-off-canvas__content')) close(openOc);
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') closeAll();
@@ -291,7 +288,9 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
         p = Math.max(0, Math.min(1, p));
         var end = m.blurEnd / 100 || 0.34;
         var blur = m.blur * (1 - Math.min(p / end, 1)); // out-in: sharpen as it enters
-        var tx = m.dir * m.speed * p; // subtle horizontal drift (px)
+        // Horizontal drift across the viewport pass: centred so it travels the
+        // full ±(speed*10)px range as the element scrolls through.
+        var tx = m.dir * m.speed * (p * 2 - 1) * 10;
         m.el.style.filter = blur > 0.1 ? 'blur(' + blur.toFixed(2) + 'px)' : '';
         m.el.style.transform = 'translateX(' + tx.toFixed(2) + 'px)';
       });
@@ -333,5 +332,10 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
+  }
+  /* Slide the panel on-screen (base state is transform:translateX(-100%) with a
+     transition, so this animates the slide-in and back out on close). */
+  .e-off-canvas.mxw-oc-open .e-off-canvas__main {
+    transform: translateX(0) !important;
   }
 </style>
