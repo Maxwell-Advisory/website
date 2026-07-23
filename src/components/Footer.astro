@@ -273,7 +273,7 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
               s.motion_fx_blur_range.sizes.end) ||
             34,
           speed: (s.motion_fx_translateX_speed && s.motion_fx_translateX_speed.size) || 0,
-          dir: s.motion_fx_translateX_direction === 'negative' ? -1 : 1,
+          flip: s.motion_fx_translateX_direction === 'negative',
         };
       });
     if (!els.length) return;
@@ -288,9 +288,12 @@ const html = raw.replaceAll('__BASE__/', import.meta.env.BASE_URL);
         p = Math.max(0, Math.min(1, p));
         var end = m.blurEnd / 100 || 0.34;
         var blur = m.blur * (1 - Math.min(p / end, 1)); // out-in: sharpen as it enters
-        // Horizontal drift across the viewport pass: centred so it travels the
-        // full ±(speed*10)px range as the element scrolls through.
-        var tx = m.dir * m.speed * (p * 2 - 1) * 10;
+        // Elementor motion-fx translate, ported exactly: percent is the viewport
+        // progress (0-100), negative direction mirrors it, and the step is
+        // -(percent-50)*speed px — i.e. a ±(50*speed)px range across the pass.
+        var percent = p * 100;
+        if (m.flip) percent = 100 - percent;
+        var tx = -(percent - 50) * m.speed;
         m.el.style.filter = blur > 0.1 ? 'blur(' + blur.toFixed(2) + 'px)' : '';
         m.el.style.transform = 'translateX(' + tx.toFixed(2) + 'px)';
       });
