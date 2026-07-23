@@ -68,10 +68,25 @@ function stripRuntime(html: string): string {
   return html;
 }
 const render = (s: string) => sub(stripRuntime(s));
+
+// Preload the brand font weights the pages actually use (PP Neue Montreal Book
+// = 400 for body text, Medium = 500). @font-face uses font-display:auto, so
+// until the file arrives the browser paints the lighter system fallback — on a
+// cold cache (e.g. the Pages site) that FOUT makes text look thinner than the
+// original. Preloading fetches them before first paint so the brand font is
+// used immediately. Fonts are always fetched in CORS mode, hence crossorigin.
+const FONT_PRELOADS = [
+  'wp-content/uploads/2025/12/ppneuemontreal-book.woff',
+  'wp-content/uploads/2025/12/ppneuemontreal-medium-1.woff',
+];
 ---
 <!doctype html>
 <html lang={lang}>
-<head><Fragment set:html={render(head)} /></head>
+<head>
+{FONT_PRELOADS.map((f) => (
+  <link rel="preload" as="font" type="font/woff" crossorigin href={B + f} />
+))}
+<Fragment set:html={render(head)} /></head>
 <body class={bodyClass}>
 <Fragment set:html={render(pre)} />
 <Header />
