@@ -41,7 +41,7 @@ signature diff). **16 remaining pages are only 7 templates.**
 | # | Template | Pages | Status |
 |---|----------|-------|--------|
 | 0 | homepage | `index` | **done** (matches: rhythm 0/6, no overlap/overflow) |
-| 1 | **title-only stub** | 7 sectors + 2 team members (9 pages) | **done** |
+| 1 | ~~title-only stub~~ | 7 sectors + 2 team members | **DELETED** (orphaned + empty; Joe's call) |
 | 2 | legal text | `legal-notice`, `privacy-policy` | **done** |
 | 3 | contact | `contact` | **done** |
 | 4 | for-companies | `for-companies` | todo |
@@ -52,39 +52,26 @@ signature diff). **16 remaining pages are only 7 templates.**
 Suggested order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (cheapest first; 7 is by far the
 most complex and is the one Joe already wanted redesigned).
 
-### Template 1 — title-only stubs ⚠️ DECISION FOR JOE
+### Template 1 — DELETED (2026-09-14)
 
-On live these 9 pages have **no Elementor content at all**. The entire `<main>` is:
+The 7 sector pages and 2 team-member pages had **no content on live** (just the
+theme's default page title) AND were **orphaned** — verified across all 17 live
+pages, nothing linked to them: the homepage sector cards aren't links, and the
+team page's member names are headings, not links. Joe's call: delete.
 
-```html
-<main>
-  <div class="page-header"><h1 class="entry-title">Renewables</h1></div>
-  <div class="page-content"></div>
-</main>
-```
+Removed: `pages/sectors/[slug].astro`, `pages/team/[slug].astro`,
+`data/stubPages.ts` and 36 legacy chunk files. The site is now 8 routes.
 
-i.e. the hello-elementor default template — header, a bare page title, footer.
-They are placeholders. Options: (a) replicate the bare stub to stay visually
-identical, or (b) design real sector/bio pages. Defaulting to (a); flagged.
-
-Pages: `/sectors/{renewables,storage,grids,green-gases,clean-transport,
-circular-economy,industrial-decarbonisation}/`, `/team/{joe-davis,
-adrien-dormesson}/`.
+NB the homepage strip shows 6 sectors; there were 7 pages
+(`industrial-decarbonisation` had no card). Sector cards remain content-only.
+If sector/bio pages are ever wanted, `data/sectors.ts` and `data/team.ts`
+already hold the content.
 
 ## Per-page status
 
 | Route | Template | Layout now | Status | Notes |
 |-------|----------|-----------|--------|-------|
 | `/` | 0 | Site | **done** | 25 box flags left, 13 = intentional Roboto→PP deviation |
-| `/sectors/renewables/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/sectors/storage/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/sectors/grids/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/sectors/green-gases/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/sectors/clean-transport/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/sectors/circular-economy/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/sectors/industrial-decarbonisation/` | 1 | Site | **done** | via `sectors/[slug].astro` |
-| `/team/joe-davis/` | 1 | Site | **done** | via `team/[slug].astro` |
-| `/team/adrien-dormesson/` | 1 | Site | **done** | via `team/[slug].astro` |
 | `/legal-notice/` | 2 | Site | **done** | copy in `src/content/legal/*.html`, rendered by `Prose.astro` |
 | `/privacy-policy/` | 2 | Site | **done** | same |
 | `/contact/` | 3 | Site | **done** | green half-panel; button offset flagged below |
