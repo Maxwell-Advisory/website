@@ -66,17 +66,26 @@ import { image } from '../lib/images.ts';
   .tr-intro {
     background: var(--c-slate);
     color: var(--c-white);
+    /* live holds the band at a 525px min-height (420 at <=767) and centres the
+       copy in it — without this the band collapses onto its padding and every
+       card below sits ~110px too high */
+    min-height: 525px;
+    display: flex;
+    align-items: center;
     padding: 100px var(--container-pad) 110px;
   }
   .tr-intro__text {
-    max-width: 967px;
+    width: 967px;
+    max-width: 100%;
     margin-inline: auto;     /* live centres the column ... */
     text-align: center;      /* ... and the text inside it */
     font-size: var(--fs-intro);
     line-height: var(--lh-intro);
   }
 
-  .tr-body { padding: var(--space-2xl) 2%; }   /* live: grid is 1214 wide at x25 */
+  /* live: 70px above the EXPERIENCE label (50 on mobile), nothing below the
+     grid — the footer follows straight on. Grid is 1214 wide at x25. */
+  .tr-body { padding: 70px 2% 0; }
   .tr-body__label {
     font-size: var(--fs-eyebrow);   /* live: 25px/25 grey, uppercase */
     line-height: 25px;
@@ -86,9 +95,10 @@ import { image } from '../lib/images.ts';
 
   /* live: two columns, 30px row gap / 15px column gap, items 600x436 */
   .tr-grid {
-    margin: var(--space-lg) 0 0;
+    margin: 20px 0 0;   /* live: 20px below the EXPERIENCE label */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1fr;   /* live's entries are all exactly the same height */
     gap: 30px 15px;
   }
   .tr-item {
@@ -238,13 +248,20 @@ import { image } from '../lib/images.ts';
     object-fit: contain;
   }
 
+  /* Live keeps the two columns down to 768 and steps the entry title
+     70 -> 28 -> 25px (measured on the live site, not the mirror, whose loop
+     grid never initialises). */
   @media (max-width: 1024px) {
-    .tr-grid { grid-template-columns: 1fr; }
-    .tr-item__btn { min-height: 0; }
-    .tr-item__title { font-size: 53px; line-height: 53px; }
+    .tr-item__btn { min-height: 407px; }   /* live's entry height at 768 */
+    .tr-item__title { font-size: 28px; line-height: 28px; }
   }
   @media (max-width: 767px) {
-    .tr-item__title { font-size: 35px; line-height: 35px; }
+    .tr-grid { grid-template-columns: 1fr; }
+    .tr-body { padding: 50px 2% 0; }
+    .tr-body__label { font-size: 20px; line-height: 20px; }
+    .tr-intro { min-height: 420px; }
+    .tr-item__btn { min-height: 379px; }   /* live's entry height at 375 */
+    .tr-item__title { font-size: 25px; line-height: 25px; }
     .tr-item__desc, .tr-panel__desc { font-size: 16px; }
     .tr-panel__main { height: auto; max-height: calc(100% - 2 * var(--space-md)); }
     .tr-panel__title { font-size: 35px; line-height: 35px; }

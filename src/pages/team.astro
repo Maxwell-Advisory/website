@@ -59,11 +59,22 @@ const motif = image('Calque_1.png');
     line-height: var(--lh-intro);
     color: var(--c-near-black);     /* live: #222222 */
   }
+  /* Live declares this at 168px and SPINS it (animation: spin 3s linear
+     infinite, the same treatment as the footer mark) — it is not a statically
+     rotated image, which is why it measures a different bounding box on every
+     capture. */
   .team__motif {
-    width: 190px;                   /* live renders it at 190px, rotated */
+    width: 168px;
     height: auto;
     margin-block-start: auto;
-    transform: rotate(138deg) scale(0.8);
+    animation: team-motif-spin 3s linear infinite;
+  }
+  @keyframes team-motif-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .team__motif { animation: none; }
   }
 
   .team__carousel {
@@ -108,12 +119,23 @@ const motif = image('Calque_1.png');
     max-width: 335px;
   }
 
+  /* Live stacks the intro above the carousel at <=1024 and centres the motif,
+     but keeps the carousel TWO-up down to 768 (measured 352px slides at 768). */
   @media (max-width: 1024px) {
     .team { flex-direction: column; gap: var(--space-2xl); padding-top: var(--space-3xl); }
     .team__intro { flex: 1 1 auto; }
-    .team__motif { margin-block-start: 0; }
-    .member { flex-basis: 100%; }
+    .team__motif { margin-block-start: 0; align-self: center; }
     .member__bio { font-size: 18px; }
+  }
+  /* Mobile: one full-bleed 390px-tall slide at a time, as live. */
+  @media (max-width: 767px) {
+    .team { padding-inline: 0; }
+    .team__intro { padding-inline: var(--container-pad); }
+    .team__carousel { padding: 0; }
+    .team__track { gap: 18px; }
+    .member { flex-basis: 100%; }
+    .member__photo { height: 390px; }
+    .member__name, .member__role, .member__bio { padding-inline: var(--container-pad); }
   }
 </style>
 
