@@ -15,14 +15,16 @@ const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-
   <h1 class="visually-hidden">Contact</h1>
   <section class="contact">
     <div class="contact__panel">
-      <p class="contact__address">
-        Maxwell Advisory Climate House<br />
-        39 rue du Caire 75002 Paris, France
-      </p>
-      <p class="contact__label">General Enquiries:</p>
-      <a class="contact__btn shine" href="mailto:contact@maxwelladvisory.eu">
-        contact@maxwelladvisory.eu
-      </a>
+      <p
+        class="contact__address"
+        set:html="Maxwell Advisory&nbsp; Climate House<br />39 rue du Caire&nbsp; 75002 Paris, France"
+      />
+      <div class="contact__enquiry">
+        <p class="contact__label">General Enquiries:</p>
+        <a class="contact__btn shine" href="mailto:contact@maxwelladvisory.eu">
+          contact@maxwelladvisory.eu
+        </a>
+      </div>
     </div>
     <div
       class="contact__photo"
@@ -56,23 +58,34 @@ const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-
     background-repeat: no-repeat;
   }
 
+  /* live: the address block is held to 307px, which is what wraps it onto four
+     lines; the label and the pill then sit side by side on one row (the button
+     starts at x=142, exactly where the 117px label ends), 27px below. */
   .contact__address {
+    width: 307px;
+    max-width: 100%;
     font-size: 36px;
     line-height: 45px;
     font-weight: var(--fw-book);
   }
+  .contact__enquiry {
+    display: flex;
+    align-items: center;
+    margin-block-start: 27px;
+  }
   .contact__label {
+    flex: none;
+    width: 117px;
     font-size: 13px;
     line-height: 19.5px;
-    margin-block-start: var(--space-lg);
   }
   /* same pill as the hero CTAs, in lilac */
   .contact__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex: none;
     min-height: 36px;
-    margin-block-start: var(--space-xs);
     padding: 10px 50px;
     border: 1px solid var(--c-lilac);
     border-radius: 80px;
@@ -98,6 +111,9 @@ const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-
       padding: var(--space-2xl) var(--container-pad);
     }
     .contact__photo { flex: 1 1 auto; min-height: 45vh; }
-    .contact__address { font-size: 24px; line-height: 30px; }
+    .contact__address { width: auto; font-size: 24px; line-height: 30px; }
+    /* live centres and stacks this block below 768 */
+    .contact__enquiry { flex-direction: column; align-items: center; gap: var(--space-xs); }
+    .contact__label { width: auto; }
   }
 </style>
