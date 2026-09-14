@@ -1,8 +1,58 @@
 ---
-import Base from '../layouts/Base.astro';
-import head from '../chunks/for-companies.head.html?raw';
-import pre  from '../chunks/for-companies.pre.html?raw';
-import mid  from '../chunks/for-companies.mid.html?raw';
-import post from '../chunks/for-companies.post.html?raw';
+// For Companies. Live: lilac intro band, then two blocks (heading, image,
+// read-more copy) side by side above 1024 and stacked below, then the
+// oversized "get in touch" CTA.
+import Site from '../layouts/Site.astro';
+import PageIntro from '../components/site/PageIntro.astro';
+import ReadMore from '../components/site/ReadMore.astro';
+import CtaBanner from '../components/site/CtaBanner.astro';
+import { forCompanies } from '../data/forCompanies.ts';
+import { asset } from '../lib/site.ts';
 ---
-<Base head={head} pre={pre} mid={mid} post={post} bodyClass="wp-singular page-template page-template-elementor_header_footer page page-id-683 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-683" />
+<Site title="For Companies">
+  <h1 class="visually-hidden">For Companies</h1>
+  <PageIntro eyebrow={forCompanies.eyebrow} intro={forCompanies.intro} />
+
+  <section class="blocks">
+    {forCompanies.blocks.map((b) => (
+      <article class="block">
+        <h2 class="block__heading">{b.heading}</h2>
+        <img class="block__image" src={asset(b.image)} alt={b.alt} loading="lazy" decoding="async" />
+        <ReadMore visible={b.visible} hidden={b.hidden} />
+      </article>
+    ))}
+  </section>
+
+  <CtaBanner />
+</Site>
+
+<style>
+  /* live @1280: the two blocks sit side by side inside a 2% padded row,
+     each 604px wide with a 20px column gap; below 1024 they stack. */
+  .blocks {
+    display: flex;
+    gap: 20px;
+    padding-inline: 2%;
+  }
+  .block {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .block__heading {
+    font-size: var(--fs-eyebrow);   /* live: 25px, uppercase, grey */
+    line-height: 25px;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .block__image {
+    width: 100%;
+    height: 500px;                  /* live: 500px at 1280, 450 below */
+    object-fit: cover;
+  }
+  @media (max-width: 1024px) {
+    .blocks { flex-direction: column; gap: var(--space-2xl); }
+    .block__image { height: 450px; }
+  }
+</style>

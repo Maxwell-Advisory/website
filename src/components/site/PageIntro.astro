@@ -1,0 +1,37 @@
+---
+// Lilac intro band used at the top of the "for ..." pages.
+// Live @1280: 1265x527, padding 100px 0 110px, background #e0e5fc, column with
+// a 20px gap; eyebrow 25px/37.5 centred #787575; intro paragraph on the shared
+// --fs-intro tier (36/32/24) in the same grey.
+interface Props { eyebrow: string; intro: string; }
+const { eyebrow, intro } = Astro.props;
+---
+<section class="page-intro">
+  <p class="page-intro__eyebrow">{eyebrow}</p>
+  <p class="page-intro__text">{intro}</p>
+</section>
+
+<style>
+  .page-intro {
+    background: var(--c-lilac);
+    color: var(--c-ink-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 100px var(--container-pad) 110px;
+    text-align: center;
+  }
+  .page-intro__eyebrow {
+    font-size: var(--fs-eyebrow);   /* 25px, 20 on mobile */
+    line-height: 37.5px;
+  }
+  .page-intro__text {
+    font-size: var(--fs-intro);     /* 36 / 32 / 24 */
+    line-height: var(--lh-intro);
+    max-width: var(--container);
+  }
+  @media (max-width: 767px) {
+    .page-intro { padding-block: 60px 70px; }
+  }
+</style>

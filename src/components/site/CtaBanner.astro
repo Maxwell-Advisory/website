@@ -1,0 +1,25 @@
+---
+// Oversized closing CTA. Live @1280: 75px/75px uppercase #cfcfcf, centred,
+// linking to /contact/.
+import { url } from '../../lib/site.ts';
+interface Props { text?: string; href?: string; }
+const { text = 'Get in touch to know more', href = '/contact/' } = Astro.props;
+---
+<section class="cta-banner">
+  <h2 class="cta-banner__title"><a href={url(href)}>{text}</a></h2>
+</section>
+
+<style>
+  .cta-banner {
+    padding-block: var(--space-2xl);
+    text-align: center;
+  }
+  .cta-banner__title {
+    font-size: clamp(2rem, 5.9vw, 75px);   /* live: 75px at 1280 and above */
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--c-heading-muted);          /* #cfcfcf */
+    transition: color var(--dur) var(--ease);
+  }
+  .cta-banner__title a:hover { color: var(--c-ink-muted); }
+</style>
