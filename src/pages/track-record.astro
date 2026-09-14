@@ -74,14 +74,17 @@ import { asset, assetSrcset } from '../lib/site.ts';
   }
   .tr-intro__text {
     max-width: 967px;
+    margin-inline: auto;     /* live centres the column ... */
+    text-align: center;      /* ... and the text inside it */
     font-size: var(--fs-intro);
     line-height: var(--lh-intro);
   }
 
-  .tr-body { padding: var(--space-2xl) var(--container-pad); }
+  .tr-body { padding: var(--space-2xl) 2%; }   /* live: grid is 1214 wide at x25 */
   .tr-body__label {
-    font-size: var(--fs-eyebrow);   /* live: 25px/25 grey */
+    font-size: var(--fs-eyebrow);   /* live: 25px/25 grey, uppercase */
     line-height: 25px;
+    text-transform: uppercase;
     color: var(--c-ink-muted);
   }
 
@@ -92,16 +95,20 @@ import { asset, assetSrcset } from '../lib/site.ts';
     grid-template-columns: repeat(2, 1fr);
     gap: 30px 15px;
   }
+  .tr-item {
+    /* live: every entry is a 1px #333 box, 600x436, padded 28px */
+    border: 1px solid var(--c-ink);
+  }
   .tr-item__btn {
     width: 100%;
     min-height: 436px;
+    padding: 28px;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-md);
     background: none;
     border: 0;
-    padding: 0;
     text-align: start;
     cursor: pointer;
     color: var(--c-ink-muted);
@@ -111,10 +118,10 @@ import { asset, assetSrcset } from '../lib/site.ts';
     font-size: 70px;                /* live: 70px/70 uppercase */
     line-height: 70px;
     text-transform: uppercase;
-    color: var(--c-heading-muted);
+    color: var(--c-ink-muted);      /* live: #787575 at rest */
     transition: color var(--dur-fast) var(--ease);
   }
-  .tr-item__btn:hover .tr-item__title { color: var(--c-ink-muted); }
+  .tr-item__btn:hover .tr-item__title { color: var(--c-ink); }
   .tr-item__desc { font-size: 20px; line-height: 25px; }
 
   /* the same +/- mark as the service accordion, at live's 50px */
