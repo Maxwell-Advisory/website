@@ -44,8 +44,8 @@ signature diff). **16 remaining pages are only 7 templates.**
 | 1 | ~~title-only stub~~ | 7 sectors + 2 team members | **DELETED** (orphaned + empty; Joe's call) |
 | 2 | legal text | `legal-notice`, `privacy-policy` | **done** |
 | 3 | contact | `contact` | **done** |
-| 4 | for-companies | `for-companies` | todo |
-| 5 | for-investors | `for-investors` | todo |
+| 4 | for-companies | `for-companies` | **done** |
+| 5 | for-investors | `for-investors` | **done** |
 | 6 | team (loop-carousel) | `team` | todo |
 | 7 | track-record (loop-grid + off-canvas) | `track-record` | todo |
 
@@ -75,10 +75,28 @@ already hold the content.
 | `/legal-notice/` | 2 | Site | **done** | copy in `src/content/legal/*.html`, rendered by `Prose.astro` |
 | `/privacy-policy/` | 2 | Site | **done** | same |
 | `/contact/` | 3 | Site | **done** | green half-panel; button offset flagged below |
-| `/for-companies/` | 4 | Base | todo | 27 widgets |
-| `/for-investors/` | 5 | Base | todo | 28 widgets |
+| `/for-companies/` | 4 | Site | **done** | `data/forCompanies.ts`; PageIntro + ReadMore + CtaBanner |
+| `/for-investors/` | 5 | Site | **done** | `data/forInvestors.ts`; TypeReveal + per-char darken |
 | `/team/` | 6 | Base | todo | member loop-carousel |
 | `/track-record/` | 7 | Base | todo | loop-grid + off-canvas popups |
+
+## Custom live behaviours ported (all were bespoke JS/CSS, not Elementor defaults)
+
+| Effect | Where on live | Our implementation |
+|---|---|---|
+| `.smooth-readmore` | for-companies | `components/site/ReadMore.astro` — excerpt + collapsed continuation (max-height 0.5s / opacity 0.4s), button label swaps READ MORE + / READ LESS − |
+| `.typing-target` | for-investors | `components/site/TypeReveal.astro` — empties the paragraph and types it back 10ms/char once 20% in view |
+| `.scroll-darken` | homepage intro, for-investors intro | per-character spans lit in sequence |
+
+⚠️ **`.scroll-darken` discrepancy:** live's script lights the letters
+**automatically on load, 17ms apart** (`autoAnimate()` on DOMContentLoaded).
+Our homepage version is **scroll-position driven** instead. for-investors uses
+live's timing (IntersectionObserver then 17ms/char). Worth reconciling — and
+the two copies should be extracted into one shared component.
+
+⚠️ When splitting text into per-character spans, use the **plain character**.
+Using `&nbsp;` for spaces makes the line unbreakable and causes horizontal
+overflow at every width (hit on for-investors).
 
 ## Tooling built for this workstream
 
@@ -88,6 +106,7 @@ already hold the content.
 | `npm run compare:refresh` | refreshes live stylesheets |
 | `npm run compare [width]` | homepage type/box/rhythm diff vs live, 6 viewports |
 | `MSYS_NO_PATHCONV=1 node tools/pagecheck.mjs /path/ ...` | per-page health: header mode, overlaps, h-overflow, console errors, at 375/768/1280 |
+| `python tools/outline.py <slug>` | prints a live page's container/widget skeleton — the fastest way to understand a page before porting |
 
 ⚠️ In Git Bash **always prefix `pagecheck` with `MSYS_NO_PATHCONV=1`**, or leading
 `/` args get rewritten to `C:/Program Files/Git/...`.

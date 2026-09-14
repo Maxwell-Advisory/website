@@ -1,8 +1,123 @@
 ---
-import Base from '../layouts/Base.astro';
-import head from '../chunks/for-investors.head.html?raw';
-import pre  from '../chunks/for-investors.pre.html?raw';
-import mid  from '../chunks/for-investors.mid.html?raw';
-import post from '../chunks/for-investors.post.html?raw';
+// For Investors. Live: a white band whose text column sits in the right half
+// (the intro letters darken as they appear), a forest-green band listing four
+// services in a row, a white band with the typed closing paragraph, then the CTA.
+import Site from '../layouts/Site.astro';
+import TypeReveal from '../components/site/TypeReveal.astro';
+import CtaBanner from '../components/site/CtaBanner.astro';
+import { forInvestors } from '../data/forInvestors.ts';
 ---
-<Base head={head} pre={pre} mid={mid} post={post} bodyClass="wp-singular page-template page-template-elementor_header_footer page page-id-597 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-597" />
+<Site title="For Investors">
+  <h1 class="visually-hidden">For Investors</h1>
+
+  <section class="inv-intro">
+    <div class="inv-intro__col">
+      <p class="inv-intro__eyebrow">{forInvestors.eyebrow}</p>
+      <p class="inv-intro__text" data-darken>{forInvestors.intro}</p>
+    </div>
+  </section>
+
+  <section class="inv-list">
+    <p class="inv-list__intro">{forInvestors.listIntro}</p>
+    <ul class="inv-list__items" role="list">
+      {forInvestors.items.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+
+  <section class="inv-closing">
+    <TypeReveal text={forInvestors.closing} />
+  </section>
+
+  <CtaBanner />
+</Site>
+
+<style>
+  /* live @1280: white, 721 tall, the 494px text column sitting in the right half */
+  .inv-intro {
+    background: var(--c-white);
+    min-height: 721px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-inline: var(--container-pad);
+  }
+  .inv-intro__col {
+    width: 494px;
+    max-width: 100%;
+    margin-inline-end: 5%;
+    text-align: center;
+    color: var(--c-ink-muted);
+  }
+  .inv-intro__eyebrow { font-size: var(--fs-eyebrow); line-height: 37.5px; }
+  .inv-intro__text {
+    margin-block-start: var(--space-md);
+    font-size: var(--fs-intro);
+    line-height: var(--lh-intro);
+  }
+  /* per-character darkening, as on the homepage intro */
+  .inv-intro__text :global(span) { color: var(--c-hairline); transition: color 0.55s ease; }
+  .inv-intro__text :global(span.is-lit) { color: var(--c-near-black); }
+
+  /* live @1280: forest green, 370 tall; lilac 25px lead-in, four 20px items in a row */
+  .inv-list {
+    background: var(--c-forest);
+    color: var(--c-lilac);
+    min-height: 370px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-lg);
+    padding: var(--space-2xl) var(--container-pad);
+  }
+  .inv-list__intro { font-size: var(--fs-eyebrow); line-height: 37.5px; }
+  .inv-list__items {
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    list-style: none;
+    padding: 10px;
+  }
+  .inv-list__items li { flex: 1 1 0; font-size: 20px; line-height: 25px; }
+
+  .inv-closing {
+    background: var(--c-white);
+    min-height: 370px;
+    display: flex;
+    align-items: center;
+    padding: var(--space-2xl) var(--container-pad);
+  }
+
+  @media (max-width: 1024px) {
+    .inv-list__items { flex-direction: column; gap: var(--space-md); }
+  }
+  @media (max-width: 767px) {
+    .inv-intro { min-height: 0; padding-block: var(--space-2xl); justify-content: center; }
+    .inv-intro__col { margin-inline-end: 0; }
+    .inv-list__items li { font-size: 16px; }
+  }
+</style>
+
+<script>
+  // Live splits this paragraph into per-character spans and lights them in
+  // sequence (17ms apart) once it is in view — the same effect as the homepage
+  // intro band.
+  const el = document.querySelector<HTMLElement>('[data-darken]');
+  if (el) {
+    const text = el.textContent || '';
+    // plain characters (NOT &nbsp;) so the line can still wrap
+    el.innerHTML = text.split('').map((ch) => `<span>${ch}</span>`).join('');
+    const spans = [...el.querySelectorAll('span')];
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      spans.forEach((s) => s.classList.add('is-lit'));
+    } else {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          spans.forEach((s, i) => setTimeout(() => s.classList.add('is-lit'), i * 17));
+          io.disconnect();
+        });
+      }, { threshold: 0.2 });
+      io.observe(el);
+    }
+  }
+</script>
