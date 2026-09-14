@@ -29,6 +29,9 @@ import { image } from '../lib/images.ts';
             <span class="tr-item__text">
               <span class="tr-item__title">{entry.title}</span>
               <span class="tr-item__desc" set:html={entry.description} />
+              {entry.logo && (
+                <Image class="tr-item__logo" src={image(entry.logo.src)} alt="" loading="lazy" />
+              )}
             </span>
             <span class="tr-item__icon" aria-hidden="true"></span>
           </button>
@@ -119,7 +122,23 @@ import { image } from '../lib/images.ts';
     transition: color var(--dur-fast) var(--ease);
   }
   .tr-item__btn:hover .tr-item__title { color: var(--c-ink); }
-  .tr-item__desc { font-size: 20px; line-height: 25px; }
+  /* Live truncates the card copy at runtime (its script inserts t1/t2/dots
+     spans) to exactly four 25px lines. A line clamp gives the same result
+     without the script. */
+  .tr-item__desc {
+    font-size: 20px;
+    line-height: 25px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* live shows the client logo on the card at 150px wide */
+  .tr-item__logo {
+    width: 150px;
+    height: auto;
+    margin-block-start: var(--space-md);
+  }
   .tr-item__desc :global(p),
   .tr-panel__desc :global(p) { margin-block-end: 0.75em; }
   .tr-item__desc :global(p:last-child),
@@ -205,9 +224,9 @@ import { image } from '../lib/images.ts';
   .tr-panel__logo {
     flex: none;
     align-self: flex-start;
-    width: auto;
     max-width: 100%;
     height: auto;
+    width: 150px;          /* live renders the panel logo at 150px too */
     max-height: 90px;
     object-fit: contain;
   }

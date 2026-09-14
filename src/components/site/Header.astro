@@ -7,12 +7,12 @@ import { Image } from 'astro:assets';
 import { primaryNav, url, siteMeta } from '../../lib/site.ts';
 import { image } from '../../lib/images.ts';
 
-interface Props { overlay?: boolean; }
-const { overlay = false } = Astro.props;
+interface Props { overlay?: boolean; onDark?: boolean; }
+const { overlay = false, onDark = false } = Astro.props;
 const logo = image('ASSETS-MAXWELLadvisory-40-1-1024x78.png');
 const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
 ---
-<header class:list={["site-header", overlay && "site-header--overlay"]} id="top">
+<header class:list={["site-header", overlay && "site-header--overlay", onDark && "site-header--on-dark"]} id="top">
   <div class="site-header__bar container">
     <a class="site-header__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
       <Image src={logo} alt={siteMeta.name} />
@@ -71,12 +71,14 @@ const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
     z-index: var(--z-header);
     color: var(--c-ink);
   }
-  /* Homepage: sits on top of the hero image. */
+  /* Sits on top of the section below it (the hero, or a coloured title band,
+     which live runs to the very top of the page). */
   .site-header--overlay {
     position: absolute;
     inset: 0 0 auto 0;
-    color: var(--c-white);
   }
+  /* Only over the dark hero photo does the header go white. */
+  .site-header--on-dark { color: var(--c-white); }
   .site-header__bar {
     display: flex;
     align-items: center;

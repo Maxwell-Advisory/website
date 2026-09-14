@@ -17,10 +17,12 @@ interface Props {
   lang?: string;
   /** Class on <body>, e.g. a per-page hook for backgrounds. */
   bodyClass?: string;
-  /** True only for pages whose first section is a full-bleed hero: the header
-      then sits ON the hero (absolute, white). Everywhere else it is in flow
-      and dark, as on live. */
+  /** Header sits ON the first section rather than above it — true for the
+      homepage hero AND for the coloured title bands, which live runs to the
+      very top of the page. */
   overlayHeader?: boolean;
+  /** Header text/marks go white — only over the dark hero photo. */
+  headerOnDark?: boolean;
 }
 
 const {
@@ -29,6 +31,7 @@ const {
   lang = 'en',
   bodyClass,
   overlayHeader = false,
+  headerOnDark = false,
 } = Astro.props;
 
 const fullTitle = title ? `${title} — ${siteMeta.name}` : siteMeta.name;
@@ -54,7 +57,7 @@ const fontPreloads = [bookFont, mediumFont];
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header overlay={overlayHeader} />
+    <Header overlay={overlayHeader} onDark={headerOnDark} />
     <main id="main">
       <slot />
     </main>

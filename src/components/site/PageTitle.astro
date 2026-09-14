@@ -1,28 +1,26 @@
 ---
-// Page title block for content pages.
+// Page title band.
 //
-// Live's stub pages render the hello-elementor default: an <h1.entry-title> at
-// 40px/48px, weight 500, #333, left-aligned, in a centred content column — but
-// in the THEME's system font, because those pages carry no Elementor styling.
-// We keep live's geometry and use the brand face instead (same call Joe made
-// for the CTA buttons, where the original also dropped out of PP Neue Montreal).
+// Live puts the page title inside a LILAC band, centred, at the intro type
+// scale in #787575 — not a dark heading on white. Measured on /legal-notice/:
+// band padding 100px / 70px on #e0e5fc, title 36/32/24px per tier, centred.
 interface Props { title: string; }
 const { title } = Astro.props;
 ---
-<div class="page-header container">
-  <h1 class="page-header__title">{title}</h1>
-</div>
+<section class="page-title">
+  <h1 class="page-title__text">{title}</h1>
+</section>
 
 <style>
-  .page-header {
-    padding-block: var(--space-2xl) var(--space-xl);
+  .page-title {
+    background: var(--c-lilac);
+    padding: 100px var(--container-pad) 70px;
+    text-align: center;
   }
-  .page-header__title {
-    font-size: 40px;
-    line-height: 48px;
-    font-weight: var(--fw-medium);   /* live: 500 */
-    color: var(--c-ink);             /* live: #333 */
-    max-width: var(--container);
-    margin-inline: auto;
+  .page-title__text {
+    font-size: var(--fs-intro);     /* 36 / 32 / 24 per live's tiers */
+    line-height: var(--lh-intro);
+    font-weight: var(--fw-book);
+    color: var(--c-ink-muted);      /* #787575 */
   }
 </style>
