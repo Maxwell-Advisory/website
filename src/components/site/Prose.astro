@@ -1,0 +1,41 @@
+---
+// Long-form body copy (legal notice, privacy policy).
+//
+// Measured on live at 1280: a centred 1140px column; paragraphs 13px/19.5px
+// weight 400 in #787575; h2 32px/38.4px weight 500 in the same grey; <strong>
+// at 700; paragraph spacing 14.4px. Content arrives as raw HTML from
+// src/content/legal/*.html, so the rules below must be :global().
+interface Props { html: string; }
+const { html } = Astro.props;
+---
+<div class="container">
+  <div class="prose boxed" set:html={html} />
+</div>
+
+<style>
+  .prose {
+    font-size: 13px;
+    line-height: 19.5px;
+    font-weight: var(--fw-book);
+    color: var(--c-ink-muted);
+    padding-block-end: var(--space-2xl);
+  }
+  .prose :global(h2) {
+    font-size: 32px;
+    line-height: 38.4px;
+    font-weight: var(--fw-medium);
+    color: var(--c-ink-muted);
+    margin-block: 8px 16px;
+  }
+  .prose :global(p) { margin-block-end: 14.4px; }
+  .prose :global(strong) { font-weight: 700; }
+  .prose :global(em) { font-style: italic; }
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-block-end: 14.4px;
+    padding-inline-start: 2.5em;
+    list-style: disc;
+  }
+  .prose :global(li) { margin-block-end: 4px; }
+  .prose :global(a) { text-decoration: underline; }
+</style>

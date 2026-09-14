@@ -42,7 +42,7 @@ signature diff). **16 remaining pages are only 7 templates.**
 |---|----------|-------|--------|
 | 0 | homepage | `index` | **done** (matches: rhythm 0/6, no overlap/overflow) |
 | 1 | **title-only stub** | 7 sectors + 2 team members (9 pages) | **done** |
-| 2 | legal text | `legal-notice`, `privacy-policy` | todo |
+| 2 | legal text | `legal-notice`, `privacy-policy` | **done** |
 | 3 | contact | `contact` | todo |
 | 4 | for-companies | `for-companies` | todo |
 | 5 | for-investors | `for-investors` | todo |
@@ -85,8 +85,8 @@ adrien-dormesson}/`.
 | `/sectors/industrial-decarbonisation/` | 1 | Site | **done** | via `sectors/[slug].astro` |
 | `/team/joe-davis/` | 1 | Site | **done** | via `team/[slug].astro` |
 | `/team/adrien-dormesson/` | 1 | Site | **done** | via `team/[slug].astro` |
-| `/legal-notice/` | 2 | Base | todo | ~2.5k chars of body copy |
-| `/privacy-policy/` | 2 | Base | todo | |
+| `/legal-notice/` | 2 | Site | **done** | copy in `src/content/legal/*.html`, rendered by `Prose.astro` |
+| `/privacy-policy/` | 2 | Site | **done** | same |
 | `/contact/` | 3 | Base | todo | address + email + button |
 | `/for-companies/` | 4 | Base | todo | 27 widgets |
 | `/for-investors/` | 5 | Base | todo | 28 widgets |
@@ -114,6 +114,9 @@ adrien-dormesson}/`.
   #333, left) in the brand face.
 - `data/stubPages.ts` + `pages/sectors/[slug].astro` + `pages/team/[slug].astro`
   replace 9 one-off files.
+- `components/site/Prose.astro` — long-form copy: centred 1140 column,
+  13px/19.5px #787575, h2 32px/38.4px w500 (live's measured values). Content
+  is raw HTML in `src/content/legal/`, so its rules are `:global()`.
 
 ## Definition of done (per page)
 
