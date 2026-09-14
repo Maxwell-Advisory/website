@@ -30,12 +30,15 @@ const { html } = Astro.props;
   .prose :global(p) { margin-block-end: 14.4px; }
   .prose :global(strong) { font-weight: 700; }
   .prose :global(em) { font-style: italic; }
+  /* live's lists have NO bottom margin — the following heading or paragraph
+     sits straight underneath */
   .prose :global(ul),
   .prose :global(ol) {
-    margin-block-end: 14.4px;
+    margin-block-end: 0;
     padding-inline-start: 2.5em;
     list-style: disc;
   }
   .prose :global(li) { margin-block-end: 4px; }
+  .prose :global(li:last-child) { margin-block-end: 0; }
   .prose :global(a) { text-decoration: underline; }
 </style>

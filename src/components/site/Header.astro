@@ -7,12 +7,12 @@ import { Image } from 'astro:assets';
 import { primaryNav, url, siteMeta } from '../../lib/site.ts';
 import { image } from '../../lib/images.ts';
 
-interface Props { overlay?: boolean; onDark?: boolean; }
-const { overlay = false, onDark = false } = Astro.props;
+interface Props { overlay?: boolean; onDark?: boolean; lightMark?: boolean; }
+const { overlay = false, onDark = false, lightMark = false } = Astro.props;
 const logo = image('ASSETS-MAXWELLadvisory-40-1-1024x78.png');
 const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
 ---
-<header class:list={["site-header", overlay && "site-header--overlay", onDark && "site-header--on-dark"]} id="top">
+<header class:list={["site-header", overlay && "site-header--overlay", onDark && "site-header--on-dark", lightMark && "site-header--light-mark"]} id="top">
   <div class="site-header__bar container">
     <a class="site-header__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
       <Image src={logo} alt={siteMeta.name} />
@@ -89,9 +89,15 @@ const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
     /* Live: ~75vw on small screens, capped at 450px from ~600px up. */
     width: min(450px, 75vw);
     height: auto;
-    /* Live darkens the wordmark on EVERY page, including over the hero.
-       Without it ours renders in the raw asset's pale grey and does not match. */
+    /* Live darkens the wordmark on the light-topped pages (home, for-companies,
+       for-investors, team, the legal pages). The two pages whose first band is
+       dark — track-record's slate and contact's photo — swap in a filter that
+       lifts it to a pale off-white instead; both values are live's own. */
     filter: brightness(0.96) contrast(2);
+  }
+  .site-header--light-mark .site-header__logo img {
+    filter: invert(0.88) sepia(0.2) saturate(5.5) hue-rotate(185deg)
+            brightness(1.68) contrast(0.92);
   }
 
   .site-header__toggle {
@@ -136,6 +142,8 @@ const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
 
   @media (max-width: 767px) {
     .site-header__toggle-icon { display: none; }
+    /* live's mobile header measures 36px at 375 == a 28px mark + 2vw padding */
+    .site-header__toggle { min-height: 28px; }
     .site-header__toggle-burger { display: block; mix-blend-mode: difference; color: var(--c-white); }
   }
 

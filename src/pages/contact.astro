@@ -10,14 +10,17 @@ import { image } from '../lib/images.ts';
 
 const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-unsplash-scaled.jpg'), format: 'webp', width: 1400 })).src;
 ---
-<Site title="Contact">
+<Site title="Contact" headerLightMark>
   <!-- live has no heading on this page; a hidden one keeps the document
        outline valid without changing the visuals -->
   <h1 class="visually-hidden">Contact</h1>
   <section class="contact">
     <div class="contact__panel">
+      {/* Live's source breaks this with U+2028 LINE SEPARATORs, which render
+          as four lines. Plain <br />s here — same rendering, and the U+2028
+          characters do not survive the build. */}
       <p class="contact__address">
-        Maxwell Advisory&nbsp; Climate House<br />39 rue du Caire&nbsp; 75002 Paris, France
+        Maxwell Advisory&nbsp;<br />Climate House<br />39 rue du Caire&nbsp;<br />75002 Paris, France
       </p>
       <div class="contact__enquiry">
         <p class="contact__label">General Enquiries:</p>
@@ -103,18 +106,21 @@ const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-uns
 
   /* Live stacks the panel over the photo, centres the copy and drops the
      address to 24px, and centres the block vertically instead of bottom-aligning. */
+  /* live @<=767: panel min-height 450px, no padding, everything centred, and
+     the address held to a 232px column (that width is what wraps it onto its
+     four lines). */
   @media (max-width: 767px) {
     .contact { flex-direction: column; min-height: 0; }
     .contact__panel {
-      flex: 1 1 auto;
-      min-height: 55vh;
+      flex: none;
+      min-height: 450px;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: var(--space-2xl) var(--container-pad);
+      padding: 0;
     }
-    .contact__photo { flex: 1 1 auto; min-height: 45vh; }
-    .contact__address { width: auto; font-size: 24px; line-height: 30px; }
+    .contact__photo { flex: none; min-height: 500px; }   /* live: --min-height:500px */
+    .contact__address { width: 232px; font-size: 24px; line-height: 30px; }
     /* live centres and stacks this block below 768 */
     .contact__enquiry { flex-direction: column; align-items: center; gap: var(--space-xs); }
     .contact__label { width: auto; }

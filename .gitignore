@@ -8,3 +8,5 @@ node_modules/
 tools/live-cache/
 tools/shots/
 tools/compare-report.json
+.shots/
+.probe/

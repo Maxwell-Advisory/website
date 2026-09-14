@@ -96,10 +96,18 @@
   --ink-weight: 0.4px;
 
   /* --- Layout ------------------------------------------------------------ */
+  /* Header height. Live's bar is a fixed-size mark plus 1% vertical padding on
+     each side, i.e. icon + 2vw. Measured live: 66@768, 76@1280, 79@1440 with a
+     51px mark; 36@375 with the mobile burger. */
+  --header-h: calc(51px + 2vw);
   --container: 1140px;
   --intro-text-w: 1100px;    /* intro statement column (live: max-width 1100)  */
   /* Side padding for full-width sections (~20px mobile -> ~40px desktop),
      matching the live site's edge (~38px at the logo/stats/footer). */
+  /* Live's page gutter is 10px below the desktop breakpoint — measured on
+     /privacy-policy/, where its prose runs 355px at 375 and 748px at 768
+     against a 20px gutter's 335/728. Above it the 1140px container centres
+     itself and the gutter never bites. */
   --container-pad: clamp(1.25rem, 2.5vw, 2.5rem);
   --hero-height: 720px;
 
@@ -131,6 +139,7 @@
 /* --- Tablet tier (live @media max-width:1024px) --------------------------- */
 @media (max-width: 1024px) {
   :root {
+    --container-pad: 10px;
     --fs-h1: 45px;            --lh-h1: 45px;
     --fs-intro: 32px;         --lh-intro: 40px;
     --fs-counter: 60px;
@@ -150,6 +159,7 @@
 /* --- Mobile tier (live @media max-width:767px) ---------------------------- */
 @media (max-width: 767px) {
   :root {
+    --header-h: calc(28px + 2vw);
     --fs-h1: 33px;            --lh-h1: 35px;
     --fs-intro: 24px;         --lh-intro: 30px;
     --fs-eyebrow: 20px;

@@ -11,27 +11,27 @@ const maxwellImg = image('ASSETS-MAXWELLadvisory-05-1-1024x157.png');
 const advisoryImg = image('advisory-1024x157.png');
 const mark = image('ASSETS-MAXWELLadvisory-26-1.png');
 
-// Footer menu order matches the live site. It flows column-major into a 2-row
-// grid: [For Companies/For Investors] [Team/Track Record] [Contact/Legal Notice]
-// [Privacy Policy] — four columns on desktop, fewer as it narrows.
-const footerLinks = [
-  { label: 'For Companies', href: '/for-companies/' },
-  { label: 'For Investors', href: '/for-investors/' },
-  { label: 'Team', href: '/team/' },
-  { label: 'Track Record', href: '/track-record/' },
-  { label: 'Contact', href: '/contact/' },
-  { label: 'Legal Notice', href: '/legal-notice/' },
-  { label: 'Privacy Policy', href: '/privacy-policy/' },
+// Live's footer menu is FOUR GROUPS of (up to) two links that wrap, not a
+// single column-major grid. That distinction only shows at mobile, where live
+// puts two groups per row — col 1 reads For Companies / For Investors /
+// Contact / Legal Notice, col 2 Team / Track Record / Privacy Policy.
+const footerGroups = [
+  [{ label: 'For Companies', href: '/for-companies/' }, { label: 'For Investors', href: '/for-investors/' }],
+  [{ label: 'Team', href: '/team/' }, { label: 'Track Record', href: '/track-record/' }],
+  [{ label: 'Contact', href: '/contact/' }, { label: 'Legal Notice', href: '/legal-notice/' }],
+  [{ label: 'Privacy Policy', href: '/privacy-policy/' }],
 ];
 ---
 <footer class="site-footer">
   <div class="site-footer__top container">
     <nav class="site-footer__nav" aria-label="Footer">
-      <ul role="list">
-        {footerLinks.map((link) => (
-          <li><a href={url(link.href)}>{link.label}</a></li>
-        ))}
-      </ul>
+      {footerGroups.map((group) => (
+        <ul role="list">
+          {group.map((link) => (
+            <li><a href={url(link.href)}>{link.label}</a></li>
+          ))}
+        </ul>
+      ))}
     </nav>
     <a class="site-footer__totop" href="#top" aria-label="Back to top">
       <Image class="site-footer__mark" src={mark} alt="" aria-hidden="true" />
@@ -61,7 +61,9 @@ const footerLinks = [
     /* Live's footer declares 115px top / 30px bottom. The homepage's larger gap
        comes from its stats section, NOT from the footer — putting it here gave
        every other page 140px of phantom space. */
-    padding-block: 115px 30px;
+    /* live: the first menu link sits 125px below the footer's top edge, and
+       the footer closes with 30px */
+    padding-block: 125px 30px;
     overflow: hidden; /* clip the drifting wordmark */
   }
 
@@ -71,19 +73,16 @@ const footerLinks = [
     justify-content: space-between;
     gap: var(--space-lg);
   }
-  .site-footer__nav { flex: 1; }   /* fill the width so columns can spread */
-
-  /* Title-case nav (grey). Column-major 2-row grid → four columns spread
-     evenly across the full width (matching live). */
-  .site-footer__nav ul {
-    margin: 0;
-    display: grid;
-    grid-template-rows: repeat(2, auto);
-    grid-auto-flow: column;
-    grid-auto-columns: max-content;
+  /* Four groups spread across the full width; they wrap two-per-row on mobile.
+     No row gap — live's rows are exactly one 37.5px leading tall. */
+  .site-footer__nav {
+    flex: 1;
+    display: flex;
+    flex-wrap: nowrap;   /* live keeps one row down to 768 */
     justify-content: space-between;
-    gap: 0.4em clamp(2rem, 4vw, 4rem);
+    gap: 0 20px;
   }
+  .site-footer__nav ul { margin: 0; }
   .site-footer__nav a {
     display: flex;      /* live: flex, so row height == the leading */
     font-size: var(--fs-footer-link);   /* live: 25px / 37.5px leading */
@@ -131,17 +130,19 @@ const footerLinks = [
     .site-footer__totop:hover .site-footer__mark { animation: none; }
   }
 
-  /* Below ~900px four columns get too tight — drop to two (4 rows). */
-  @media (max-width: 900px) {
-    .site-footer__nav ul { grid-template-rows: repeat(4, auto); }
+  /* Live keeps all four groups in one row down to 768 (measured at
+     x 25/209/371/525); on mobile they wrap to two per row. */
+  @media (max-width: 767px) {
+    .site-footer__nav { flex-wrap: wrap; gap: 0; }
+    .site-footer__nav ul { flex: 0 0 50%; }
   }
 
+  /* live: 30px below the menu, and a 20px gap BETWEEN the two wordmark lines
+     (measured 74/130/204px between their tops against 54/110/184px images) */
   .site-footer__wordmark {
-    margin-block-start: 30px;   /* measured gap from the menu to the wordmark */
-  }
-  @media (max-width: 767px) {
-    /* live leaves more air here on mobile (measured 92px) */
-    .site-footer__wordmark { margin-block-start: 92px; }
+    margin-block-start: 30px;
+    display: grid;
+    gap: 20px;
   }
   .site-footer__word {
     display: block;

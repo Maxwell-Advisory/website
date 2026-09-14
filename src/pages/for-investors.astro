@@ -2,16 +2,25 @@
 // For Investors. Live: a white band whose text column sits in the right half
 // (the intro letters darken as they appear), a forest-green band listing four
 // services in a row, a white band with the typed closing paragraph, then the CTA.
+import { getImage } from 'astro:assets';
 import Site from '../layouts/Site.astro';
 import TypeReveal from '../components/site/TypeReveal.astro';
 import ScrollDarken from '../components/site/ScrollDarken.astro';
 import CtaBanner from '../components/site/CtaBanner.astro';
 import { forInvestors } from '../data/forInvestors.ts';
+import { image } from '../lib/images.ts';
+
+// Live paints the left half of the intro band with this photo as a CSS
+// background (no <img>), so it is resolved through getImage() rather than
+// rendered with <Image>.
+const photo = await getImage({ src: image('hazel-OhUURadmw-k-unsplash-scaled.jpg'), format: 'webp', width: 1600 });
+const band = await getImage({ src: image('luca-bravo-YoelVcKWmws-unsplash-scaled.jpg'), format: 'webp', width: 2000 });
 ---
 <Site title="For Investors">
   <h1 class="visually-hidden">For Investors</h1>
 
   <section class="inv-intro">
+    <div class="inv-intro__photo" style={`background-image:url('${photo.src}')`} aria-hidden="true"></div>
     <div class="inv-intro__col">
       <p class="inv-intro__eyebrow">{forInvestors.eyebrow}</p>
       <ScrollDarken text={forInvestors.intro} class="inv-intro__text" />
@@ -29,39 +38,69 @@ import { forInvestors } from '../data/forInvestors.ts';
     <TypeReveal text={forInvestors.closing} />
   </section>
 
-  {/* Live has an empty 810px-tall section here before the CTA. It carries no
-      content and looks unintentional, but it is a large, visible gap, so it is
-      reproduced to keep the page rhythm matching. */}
-  <div class="inv-spacer" aria-hidden="true"></div>
+  {/* A full-bleed 810px photo band (500px on mobile) between the closing
+      paragraph and the CTA. It carries no text — the photo IS the content. */}
+  <div class="inv-band" style={`background-image:url('${band.src}')`} role="img" aria-label="Wind turbines on open farmland"></div>
 
   <CtaBanner />
 </Site>
 
 <style>
-  /* live @1280: white, 721 tall, the 494px text column sitting in the right half */
+  /* Live's intro band is two 50% columns: the photo (a CSS background, not an
+     <img>) on the left and the 494px text column centred in the right half.
+     The band's height is content-driven — 721px at 1280 — not a fixed value. */
   .inv-intro {
     background: var(--c-white);
-    min-height: 721px;
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-inline: var(--container-pad);
+    align-items: stretch;
+  }
+  .inv-intro__photo {
+    flex: 0 0 50%;
+    background-repeat: no-repeat;
+    /* live: an 85%-wide crop offset off the left edge, held still while the
+       page scrolls past it */
+    background-size: 85% auto;
+    background-position: -31vw -256px;
+    background-attachment: fixed;
   }
   .inv-intro__col {
-    width: 494px;
-    max-width: 100%;
-    margin-inline-end: 5%;
+    flex: 0 0 50%;
+    /* without this the 494px children set the flex item's min-content width
+       and push the band past the viewport below ~1000px */
+    min-width: 0;
+    /* live: the text column carries 110px of bottom padding, and the widgets
+       inside are a fixed 494px centred in the half */
+    padding-block-end: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     text-align: center;
     color: var(--c-ink-muted);
   }
-  .inv-intro__eyebrow { font-size: var(--fs-eyebrow); line-height: 37.5px; }
+  .inv-intro__col > * { width: 494px; max-width: 100%; }
+  .inv-intro__eyebrow {
+    font-size: var(--fs-eyebrow);
+    line-height: 37.5px;
+    margin-block: 50px 10px;   /* live's eyebrow margins */
+  }
   .inv-intro__text {
-    margin-block-start: var(--space-md);
     font-size: var(--fs-intro);
     line-height: var(--lh-intro);
   }
 
+  /* Below 1025 live drops the parallax and covers the column instead. */
+  @media (max-width: 1024px) {
+    .inv-intro__photo {
+      background-attachment: scroll;
+      background-size: cover;
+      background-position: 70% 0;
+    }
+  }
+
   /* live @1280: forest green, 370 tall; lilac 25px lead-in, four 20px items in a row */
+  /* Live: a full-bleed 370px band, contents vertically centred, no padding of
+     its own. The lead-in is indented 2%; the items sit in a 90%-wide row. */
   .inv-list {
     background: var(--c-forest);
     color: var(--c-lilac);
@@ -69,21 +108,35 @@ import { forInvestors } from '../data/forInvestors.ts';
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: var(--space-lg);
-    padding: var(--space-2xl) var(--container-pad);
+    gap: 20px;
+    padding: 0;
   }
-  .inv-list__intro { font-size: var(--fs-eyebrow); line-height: 37.5px; }
+  .inv-list__intro {
+    font-size: var(--fs-eyebrow);
+    line-height: 37.5px;
+    padding-inline-start: 2%;
+  }
+  /* live: a 90%-wide centred row, space-between, with the four items sized to
+     their own text (flex: 0 1 auto) rather than to equal columns */
   .inv-list__items {
     display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: 20px;
-    margin: 0;
+    width: 90%;
+    margin-inline: auto;
     list-style: none;
-    padding: 10px;
+    padding: 10px;   /* live's row padding — the items start 10px inside it */
   }
-  .inv-list__items li { flex: 1 1 0; font-size: 20px; line-height: 25px; }
+  .inv-list__items li { flex: 0 1 auto; font-size: 20px; line-height: 25px; }
 
-  .inv-spacer { min-height: 810px; }
-  @media (max-width: 767px) { .inv-spacer { min-height: 300px; } }
+  .inv-band {
+    min-height: 810px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  @media (max-width: 767px) { .inv-band { min-height: 500px; } }
 
   .inv-closing {
     background: var(--c-white);
@@ -93,12 +146,26 @@ import { forInvestors } from '../data/forInvestors.ts';
     padding: var(--space-2xl) var(--container-pad);
   }
 
-  @media (max-width: 1024px) {
+  /* Live keeps the four items in a row down to 768 (--flex-wrap-mobile: wrap);
+     they stack only on mobile. */
+  @media (max-width: 767px) {
     .inv-list__items { flex-direction: column; gap: var(--space-md); }
   }
+  /* At <=767 live stacks the band and sends the photo BELOW the text
+     (--order: 99999), giving it a fixed 500px height. */
   @media (max-width: 767px) {
-    .inv-intro { min-height: 0; padding-block: var(--space-2xl); justify-content: center; }
-    .inv-intro__col { margin-inline-end: 0; }
+    .inv-intro { flex-direction: column; }
+    .inv-intro__photo {
+      order: 2;
+      flex: none;
+      min-height: 500px;
+      background-position: 0 0;
+    }
+    .inv-intro__col {
+      order: 1;
+      flex: none;
+      padding: 50px 5px 70px;
+    }
     .inv-list__items li { font-size: 16px; }
   }
 </style>

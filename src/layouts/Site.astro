@@ -23,6 +23,9 @@ interface Props {
   overlayHeader?: boolean;
   /** Header text/marks go white — only over the dark hero photo. */
   headerOnDark?: boolean;
+  /** Wordmark rendered pale instead of dark — for pages whose first band is
+      dark (track-record's slate, contact's photo), as live does. */
+  headerLightMark?: boolean;
 }
 
 const {
@@ -34,6 +37,7 @@ const {
   // section colour runs to the very top. Overlay is therefore the default.
   overlayHeader = true,
   headerOnDark = false,
+  headerLightMark = false,
 } = Astro.props;
 
 const fullTitle = title ? `${title} — ${siteMeta.name}` : siteMeta.name;
@@ -59,10 +63,18 @@ const fontPreloads = [bookFont, mediumFont];
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header overlay={overlayHeader} onDark={headerOnDark} />
-    <main id="main">
+    <Header overlay={overlayHeader} onDark={headerOnDark} lightMark={headerLightMark} />
+    <main id="main" class:list={['site-main', overlayHeader && 'site-main--pulled']}>
       <slot />
     </main>
     <Footer />
   </body>
 </html>
+
+<style>
+  /* Live pulls the page content up so the first section's top sits at exactly
+     (header height - 85px) — measured at -49@375, -19@768, -9@1280, -6@1440,
+     which is header_h - 85 in every case. The header floats on top of it. */
+  .site-main--pulled { margin-block-start: calc(var(--header-h) - 85px); }
+</style>
+

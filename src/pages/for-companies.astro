@@ -1,7 +1,7 @@
 ---
 // For Companies. Live: lilac intro band, then two blocks (heading, image,
-// read-more copy) side by side above 1024 and stacked below, then the
-// oversized "get in touch" CTA.
+// read-more copy) side by side down to 768 and stacked only on mobile, then
+// the oversized "get in touch" CTA.
 import Site from '../layouts/Site.astro';
 import PageIntro from '../components/site/PageIntro.astro';
 import ReadMore from '../components/site/ReadMore.astro';
@@ -54,8 +54,12 @@ import { image } from '../lib/images.ts';
     height: 500px;                  /* live: 500px at 1280, 450 below */
     object-fit: cover;
   }
+  /* Live shortens the images at <=1024 but keeps the two blocks SIDE BY SIDE
+     down to 768 — they stack only on mobile. */
   @media (max-width: 1024px) {
-    .blocks { flex-direction: column; gap: var(--space-2xl); }
     .block__image { height: 450px; }
+  }
+  @media (max-width: 767px) {
+    .blocks { flex-direction: column; gap: 55px; padding-inline: 5px; }  /* live's measured stack gap */
   }
 </style>
