@@ -16,7 +16,9 @@ const { text = 'Get in touch to know more', href = '/contact/' } = Astro.props;
     text-align: center;
   }
   .cta-banner__title {
-    font-size: clamp(2rem, 5.9vw, 75px);   /* live: 75px at 1280 and above */
+    /* live: 75px at 1280 and above, scaling down to a single 26px line at 375
+       (a 2rem floor wrapped it onto two lines on mobile) */
+    font-size: clamp(26px, 5.9vw, 75px);
     line-height: 1;
     text-transform: uppercase;
     color: var(--c-heading-muted);          /* #cfcfcf */

@@ -47,13 +47,16 @@
   --fs-h1: 50px;             --lh-h1: 60px;      /* hero headline              */
   --fs-intro: 36px;          --lh-intro: 45px;   /* lilac intro statement      */
   --fs-eyebrow: 25px;                            /* section labels             */
+  --lh-eyebrow: 37.5px;                          /* live: 30px at <=767        */
   /* Accordion title has an EXTRA tier live adds via custom CSS:
      >1360 = 70px, 1024-1360 = 58px, <1024 = 53px, <=767 = 20px. */
   --fs-acc-title: 70px;                          /* service card headings      */
   --fs-body-lg: 20px;        --lh-body-lg: 25px; /* accordion body copy        */
   --fs-sector-title: 25px;                       /* sector card titles         */
   --fs-counter: 160px;                           /* big stat numbers           */
-  --fs-counter-suffix: 70px;                     /* the "+"                    */
+  --fs-counter-suffix: 70px;                     /* the "+" — 70px at EVERY
+                                                    width; measured on live at
+                                                    375 and 768 too          */
   --fs-counter-label: 20px;                      /* stat labels                */
   --lh-counter-label: 50px;                      /* live's label leading       */
   --fs-footer-link: 25px;                        /* footer nav links (icon-list) */
@@ -143,7 +146,6 @@
     --fs-h1: 45px;            --lh-h1: 45px;
     --fs-intro: 32px;         --lh-intro: 40px;
     --fs-counter: 60px;
-    --fs-counter-suffix: 53px;
     --fs-menu: 53px;
     --menu-logo-w: 360px;
   }
@@ -163,11 +165,11 @@
     --fs-h1: 33px;            --lh-h1: 35px;
     --fs-intro: 24px;         --lh-intro: 30px;
     --fs-eyebrow: 20px;
+    --lh-eyebrow: 30px;
     --fs-acc-title: 20px;
     --fs-body-lg: 18px;
     --fs-sector-title: 20px;
     --fs-counter: 120px;      /* note: larger than the tablet tier, as on live */
-    --fs-counter-suffix: 35px;
     --fs-counter-label: 14px;
     --lh-counter-label: 35px;
     --fs-menu: 35px;

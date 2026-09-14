@@ -24,7 +24,7 @@ const { eyebrow, intro } = Astro.props;
   }
   .page-intro__eyebrow {
     font-size: var(--fs-eyebrow);   /* 25px, 20 on mobile */
-    line-height: 37.5px;
+    line-height: var(--lh-eyebrow);
     width: 494px;                   /* live's eyebrow widget width */
     max-width: 100%;
   }
@@ -35,6 +35,7 @@ const { eyebrow, intro } = Astro.props;
   }
   /* live @<=767: 150px top, 70px bottom, 5px sides */
   @media (max-width: 767px) {
-    .page-intro { padding: 150px 5px 70px; }
+    /* live closes the eyebrow/intro gap entirely at this width */
+    .page-intro { padding: 150px 5px 70px; gap: 0; }
   }
 </style>

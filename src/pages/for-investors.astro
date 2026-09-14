@@ -81,7 +81,7 @@ const band = await getImage({ src: image('luca-bravo-YoelVcKWmws-unsplash-scaled
   .inv-intro__col > * { width: 494px; max-width: 100%; }
   .inv-intro__eyebrow {
     font-size: var(--fs-eyebrow);
-    line-height: 37.5px;
+    line-height: var(--lh-eyebrow);
     margin-block: 50px 10px;   /* live's eyebrow margins */
   }
   .inv-intro__text {
@@ -113,7 +113,7 @@ const band = await getImage({ src: image('luca-bravo-YoelVcKWmws-unsplash-scaled
   }
   .inv-list__intro {
     font-size: var(--fs-eyebrow);
-    line-height: 37.5px;
+    line-height: var(--lh-eyebrow);
     padding-inline-start: 2%;
   }
   /* live: a 90%-wide centred row, space-between, with the four items sized to
@@ -164,7 +164,9 @@ const band = await getImage({ src: image('luca-bravo-YoelVcKWmws-unsplash-scaled
     .inv-intro__col {
       order: 1;
       flex: none;
-      padding: 50px 5px 70px;
+      /* measured: live's eyebrow lands at y=101 here, 50px lower than its
+         declared 50px padding alone would put it */
+      padding: 100px 5px 70px;
     }
     .inv-list__items li { font-size: 16px; }
   }

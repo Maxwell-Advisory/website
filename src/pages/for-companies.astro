@@ -60,6 +60,7 @@ import { image } from '../lib/images.ts';
     .block__image { height: 450px; }
   }
   @media (max-width: 767px) {
-    .blocks { flex-direction: column; gap: 55px; padding-inline: 5px; }  /* live's measured stack gap */
+    .blocks { flex-direction: column; gap: 55px; padding-inline: 11px; }
+    .block__heading { line-height: 20px; }   /* live drops the leading on mobile */
   }
 </style>
