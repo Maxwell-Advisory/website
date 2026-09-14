@@ -27,10 +27,14 @@ import { stats } from '../../data/stats.ts';
 <style>
   /* Live: stats section has zero padding; the "Our data" eyebrow carries a
      75px top margin and a -20px bottom margin. */
-  .stats { padding-block: 0; }
+  /* live's stats section has no padding of its own, but the gap from the last
+     counter label to the footer menu measures 255px and the footer supplies
+     only 115px of it — the balance belongs here. */
+  .stats { padding-block: 0 140px; }
+  @media (max-width: 767px) { .stats { padding-block-end: 51px; } }
   /* measured live gaps: progress-bar bottom -> eyebrow top = 40px,
      eyebrow bottom -> counter top = 125px */
-  .stats .eyebrow { margin-block-start: 40px; }
+  .stats .eyebrow { margin-block-start: 75px; }   /* measured: progress bar -> eyebrow */
 
   /* Live (.stats-section) draws TWO 1px #787575 lines on the counters box:
      ::before at the top growing from the LEFT, ::after at the bottom growing

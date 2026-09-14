@@ -108,6 +108,8 @@ overflow at every width (hit on for-investors).
 | `npm run compare:refresh` | refreshes live stylesheets |
 | `npm run compare [width]` | homepage type/box/rhythm diff vs live, 6 viewports |
 | `MSYS_NO_PATHCONV=1 node tools/pagecheck.mjs /path/ ...` | per-page health: header mode, overlaps, h-overflow, console errors, at 375/768/1280 |
+| `MSYS_NO_PATHCONV=1 node tools/rhythm.mjs /path/ [width]` | **text-anchored** vertical-rhythm diff vs live for ANY page — pairs landmarks by their text, so it works across different DOM structures |
+| `MSYS_NO_PATHCONV=1 node tools/sections.mjs /path/` | live's top-level section boxes (padding, min-height, background) |
 | `python tools/outline.py <slug>` | prints a live page's container/widget skeleton — the fastest way to understand a page before porting |
 
 ⚠️ In Git Bash **always prefix `pagecheck` with `MSYS_NO_PATHCONV=1`**, or leading
@@ -149,6 +151,22 @@ CSS backgrounds (hero, sector cards, contact photo) use `getImage()` rather than
 
 `public/wp-content` (52MB) and `public/wp-includes` (20MB) are gone — nothing
 referenced them. `dist` is now 3.3MB, of which 2.8MB is imagery.
+
+## ⚠️ The mirror cannot measure JS-built layout
+
+Elementor's JS does not run against `tools/live-cache`, so anything whose layout
+is built by script measures WRONG there:
+
+| Page | What breaks | Symptom |
+|---|---|---|
+| `/track-record/` | off-canvas stays inline | cards read 1064px instead of ~436px |
+| `/team/` | Swiper never initialises | slides stack at full width |
+| `/` | sector Swiper | progress bar and card widths read 0 |
+
+Measure those against the REAL site in the Browser pane (which has working
+network). `rhythm.mjs` and `sections.mjs` carry this warning in their headers.
+Two "differences" were chased before this was understood — check the page for
+JS-built layout before believing a large delta.
 
 ## Still open
 

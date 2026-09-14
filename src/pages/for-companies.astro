@@ -33,7 +33,9 @@ import { image } from '../lib/images.ts';
   .blocks {
     display: flex;
     gap: 20px;
-    padding-inline: 2%;
+    /* live: the block row is 763 tall and its headings sit 70px below the
+       lilac band; no bottom padding (the CTA section supplies that) */
+    padding: 104px 2% 0;
   }
   .block {
     flex: 1 1 0;

@@ -58,17 +58,13 @@ const footerLinks = [
   .site-footer {
     background: var(--c-white);
     color: var(--c-ink);
-    /* Live's declared padding is 115px, but the measured gap from the last stat
-       label to the menu is 255px (its stats section contributes the rest), so we
-       use the measured value to match the rhythm. Bottom stays 30px. */
-    padding-block: 255px 30px;
+    /* Live's footer declares 115px top / 30px bottom. The homepage's larger gap
+       comes from its stats section, NOT from the footer — putting it here gave
+       every other page 140px of phantom space. */
+    padding-block: 115px 30px;
     overflow: hidden; /* clip the drifting wordmark */
   }
-  @media (max-width: 767px) {
-    /* the stacked counters already supply height, so live's gap from the last
-       label to the menu is smaller here (measured 385px vs our 474px) */
-    .site-footer { padding-block-start: 166px; }
-  }
+
   .site-footer__top {
     display: flex;
     align-items: flex-start;

@@ -29,6 +29,11 @@ import { forInvestors } from '../data/forInvestors.ts';
     <TypeReveal text={forInvestors.closing} />
   </section>
 
+  {/* Live has an empty 810px-tall section here before the CTA. It carries no
+      content and looks unintentional, but it is a large, visible gap, so it is
+      reproduced to keep the page rhythm matching. */}
+  <div class="inv-spacer" aria-hidden="true"></div>
+
   <CtaBanner />
 </Site>
 
@@ -76,6 +81,9 @@ import { forInvestors } from '../data/forInvestors.ts';
     padding: 10px;
   }
   .inv-list__items li { flex: 1 1 0; font-size: 20px; line-height: 25px; }
+
+  .inv-spacer { min-height: 810px; }
+  @media (max-width: 767px) { .inv-spacer { min-height: 300px; } }
 
   .inv-closing {
     background: var(--c-white);

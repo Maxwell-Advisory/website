@@ -81,12 +81,15 @@ const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-block: var(--space-md);
+    padding: 1% 2%;   /* live: 12.8px / 25.6px at 1280 — a 76px tall header */
   }
   .site-header__logo img {
     /* Live: ~75vw on small screens, capped at 450px from ~600px up. */
     width: min(450px, 75vw);
     height: auto;
+    /* Live darkens the wordmark on EVERY page, including over the hero.
+       Without it ours renders in the raw asset's pale grey and does not match. */
+    filter: brightness(0.96) contrast(2);
   }
 
   .site-header__toggle {
@@ -101,8 +104,10 @@ const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
   /* Circular pictogram: scaled to 0.8 and spinning continuously (10s), like the
      live site; hover speeds it up. */
   .site-header__toggle-icon {
-    width: 40px;
-    height: 40px;
+    /* 51px, like the popup's close control — this is what makes live's header
+       76px tall rather than 66px */
+    width: 51px;
+    height: 51px;
     /* Live flattens the pictogram to a light grey via this filter. */
     filter: brightness(1.78) contrast(0);
     animation: menu-spin 10s linear infinite;

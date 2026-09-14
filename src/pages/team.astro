@@ -46,7 +46,7 @@ const motif = image('Calque_1.png');
   .team {
     display: flex;
     gap: 0;
-    padding: 200px var(--container-pad) var(--space-2xl);
+    padding: 200px var(--container-pad) 0;   /* live: no bottom padding */
   }
   .team__intro {
     flex: 0 0 434px;
@@ -100,7 +100,13 @@ const motif = image('Calque_1.png');
     color: var(--c-ink-muted);
   }
   .member__role { font-size: 13px; line-height: 19.5px; color: var(--c-ink-muted); }
-  .member__bio  { font-size: 20px; line-height: 25px; color: var(--c-ink-muted); }
+  /* live insets the bio from the photo edge (335 wide in a 384 slide) */
+  .member__bio {
+    font-size: 20px;
+    line-height: 25px;
+    color: var(--c-ink-muted);
+    max-width: 335px;
+  }
 
   @media (max-width: 1024px) {
     .team { flex-direction: column; gap: var(--space-2xl); padding-top: var(--space-3xl); }
