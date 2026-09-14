@@ -1,0 +1,277 @@
+---
+// Site header: white wordmark (left) + menu trigger (right). On desktop/tablet
+// the trigger is the circular pictogram that rests at 0.8 scale and spins 360°
+// on hover (matching the live site); on mobile it's a hamburger. Opens a
+// full-viewport overlay menu. Behaviour is a tiny inline script, no framework.
+import { primaryNav, url, siteMeta } from '../../lib/site.ts';
+
+interface Props { overlay?: boolean; }
+const { overlay = false } = Astro.props;
+const logo = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-40-1-1024x78.png');
+const icon = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-26-1.png');
+---
+<header class:list={["site-header", overlay && "site-header--overlay"]} id="top">
+  <div class="site-header__bar container">
+    <a class="site-header__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
+      <img src={logo} width="800" height="61" alt={siteMeta.name} />
+    </a>
+
+    <button
+      class="site-header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      data-menu-open
+    >
+      <span class="visually-hidden">Open menu</span>
+      <img class="site-header__toggle-icon" src={icon} width="52" height="52" alt="" aria-hidden="true" />
+      <svg class="site-header__toggle-burger" width="23" height="21" viewBox="0 0 23 21" fill="none" aria-hidden="true">
+        <line x1="0" y1="1"     x2="23" y2="1"     stroke="currentColor" stroke-width="2" />
+        <line x1="0" y1="10.25" x2="23" y2="10.25" stroke="currentColor" stroke-width="2" />
+        <line x1="0" y1="19.96" x2="23" y2="19.96" stroke="currentColor" stroke-width="2" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+<nav class="site-menu" id="site-menu" aria-label="Main" hidden>
+  <!-- Live is an Elementor popup (id 50), NOT a full-screen white sheet:
+       a dark rgba(0,0,0,.8) scrim with a top-anchored white panel whose height
+       is content-driven (~568px at desktop), sliding down over 0.7s. The close
+       control swaps: the 51px circular pictogram at >=768, a small X at <=767. -->
+  <div class="site-menu__panel">
+    <div class="site-menu__bar">
+      <a class="site-menu__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
+        <img src={logo} width="800" height="61" alt={siteMeta.name} />
+      </a>
+      <button class="site-menu__close" type="button" data-menu-close>
+        <span class="visually-hidden">Close menu</span>
+        <img class="site-menu__close-icon" src={icon} width="51" height="51" alt="" aria-hidden="true" />
+        <svg class="site-menu__close-x" width="21" height="22" viewBox="0 0 21 22" fill="none" aria-hidden="true">
+          <line x1="0.707" y1="0.707" x2="20.3" y2="20.3" stroke="currentColor" stroke-width="2" />
+          <line x1="20.3" y1="1.0" x2="0.707" y2="20.6" stroke="currentColor" stroke-width="2" />
+        </svg>
+      </button>
+    </div>
+    <ul class="site-menu__list" role="list">
+      {primaryNav.map((link) => (
+        <li><a href={url(link.href)}>{link.label}</a></li>
+      ))}
+    </ul>
+  </div>
+</nav>
+
+<style>
+  /* Default (content pages): in normal flow, dark text — matching live, whose
+     header is position:static on every page without a hero. */
+  .site-header {
+    position: relative;
+    z-index: var(--z-header);
+    color: var(--c-ink);
+  }
+  /* Homepage: sits on top of the hero image. */
+  .site-header--overlay {
+    position: absolute;
+    inset: 0 0 auto 0;
+    color: var(--c-white);
+  }
+  .site-header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: var(--space-md);
+  }
+  .site-header__logo img {
+    /* Live: ~75vw on small screens, capped at 450px from ~600px up. */
+    width: min(450px, 75vw);
+    height: auto;
+  }
+
+  .site-header__toggle {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: currentColor;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  /* Circular pictogram: scaled to 0.8 and spinning continuously (10s), like the
+     live site; hover speeds it up. */
+  .site-header__toggle-icon {
+    width: 40px;
+    height: 40px;
+    /* Live flattens the pictogram to a light grey via this filter. */
+    filter: brightness(1.78) contrast(0);
+    animation: menu-spin 10s linear infinite;
+    transition: transform 0.6s ease-in-out, scale 0.6s ease-in-out;  /* as live */
+  }
+  /* Live replaces the infinite spin with a ONE-SHOT fast spin on hover
+     (animation: spin-fast 0.6s linear forwards), not a speed-up. */
+  .site-header__toggle:hover .site-header__toggle-icon,
+  .site-header__toggle:focus-visible .site-header__toggle-icon {
+    animation: menu-spin-fast 0.6s linear forwards;
+  }
+  @keyframes menu-spin {
+    from { transform: rotate(0deg) scale(0.8); }
+    to   { transform: rotate(360deg) scale(0.8); }
+  }
+  @keyframes menu-spin-fast {
+    from { transform: rotate(0deg) scale(0.8); }
+    to   { transform: rotate(360deg) scale(0.8); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__toggle-icon { animation: none; transform: scale(0.8); }
+  }
+  .site-header__toggle-burger { display: none; }
+
+  @media (max-width: 767px) {
+    .site-header__toggle-icon { display: none; }
+    .site-header__toggle-burger { display: block; mix-blend-mode: difference; color: var(--c-white); }
+  }
+
+  /* --- Overlay menu (port of live popup id 50) --------------------------- */
+  /* Measured on the live popup: scrim rgba(0,0,0,.8) with align-items:flex-start
+     and justify-content:center; white panel full-width, content-height (~568px
+     at 1280), max-height 100%, sliding in over 0.7s; top bar with the 414px
+     wordmark left and the 51px pictogram right; rows 79px tall at desktop
+     (29px padding + a 20px line-height) / 71px at mobile (25px padding),
+     hairline 0.667px #787575, text 70/53/35px #CFCFCF uppercase, LEFT-aligned
+     at desktop and centred at <=767. */
+  .site-menu {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
+  }
+  .site-menu[data-open] { opacity: 1; visibility: visible; }
+
+  .site-menu__panel {
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    background: var(--c-white);
+    color: var(--c-ink);
+  }
+  .site-menu[data-open] .site-menu__panel {
+    animation: menu-drop 0.7s ease;   /* live's popup entrance */
+  }
+  @keyframes menu-drop {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(0); }
+  }
+
+  .site-menu__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 25px;          /* live: logo sits at 25,22 */
+  }
+  .site-menu__logo img {
+    width: var(--menu-logo-w);   /* live: 414 / 360 / 280px per tier */
+    max-width: 100%;
+    height: auto;
+  }
+  .site-menu__close {
+    flex: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+    color: var(--c-ink);
+  }
+  /* Desktop close: the circular pictogram, flattened to light grey, returning to
+     full colour and spinning once on hover (0.6s ease-in-out, as live). */
+  .site-menu__close-icon {
+    width: 51px;
+    height: 51px;
+    filter: brightness(1.78) contrast(0);
+    transition: filter 0.6s ease-in-out, transform 0.6s ease-in-out;
+  }
+  .site-menu__close:hover .site-menu__close-icon,
+  .site-menu__close:focus-visible .site-menu__close-icon {
+    filter: none;
+    transform: rotate(360deg) scale(0.8);
+  }
+  .site-menu__close-x { display: none; }
+
+  .site-menu__list { margin: 0; }
+  .site-menu__list a {
+    display: flex;
+    align-items: center;
+    border-block-start: 1px solid var(--c-ink-muted);   /* live: 1px #787575 */
+    padding: 29px 20px 29px 2%;
+    font-size: var(--fs-menu);          /* live "primary": 70 / 53 / 35px */
+    line-height: 20px;                  /* live's tight leading -> 79px rows */
+    text-transform: uppercase;
+    color: var(--c-heading-muted);      /* #CFCFCF at rest */
+    /* Hover fills the text left-to-right with a grey->black gradient over 2.6s.
+       The stroke-based overbold is disabled here: with the fill transparent it
+       would outline the glyphs over the gradient, which live does not do. */
+    -webkit-text-stroke: 0;
+    background-image: linear-gradient(90deg, #787575 40%, #000000 100%);
+    background-size: 0% 100%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: currentColor;
+    transition: background-size 2.6s cubic-bezier(0.25, 0.1, 0.25, 1),
+                padding 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .site-menu__list a:hover,
+  .site-menu__list a:focus-visible {
+    padding-left: 3%;
+    -webkit-text-fill-color: transparent;
+    background-size: 100% 100%;
+  }
+
+  /* Mobile: rows are centred and shorter, and the close control becomes a small
+     X with mix-blend-mode difference (the pictogram is hidden). */
+  @media (max-width: 767px) {
+    .site-menu__list a {
+      justify-content: center;
+      text-align: center;
+      padding: 25px 20px 25px 2%;
+    }
+    .site-menu__close-icon { display: none; }
+    .site-menu__close-x { display: block; mix-blend-mode: difference; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-menu[data-open] .site-menu__panel { animation: none; }
+    .site-menu__list a, .site-menu__close-icon { transition: none; }
+  }
+</style>
+
+<script>
+  const menu = document.getElementById('site-menu');
+  const openBtn = document.querySelector('[data-menu-open]');
+  const closeBtn = document.querySelector('[data-menu-close]');
+  if (menu && openBtn && closeBtn) {
+    const open = () => {
+      menu.hidden = false;
+      requestAnimationFrame(() => menu.setAttribute('data-open', ''));
+      openBtn.setAttribute('aria-expanded', 'true');
+      document.documentElement.style.overflow = 'hidden';
+    };
+    const close = () => {
+      menu.removeAttribute('data-open');
+      openBtn.setAttribute('aria-expanded', 'false');
+      document.documentElement.style.overflow = '';
+      const done = () => { menu.hidden = true; menu.removeEventListener('transitionend', done); };
+      menu.addEventListener('transitionend', done);
+    };
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    menu.addEventListener('click', (e) => { if (e.target === menu) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.hasAttribute('data-open')) close();
+    });
+  }
+</script>

@@ -5,9 +5,14 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "compare": "node tools/compare.mjs",
+    "compare:refresh": "bash tools/refresh-live-mirror.sh"
   },
   "dependencies": {
     "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.1"
   }
 }

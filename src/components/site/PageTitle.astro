@@ -1,0 +1,28 @@
+---
+// Page title block for content pages.
+//
+// Live's stub pages render the hello-elementor default: an <h1.entry-title> at
+// 40px/48px, weight 500, #333, left-aligned, in a centred content column — but
+// in the THEME's system font, because those pages carry no Elementor styling.
+// We keep live's geometry and use the brand face instead (same call Joe made
+// for the CTA buttons, where the original also dropped out of PP Neue Montreal).
+interface Props { title: string; }
+const { title } = Astro.props;
+---
+<div class="page-header container">
+  <h1 class="page-header__title">{title}</h1>
+</div>
+
+<style>
+  .page-header {
+    padding-block: var(--space-2xl) var(--space-xl);
+  }
+  .page-header__title {
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: var(--fw-medium);   /* live: 500 */
+    color: var(--c-ink);             /* live: #333 */
+    max-width: var(--container);
+    margin-inline: auto;
+  }
+</style>

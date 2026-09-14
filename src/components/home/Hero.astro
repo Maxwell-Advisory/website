@@ -1,0 +1,209 @@
+---
+// Homepage hero: full-height turbine image, centred uppercase headline, tagline,
+// and the two pill CTAs ("For Companies" / "For Investors") — matching the live
+// site. No dark overlay. On load, the circular "Pictogramme" logo plays a
+// one-shot intro (scales up, spins 520°, shrinks + fades away).
+import { url } from '../../lib/site.ts';
+
+interface Props {
+  title: string;
+  tagline: string;
+}
+const { title, tagline } = Astro.props;
+const bg = url('/wp-content/uploads/2025/12/fabian-wiktor-pPITJDEYR78-unsplash-scaled.jpg');
+const motif = url('/wp-content/uploads/2025/12/Pictogramme.png');
+---
+<section class="hero">
+  <div class="hero__media" style={`background-image:url('${bg}')`} role="img" aria-label="Wind turbines on a ridgeline"></div>
+  <img class="hero__motif" src={motif} alt="" width="300" height="300" fetchpriority="high" />
+  <div class="hero__inner">
+    <div class="hero__content">
+      <h1 class="hero__title">{title}</h1>
+      <p class="hero__tagline">{tagline}</p>
+      <div class="hero__actions">
+        <a class="hero__btn hero__btn--ghost" href={url('/for-companies/')}>For Companies</a>
+        <a class="hero__btn hero__btn--solid" href={url('/for-investors/')}>For Investors</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100dvh; /* full viewport height, like the live site */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-on-dark);
+    overflow: hidden;
+    /* Live pushes the hero content into the lower half via a large top padding
+       (declared 330px); capped by vh so short viewports still fit. */
+    padding-top: min(var(--hero-pad-top), 45vh);
+    /* Live's `.hero-blur`: the whole hero sharpens from an 18px blur over 2.5s
+       on load, in step with the motif intro. Deliberately WITHOUT `forwards` —
+       a lingering filter (even blur(0)) makes this a containing block and
+       would stop the fixed-attachment background from parallaxing. */
+    animation: hero-blur-in 2.5s ease-out;
+    will-change: filter;
+  }
+  @keyframes hero-blur-in {
+    from { filter: blur(18px); }
+    to   { filter: blur(0px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero { animation: none; }
+  }
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center top;   /* 50% 0% — matches live */
+    background-attachment: fixed;      /* parallax on scroll, like live */
+  }
+  @media (max-width: 767px) {
+    /* fixed attachment is unreliable on mobile browsers */
+    .hero__media { background-attachment: scroll; }
+  }
+
+  /* One-shot intro logo — starts big, spins and shrinks to nothing. Base state
+     is the animation's end (invisible), so with reduced motion it stays hidden. */
+  .hero__motif {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* live: min(480px, 50vw) — 188@375, 384@768, 480 capped from 1280 up.
+       Ours was ~half that, so it faded out of view far sooner. */
+    width: min(480px, 50vw);
+    height: auto;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.8) rotate(0deg);
+    animation: hero-motif 2.5s ease-out forwards;
+    will-change: transform, opacity;
+    pointer-events: none;
+    z-index: 2;
+  }
+  @keyframes hero-motif {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(1.8) rotate(0deg); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.1) rotate(520deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* base state is now the visible first frame, so hide it explicitly */
+    .hero__motif { animation: none; opacity: 0; }
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+  }
+  /* Centred content column, sized so the headline wraps to two lines like the
+     live site. */
+  .hero__content {
+    width: 100%;
+    max-width: var(--container);   /* live hero column is 1140px (not 1100) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero__title {
+    font-size: var(--fs-h1);
+    line-height: var(--lh-h1);   /* 60 / 45 / 35px per live's tiers */
+    text-transform: uppercase;
+    text-wrap: normal; /* greedy wrap like the live site (not balanced) */
+    margin-block-end: var(--space-md);
+    text-shadow: 0 1px 24px rgba(0, 0, 0, 0.35);
+  }
+  .hero__tagline {
+    font-size: var(--fs-caption);
+    width: 100%;               /* live tagline spans the full hero column */
+    text-shadow: 0 1px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .hero__actions {
+    display: flex;
+    justify-content: center;
+    gap: 85px;            /* live: --column-gap: 85px */
+    flex-wrap: wrap;
+    margin-block-start: var(--space-xl);
+    width: 100%;
+  }
+  .hero__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;   /* anchor for the ::after shine sweep */
+    overflow: hidden;     /* clips the sweep to the pill */
+    min-height: 36px;
+    max-width: 100%;
+    /* live: padding 10px 150px (90/97px on mobile) — this, not a min-width, is
+       what makes the pill ~405px wide. */
+    padding: 10px 150px;
+    border: 1px solid;
+    border-radius: 80px;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);   /* 500 - matches live */
+    line-height: 1;
+    /* live: `transition: all .3s` overridden to 0.8s, default `ease` curve */
+    transition: all 0.8s;
+    /* NB: no backdrop-filter. Live has none — ours frosted the parallax hero
+       behind the pill, which flattened it and lost the shimmer as the border
+       and text fade to white over 0.8s. */
+  }
+  /* THE SHIMMER. Live puts a custom `.shine` class on BOTH button widgets
+     (wp-custom-css): a skewed, translucent-white gradient band that sweeps
+     across the pill from left to right over 1.4s on hover. This is the effect
+     that was missing — the pills were otherwise only changing colour. */
+  .hero__btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 85%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.32) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: all 1.4s ease;
+    pointer-events: none;
+  }
+  .hero__btn:hover::after,
+  .hero__btn:focus-visible::after { left: 150%; }
+  @media (prefers-reduced-motion: reduce) {
+    .hero__btn::after { transition: none; }
+  }
+
+  /* Live styles the two pills differently, and ONLY the first has a hover
+     state (the second declares no :hover and no transition at all). */
+  .hero__btn--ghost {
+    border-color: var(--c-heading-muted);   /* #CFCFCF */
+    color: var(--c-heading-muted);
+    background: #E0E5FC00;                  /* transparent lilac, as live */
+  }
+  .hero__btn--ghost:hover,
+  .hero__btn--ghost:focus-visible {
+    color: var(--c-white);
+    border-color: var(--c-white);
+  }
+  .hero__btn--solid {
+    border-color: var(--c-white);
+    color: var(--c-white);
+    background: #FFFFFF54;                  /* white @ 33%, as live */
+  }
+
+  /* live shrinks the padding only at <=767 (90px / 97px per button) */
+  @media (max-width: 767px) {
+    .hero__btn--ghost { padding: 10px 90px; }
+    .hero__btn--solid { padding: 10px 97px; }
+  }
+  @media (max-width: 560px) {
+    .hero__actions { flex-direction: column; align-items: stretch; gap: var(--space-md); }
+  }
+</style>

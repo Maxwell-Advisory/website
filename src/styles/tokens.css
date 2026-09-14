@@ -1,0 +1,173 @@
+/* ===========================================================================
+   DESIGN TOKENS — the single source of truth for the Maxwell Advisory site.
+
+   Type sizes and component dimensions below are the EXACT values declared in
+   the live site's own stylesheets (read from maxwelladvisory.eu's inlined
+   Elementor CSS), including its three breakpoint tiers:
+
+       desktop  > 1024px
+       tablet  <= 1024px
+       mobile  <=  767px
+
+   These are deliberately NOT fluid clamps: the original steps at breakpoints,
+   so matching it means stepping at the same breakpoints. That also makes the
+   layout correct at every width by construction rather than by approximation.
+   Do not hard-code sizes in components — always reference a --token.
+   =========================================================================== */
+:root {
+  /* --- Brand palette ----------------------------------------------------- */
+  --c-ink: #333333;          /* primary body text                            */
+  --c-ink-muted: #787575;    /* secondary text, icon strokes                 */
+  --c-heading-muted: #cfcfcf;/* large muted headings (service accordion)     */
+  --c-hairline: #c7c7c7;     /* thin rules / borders; scroll-darken start     */
+  --c-near-black: #222222;   /* scroll-darken end colour                     */
+  --c-white: #ffffff;
+  --c-black: #000000;
+
+  --c-lilac: #e0e5fc;        /* the oversized MAXWELL ADVISORY wordmark       */
+  --c-forest: #465845;       /* green feature band                           */
+  --c-navy: #32323a;         /* dark services / feature section              */
+
+  /* --- Semantic aliases -------------------------------------------------- */
+  --bg-page: var(--c-white);
+  --text-body: var(--c-ink);
+  --text-on-dark: var(--c-white);
+
+  /* --- Typography -------------------------------------------------------- */
+  --font-sans: "PP Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --fw-thin: 300;
+  --fw-book: 400;
+  --fw-medium: 500;
+  --fw-bold: 700;
+
+  /* Type scale — desktop tier (live "secondary"/"6827eb6"/"41f1e0f"/"d5b0afe") */
+  --fs-h1: 50px;             --lh-h1: 60px;      /* hero headline              */
+  --fs-intro: 36px;          --lh-intro: 45px;   /* lilac intro statement      */
+  --fs-eyebrow: 25px;                            /* section labels             */
+  /* Accordion title has an EXTRA tier live adds via custom CSS:
+     >1360 = 70px, 1024-1360 = 58px, <1024 = 53px, <=767 = 20px. */
+  --fs-acc-title: 70px;                          /* service card headings      */
+  --fs-body-lg: 20px;        --lh-body-lg: 25px; /* accordion body copy        */
+  --fs-sector-title: 25px;                       /* sector card titles         */
+  --fs-counter: 160px;                           /* big stat numbers           */
+  --fs-counter-suffix: 70px;                     /* the "+"                    */
+  --fs-counter-label: 20px;                      /* stat labels                */
+  --lh-counter-label: 50px;                      /* live's label leading       */
+  --fs-footer-link: 25px;                        /* footer nav links (icon-list) */
+  --lh-footer-link: 37.5px;
+  --fs-body: 16px;
+  --fs-small: 15px;
+  --fs-caption: 13px;                            /* hero tagline               */
+  --menu-logo-w: 414px;                          /* popup wordmark: 414/360/280 */
+  --fs-menu: 70px;                               /* overlay menu items (live "primary") */
+  --fs-display: var(--fs-acc-title);
+  --fs-h2: 40px;
+  --fs-lead: var(--fs-eyebrow);
+  --fs-wordmark: var(--fs-counter);
+
+  /* Component dimensions (live declares these as fixed px, not fluid) */
+  --acc-row-h: 115px;        /* accordion closed-row height                   */
+  --acc-icon: 80px;          /* accordion +/- hit area                        */
+  --acc-icon-line-w: 52px;   /* +/- stroke length                             */
+  --acc-icon-line-h: 2px;
+  --sector-card-h: 530px;    /* sector card height                            */
+  --intro-min-h: 370px;      /* lilac band height                             */
+  --hero-pad-top: 330px;     /* pushes hero content into the lower half       */
+
+  --lh-tight: 1;
+  --lh-heading: 1.2;
+  --lh-body: 1.5;
+
+  /* The live site declares letter-spacing: 0em (its only declaration) and leaves
+     everything else at `normal` — so NO negative tracking anywhere. We used
+     -0.01em on headings/labels/buttons, which rendered all our text slightly
+     tighter than the original. Keep this at 0 to match. */
+  --tracking-tight: 0em;
+  --tracking-normal: 0em;
+
+  /* Overbold compensation. The type matches the live site by every CSS measure
+     (PP Neue Montreal 400, identical sizes/widths), but renders a touch lighter
+     than the original on some displays. A small text-stroke in the text colour
+     thickens the strokes to match the original's heavier appearance. Tune this
+     one value to taste: 0 = off, ~0.5px ~= a full half-weight step. */
+  --ink-weight: 0.4px;
+
+  /* --- Layout ------------------------------------------------------------ */
+  --container: 1140px;
+  --intro-text-w: 1100px;    /* intro statement column (live: max-width 1100)  */
+  /* Side padding for full-width sections (~20px mobile -> ~40px desktop),
+     matching the live site's edge (~38px at the logo/stats/footer). */
+  --container-pad: clamp(1.25rem, 2.5vw, 2.5rem);
+  --hero-height: 720px;
+
+  /* --- Spacing scale (8px base) ----------------------------------------- */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 8rem;
+
+  /* --- Motion ------------------------------------------------------------ */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 180ms;
+  --dur: 320ms;
+  --dur-slow: 600ms;
+
+  --z-header: 100;
+  --z-overlay: 200;
+}
+
+/* --- Accordion-title mid tier (live: 1024-1360px gets 58px) --------------- */
+@media (max-width: 1360px) {
+  :root { --fs-acc-title: 58px; }
+}
+
+/* --- Tablet tier (live @media max-width:1024px) --------------------------- */
+@media (max-width: 1024px) {
+  :root {
+    --fs-h1: 45px;            --lh-h1: 45px;
+    --fs-intro: 32px;         --lh-intro: 40px;
+    --fs-counter: 60px;
+    --fs-counter-suffix: 53px;
+    --fs-menu: 53px;
+    --menu-logo-w: 360px;
+  }
+}
+
+/* Accordion title drops to 53px only BELOW 1024 — live's 58px rule is
+   (min-width:1024px and max-width:1360px), so 1024 itself is still 58px.
+   The smaller icon gives the long titles room to stay on one line. */
+@media (max-width: 1023px) {
+  :root { --fs-acc-title: 53px; --acc-icon: 40px; }
+}
+
+/* --- Mobile tier (live @media max-width:767px) ---------------------------- */
+@media (max-width: 767px) {
+  :root {
+    --fs-h1: 33px;            --lh-h1: 35px;
+    --fs-intro: 24px;         --lh-intro: 30px;
+    --fs-eyebrow: 20px;
+    --fs-acc-title: 20px;
+    --fs-body-lg: 18px;
+    --fs-sector-title: 20px;
+    --fs-counter: 120px;      /* note: larger than the tablet tier, as on live */
+    --fs-counter-suffix: 35px;
+    --fs-counter-label: 14px;
+    --lh-counter-label: 35px;
+    --fs-menu: 35px;
+    --menu-logo-w: 280px;
+    --fs-footer-link: 20px;   --lh-footer-link: 30px;
+    --acc-icon: 40px;          /* smaller hit area so the title fits one line */
+
+    --acc-row-h: 75px;
+    --acc-icon-line-w: 20px;
+    --acc-icon-line-h: 1px;
+    --sector-card-h: 380px;
+    --intro-min-h: 300px;
+  }
+}

@@ -1,0 +1,63 @@
+---
+// Clean shared layout for the rebuilt site. Owns the document shell, loads the
+// global stylesheet (reset + tokens + fonts), preloads the two above-the-fold
+// font weights, and wraps every page in the Header + Footer. Pages supply a
+// title/description and their content via <slot />.
+import '../styles/global.css';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import { siteMeta } from '../lib/site.ts';
+// Vite resolves these to fingerprinted, base-correct URLs — used for preloads.
+import bookFont from '../assets/fonts/ppneuemontreal-book.woff';
+import mediumFont from '../assets/fonts/ppneuemontreal-medium.woff';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  /** Class on <body>, e.g. a per-page hook for backgrounds. */
+  bodyClass?: string;
+  /** True only for pages whose first section is a full-bleed hero: the header
+      then sits ON the hero (absolute, white). Everywhere else it is in flow
+      and dark, as on live. */
+  overlayHeader?: boolean;
+}
+
+const {
+  title,
+  description = siteMeta.tagline,
+  lang = 'en',
+  bodyClass,
+  overlayHeader = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} — ${siteMeta.name}` : siteMeta.name;
+
+// Preloaded so the brand font is used on first paint (no cold-cache FOUT).
+const fontPreloads = [bookFont, mediumFont];
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={Astro.url.href} />
+    {fontPreloads.map((f) => (
+      <link rel="preload" as="font" type="font/woff" crossorigin href={f} />
+    ))}
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header overlay={overlayHeader} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -1,0 +1,230 @@
+---
+// Services accordion. Native <details>/<summary> for accessibility + no-JS
+// fallback; a tiny script enforces single-open behaviour and animates height.
+// Content comes from src/data/services.ts.
+import { services } from '../../data/services.ts';
+import { asset, assetSrcset } from '../../lib/site.ts';
+---
+<section class="services section" aria-label="What we do">
+  <p class="eyebrow services__eyebrow">Three service cards</p>
+  <div class="services__list">
+      {services.map((c, i) => (
+        <details class="service" name="service">
+          <summary class="service__summary">
+            <h2 class="service__title" set:html={c.title} />
+            <span class="service__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="service__body">
+            <div class="service__text" set:html={c.body} />
+            <img
+              class="service__image"
+              src={asset(c.image)}
+              srcset={assetSrcset(c.srcset)}
+              sizes={c.sizes}
+              width={c.width}
+              height={c.height}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        </details>
+      ))}
+  </div>
+</section>
+
+<style>
+  /* All values below are the live site's declared values (Elementor CSS):
+     section padding-top 50px/bottom 0; rows a fixed 115px (75px mobile) with a
+     1px top border; title 58/53/20px; body copy 931px wide indented 3%; image
+     26vw × 525px pulled up -114px so it spans heading + body. */
+  /* measured gap from the intro band to the eyebrow is 70px on live */
+  .services { padding-block-start: 70px; }
+  /* spacing comes from the global .eyebrow rule — don't override it here */
+
+  /* live's dividers are #787575 (--c-ink-muted), not the lighter hairline */
+  .service { border-block-start: 1px solid var(--c-ink-muted); }
+  .services__list > .service:last-child {
+    border-block-end: 1px solid var(--c-ink-muted);
+  }
+  .service__summary {
+    position: relative;   /* keeps the heading + icon above the pulled-up image */
+    z-index: 1;
+    /* min-height (not height): matches live's 115px in every normal case, but
+       lets the row grow instead of spilling if a long title wraps at awkward
+       widths (e.g. ~768px, where "2.Capital Raising and M&A" needs two lines). */
+    min-height: var(--acc-row-h);
+    padding-inline: 3%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;              /* live has no gap; extra gap made the title wrap */
+    cursor: pointer;
+    list-style: none;
+  }
+  .service__summary::-webkit-details-marker { display: none; }
+  .service__title {
+    font-size: var(--fs-acc-title);   /* 58 / 53 / 20px per live's tiers */
+    text-transform: uppercase;
+    color: var(--c-heading-muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .service[open] .service__title,
+  .service__summary:hover .service__title { color: var(--c-ink-muted); }
+
+  /* +/- icon: 80×80 hit area, 52×2px strokes (20×1px on mobile). */
+  .service__icon {
+    flex: none;
+    position: relative;
+    width: var(--acc-icon);
+    height: var(--acc-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .service__icon::before,
+  .service__icon::after {
+    content: "";
+    position: absolute;
+    width: var(--acc-icon-line-w);
+    height: var(--acc-icon-line-h);
+    background: grey;
+    border-radius: 2px;
+    /* live's exact easing/timing for the +/- strokes */
+    transition: transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1),
+                opacity 0.4s ease;
+  }
+  .service__icon::after { transform: rotate(90deg); }          /* vertical bar */
+  /* On open, live rotates the vertical stroke a further 90deg (to 180) as it
+     collapses and fades — it spins away rather than simply shrinking. */
+  .service[open] .service__icon::after { transform: rotate(180deg) scaleX(0); opacity: 0; }
+
+  .service__body {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    /* the 3% indent lives here (as on live, where it sits on the widget
+       wrapper) so the text column's CONTENT is the full 931px */
+    padding-left: 3%;
+    padding-block-end: var(--space-lg);
+  }
+  .service__text {
+    /* live declares a fixed 931px, but 931 + 26vw image + gap overflows below
+       ~1400px, so allow it to shrink (costs a few px at 1280, no overflow) */
+    flex: 0 1 931px;
+    max-width: 931px;
+    font-size: var(--fs-body-lg);   /* 20 / 20 / 18px per live's tiers */
+    line-height: var(--lh-body-lg);
+    color: var(--c-ink-muted);
+    display: grid;
+    gap: 1em;
+    align-content: start;
+  }
+  .service__image {
+    flex: 0 0 26vw;      /* live: 374px@1440, 499px@1920 == 26vw */
+    width: 26vw;
+    max-width: 26vw;
+    height: 525px;
+    object-fit: cover;
+    margin-top: -114px;   /* spans heading + body, keeping the box compact */
+    margin-right: 0;      /* flush to the right edge, as live renders it */
+    /* live fades the image out over 0.45s just before the panel closes
+       (its JS toggles a .fadeout class on the image widget) */
+    transition: opacity 0.45s ease;
+  }
+  .service__image.is-fading { opacity: 0; }
+
+  /* Wide enough for live's fixed 931px column alongside the 26vw image. */
+  @media (min-width: 1400px) {
+    .service__text { flex-shrink: 0; }
+  }
+
+  /* Live stacks the open body at <=1024 with a full-width 500px-tall image. */
+  @media (max-width: 1024px) {
+    .service__body { flex-direction: column; gap: var(--space-md); padding-left: 0; }
+    .service__text { flex: 1 1 auto; max-width: 98%; padding-inline-start: 3%; }
+    .service__image {
+      /* live measures 752w@768 and 1003w@1024 (~98%) and stays 525px tall */
+      flex: none; width: 98%; max-width: 98%; height: 525px;
+      margin: 0;
+    }
+  }
+</style>
+
+<script>
+  // Smooth draw-down open/close. A native <details> snaps open, so we intercept
+  // the click and animate the element's own height between the closed-row
+  // height and its full height. Animating the <details> (rather than just the
+  // body) keeps the image — which is pulled up beside the heading with a
+  // negative margin — inside the animated box, so it is revealed by the wipe
+  // instead of popping in at the end.
+  //
+  // Timing matches the +/- icon strokes (0.55s, cubic-bezier(.25,.8,.25,1)) so
+  // the panel and the icon move together.
+  const DUR = 550;
+  const EASE = 'cubic-bezier(0.25, 0.8, 0.25, 1)';
+  const items = [...document.querySelectorAll<HTMLDetailsElement>('.service')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const running = new WeakMap<HTMLDetailsElement, Animation>();
+
+  const rowHeight = (d: HTMLDetailsElement) => {
+    const sum = d.querySelector<HTMLElement>('.service__summary');
+    return sum ? sum.getBoundingClientRect().height : 0;
+  };
+
+  const animateTo = (d: HTMLDetailsElement, from: number, to: number, done?: () => void) => {
+    running.get(d)?.cancel();
+    d.style.overflow = 'hidden';
+    const anim = d.animate(
+      [{ height: `${from}px` }, { height: `${to}px` }],
+      { duration: DUR, easing: EASE },
+    );
+    running.set(d, anim);
+    anim.onfinish = () => {
+      running.delete(d);
+      d.style.height = '';
+      d.style.overflow = '';
+      done?.();
+    };
+    anim.oncancel = () => { d.style.height = ''; d.style.overflow = ''; };
+  };
+
+  const image = (d: HTMLDetailsElement) => d.querySelector<HTMLElement>('.service__image');
+
+  const expand = (d: HTMLDetailsElement) => {
+    image(d)?.classList.remove('is-fading');
+    const from = rowHeight(d);
+    d.open = true;                     // content joins the flow so we can measure
+    const to = d.scrollHeight;
+    animateTo(d, from, to);
+  };
+
+  const collapse = (d: HTMLDetailsElement) => {
+    image(d)?.classList.add('is-fading');   // fades out as the panel wipes up
+    const from = d.getBoundingClientRect().height;
+    animateTo(d, from, rowHeight(d), () => {
+      d.open = false;
+      image(d)?.classList.remove('is-fading');
+    });
+  };
+
+  items.forEach((d) => {
+    const summary = d.querySelector<HTMLElement>('.service__summary');
+    if (!summary) return;
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();               // we drive `open` ourselves
+      if (reduce) { 
+        items.forEach((o) => { if (o !== d) o.open = false; });
+        d.open = !d.open;
+        return;
+      }
+      if (d.open) {
+        collapse(d);
+      } else {
+        items.forEach((o) => { if (o !== d && o.open) collapse(o); });
+        expand(d);
+      }
+    });
+  });
+</script>

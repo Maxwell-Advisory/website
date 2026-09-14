@@ -1,0 +1,168 @@
+---
+// Homepage "Sectors strip": a 3-up (2 tablet / 1 mobile) drag carousel with a
+// progress bar — matching the live Swiper. Cards are NOT links (the live cards
+// don't navigate). Drag/swipe to advance; it deliberately does NOT scroll with
+// the mouse wheel (transform-based, no overflow scroll). Data: src/data/sectors.ts.
+import { sectors } from '../../data/sectors.ts';
+import { asset } from '../../lib/site.ts';
+---
+<section class="sectors section" aria-label="Sectors">
+  <p class="eyebrow sectors__eyebrow">Sectors strip</p>
+  <div class="sectors__viewport" data-carousel>
+    <ul class="sectors__track" data-track role="list">
+      {sectors.map((s) => (
+        <li class="sector-card">
+          <span class="sector-card__media" style={`background-image:url('${asset(s.image)}')`}></span>
+          <span class="sector-card__overlay"></span>
+          <h3 class="sector-card__title">{s.title}</h3>
+        </li>
+      ))}
+    </ul>
+  </div>
+  <div class="sectors__progress" aria-hidden="true">
+    <span class="sectors__progress-bar" data-progress></span>
+  </div>
+</section>
+
+<style>
+  /* Only the top margin is section-specific; the bottom gap comes from the
+     global .eyebrow rule (measured +14px on live). */
+  .sectors__eyebrow { margin-block-start: 80px; }
+  @media (max-width: 767px) { .sectors__eyebrow { margin-block-start: 25px; } }
+
+  .sectors__viewport {
+    overflow: hidden;
+    cursor: grab;
+    touch-action: pan-y;              /* allow vertical page scroll, we handle X */
+  }
+  .sectors__viewport.is-dragging { cursor: grabbing; }
+
+  .sectors__track {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    will-change: transform;
+    transition: transform var(--dur) var(--ease);
+    user-select: none;
+  }
+
+  .sector-card {
+    position: relative;
+    flex: 0 0 calc((100% - 20px) / 3);
+    height: var(--sector-card-h);   /* live: 530px, 380px on mobile */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-on-dark);
+  }
+  .sector-card__media {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    /* no hover transform: the live cards have no hover effect at all */
+  }
+  .sector-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.18);
+  }
+  .sector-card__title {
+    position: relative;
+    width: 100%;
+    max-width: 400px;                    /* live's rendered title box */
+    font-size: var(--fs-sector-title);   /* live: 25px, 20px on mobile */
+    line-height: var(--fs-sector-title); /* live: leading == font-size */
+    text-transform: uppercase;
+    padding-inline: var(--space-md);
+    text-shadow: 0 1px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Live's custom CSS declares 96% for the progressbar but Swiper's own rule
+     wins — MEASURED, the track spans the full content width. 1px tall, 35px
+     below the cards. */
+  .sectors__progress {
+    margin: 35px auto 0;
+    width: 100%;
+    height: 1px;
+    background: var(--c-hairline);
+    position: relative;
+    overflow: hidden;
+  }
+  .sectors__progress-bar {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    width: 33.33%;
+    background: var(--c-ink-muted);
+    transition: left var(--dur) var(--ease), width var(--dur) var(--ease);
+  }
+
+  /* Live stays 3-up at 1024 and only drops to 2-up below it. */
+  @media (max-width: 1023px) {
+    .sector-card { flex-basis: calc((100% - 10px) / 2); }
+  }
+  @media (max-width: 767px) {
+    .sector-card { flex-basis: 100%; }   /* height comes from --sector-card-h (380px) */
+  }
+</style>
+
+<script>
+  const vp = document.querySelector<HTMLElement>('[data-carousel]');
+  const track = vp?.querySelector<HTMLElement>('[data-track]');
+  const bar = document.querySelector<HTMLElement>('[data-progress]');
+  if (vp && track && bar) {
+    const total = track.children.length;
+    let index = 0, trackX = 0, startX = 0, dragging = false, pointerId = -1;
+
+    const step = () => {
+      const first = track.children[0] as HTMLElement;
+      const gap = parseFloat(getComputedStyle(track).columnGap || '10') || 10;
+      return first.getBoundingClientRect().width + gap;
+    };
+    const perView = () => Math.max(1, Math.round(vp.clientWidth / step()));
+    const maxIndex = () => Math.max(0, total - perView());
+
+    const updateBar = () => {
+      const frac = Math.min(1, perView() / total);
+      bar.style.width = `${frac * 100}%`;
+      const mi = maxIndex();
+      const p = mi ? index / mi : 0;
+      bar.style.left = `${p * (100 - frac * 100)}%`;
+    };
+    const goTo = (i: number) => {
+      index = Math.max(0, Math.min(maxIndex(), i));
+      trackX = -index * step();
+      track.style.transform = `translateX(${trackX}px)`;
+      updateBar();
+    };
+
+    vp.addEventListener('pointerdown', (e) => {
+      dragging = true; startX = e.clientX; pointerId = e.pointerId;
+      vp.setPointerCapture(e.pointerId);
+      vp.classList.add('is-dragging');
+      track.style.transition = 'none';
+    });
+    vp.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      track.style.transform = `translateX(${trackX + (e.clientX - startX)}px)`;
+    });
+    const end = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      vp.classList.remove('is-dragging');
+      track.style.transition = '';
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) > 40) goTo(index + Math.round(-dx / step()));
+      else goTo(index);
+    };
+    vp.addEventListener('pointerup', end);
+    vp.addEventListener('pointercancel', end);
+    // Keep image drag from hijacking the gesture
+    vp.addEventListener('dragstart', (e) => e.preventDefault());
+    window.addEventListener('resize', () => goTo(index));
+    updateBar();
+  }
+</script>

@@ -1,0 +1,15 @@
+---
+// Individual team-member pages. Content-free on live (name only) — see
+// src/data/stubPages.ts.
+import Site from '../../layouts/Site.astro';
+import PageTitle from '../../components/site/PageTitle.astro';
+import { teamMemberPages } from '../../data/stubPages.ts';
+
+export function getStaticPaths() {
+  return teamMemberPages.map((p) => ({ params: { slug: p.slug }, props: { page: p } }));
+}
+const { page } = Astro.props;
+---
+<Site title={page.title}>
+  <PageTitle title={page.title} />
+</Site>

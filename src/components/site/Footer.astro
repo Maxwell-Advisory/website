@@ -1,0 +1,189 @@
+---
+// Site footer: a two-column, title-case nav and the oversized MAXWELL / ADVISORY
+// wordmark. The wordmark is the two lilac wordmark images (stacked, full-bleed)
+// that drift horizontally with a blur as the page scrolls — a faithful port of
+// the live site's Elementor motion-fx (translateX + blur, "out-in", desktop/
+// tablet only). Colours/sizes from tokens.
+import { url, siteMeta } from '../../lib/site.ts';
+const maxwellImg = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-05-1-1024x157.png');
+const advisoryImg = url('/wp-content/uploads/2025/12/advisory-1024x157.png');
+const mark = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-26-1.png');
+
+// Footer menu order matches the live site. It flows column-major into a 2-row
+// grid: [For Companies/For Investors] [Team/Track Record] [Contact/Legal Notice]
+// [Privacy Policy] — four columns on desktop, fewer as it narrows.
+const footerLinks = [
+  { label: 'For Companies', href: '/for-companies/' },
+  { label: 'For Investors', href: '/for-investors/' },
+  { label: 'Team', href: '/team/' },
+  { label: 'Track Record', href: '/track-record/' },
+  { label: 'Contact', href: '/contact/' },
+  { label: 'Legal Notice', href: '/legal-notice/' },
+  { label: 'Privacy Policy', href: '/privacy-policy/' },
+];
+---
+<footer class="site-footer">
+  <div class="site-footer__top container">
+    <nav class="site-footer__nav" aria-label="Footer">
+      <ul role="list">
+        {footerLinks.map((link) => (
+          <li><a href={url(link.href)}>{link.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a class="site-footer__totop" href="#top" aria-label="Back to top">
+      <img class="site-footer__mark" src={mark} width="46" height="46" alt="" aria-hidden="true" />
+    </a>
+  </div>
+
+  <div class="site-footer__wordmark" aria-label={siteMeta.name} role="img">
+    <img
+      class="site-footer__word"
+      src={maxwellImg}
+      alt=""
+      data-drift='{"speed":2,"blur":13,"end":34,"flip":true}'
+    />
+    <img
+      class="site-footer__word"
+      src={advisoryImg}
+      alt=""
+      data-drift='{"speed":3,"blur":15,"end":40,"flip":false}'
+    />
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--c-white);
+    color: var(--c-ink);
+    /* Live's declared padding is 115px, but the measured gap from the last stat
+       label to the menu is 255px (its stats section contributes the rest), so we
+       use the measured value to match the rhythm. Bottom stays 30px. */
+    padding-block: 255px 30px;
+    overflow: hidden; /* clip the drifting wordmark */
+  }
+  @media (max-width: 767px) {
+    /* the stacked counters already supply height, so live's gap from the last
+       label to the menu is smaller here (measured 385px vs our 474px) */
+    .site-footer { padding-block-start: 166px; }
+  }
+  .site-footer__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-lg);
+  }
+  .site-footer__nav { flex: 1; }   /* fill the width so columns can spread */
+
+  /* Title-case nav (grey). Column-major 2-row grid → four columns spread
+     evenly across the full width (matching live). */
+  .site-footer__nav ul {
+    margin: 0;
+    display: grid;
+    grid-template-rows: repeat(2, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: max-content;
+    justify-content: space-between;
+    gap: 0.4em clamp(2rem, 4vw, 4rem);
+  }
+  .site-footer__nav a {
+    display: flex;      /* live: flex, so row height == the leading */
+    font-size: var(--fs-footer-link);   /* live: 25px / 37.5px leading */
+    line-height: var(--lh-footer-link); /* 37.5px desktop / 30px mobile */
+    color: var(--c-ink-muted);
+    transition: color 1s;              /* live: a slow 1s colour fade */
+  }
+  .site-footer__nav a:hover { color: var(--c-black); }  /* live hovers to #000 */
+
+  /* Live's footer pictogram is a link to #top (smooth scroll to the header),
+     NOT a menu trigger. It carries the same .icon-rotate-hover treatment as the
+     header icon, so it also does the one-shot fast spin on hover. */
+  .site-footer__totop {
+    flex: none;
+    display: inline-block;
+    line-height: 0;
+  }
+  /* live carries elementor-hidden-mobile on the footer pictogram */
+  @media (max-width: 767px) {
+    .site-footer__totop { display: none; }
+  }
+  .site-footer__mark {
+    width: 40px;
+    height: 40px;
+    filter: brightness(1.78) contrast(0);   /* light-grey mark, like live */
+    /* live spins the footer mark continuously at 3s — faster than the
+       header's 10s spin */
+    animation: footer-mark-spin 3s linear infinite;
+    transition: transform 0.6s ease-in-out, scale 0.6s ease-in-out;  /* as live */
+  }
+  @keyframes footer-mark-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .site-footer__totop:hover .site-footer__mark,
+  .site-footer__totop:focus-visible .site-footer__mark {
+    animation: footer-mark-spin-fast 0.6s linear forwards;
+  }
+  @keyframes footer-mark-spin-fast {
+    from { transform: rotate(0deg) scale(1); }
+    to   { transform: rotate(360deg) scale(0.8); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-footer__mark { animation: none; }
+    .site-footer__totop:hover .site-footer__mark { animation: none; }
+  }
+
+  /* Below ~900px four columns get too tight — drop to two (4 rows). */
+  @media (max-width: 900px) {
+    .site-footer__nav ul { grid-template-rows: repeat(4, auto); }
+  }
+
+  .site-footer__wordmark {
+    margin-block-start: 30px;   /* measured gap from the menu to the wordmark */
+  }
+  @media (max-width: 767px) {
+    /* live leaves more air here on mobile (measured 92px) */
+    .site-footer__wordmark { margin-block-start: 92px; }
+  }
+  .site-footer__word {
+    display: block;
+    width: 94%;          /* live declares the wordmark images at 94% */
+    height: auto;
+    will-change: transform, filter;
+  }
+</style>
+
+<script>
+  // Port of the live site's Elementor motion-fx: each wordmark image drifts on
+  // translateX and sharpens from a blur as it scrolls through the viewport
+  // ("out-in"). Desktop + tablet only, matching the original.
+  interface Drift { speed: number; blur: number; end: number; flip: boolean; }
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && window.innerWidth > 767) {
+    const words = [...document.querySelectorAll<HTMLElement>('.site-footer__word')].map((el) => ({
+      el,
+      cfg: JSON.parse(el.dataset.drift || '{}') as Drift,
+    }));
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const vh = window.innerHeight;
+      for (const { el, cfg } of words) {
+        const r = el.getBoundingClientRect();
+        let p = (vh - r.top) / (vh + r.height);
+        p = Math.max(0, Math.min(1, p));
+        const end = (cfg.end || 34) / 100;
+        const blur = (cfg.blur || 0) * (1 - Math.min(p / end, 1)); // sharpen as it enters
+        let percent = p * 100;
+        if (cfg.flip) percent = 100 - percent;
+        const tx = -(percent - 50) * (cfg.speed || 0);            // ±(50·speed)px
+        el.style.transform = `translateX(${tx.toFixed(2)}px)`;
+        el.style.filter = blur > 0.1 ? `blur(${blur.toFixed(2)}px)` : '';
+      }
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+  }
+</script>
