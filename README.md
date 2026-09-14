@@ -1,50 +1,88 @@
-# Maxwell Advisory website (Astro)
+# Maxwell Advisory website
 
-A code-based rebuild of maxwelladvisory.eu. The site is static: no WordPress,
-no database, no build-time content fetching. Every page renders identically to
-the original. The shared header and footer are Astro components you edit once
-(`src/components/Header.astro`, `src/components/Footer.astro`); each page lives
-in `src/pages/` and pulls its content from `src/chunks/`.
+A static [Astro](https://astro.build) site, hand-authored from scratch. No
+WordPress, no page builder, no database, no build-time content fetching — the
+whole site is the source in `src/`.
 
-## One-time setup
+**Live:** https://maxwell-advisory.github.io/website/
 
-1. **Add the site assets.** Copy the `wp-content` and `wp-includes` folders from
-   your Simply Static export into `public/`, so you have:
-   `public/wp-content/...` and `public/wp-includes/...`
-   (These hold the images, CSS, JavaScript and fonts. They are not included in
-   this bundle because you already have them in the export.)
+## Running it
 
-2. **Set the base path** in `astro.config.mjs`. For a GitHub Pages project repo
-   the site is served at `https://<user>.github.io/<repo>/`, so `base` must be
-   `"/<repo>"`. This bundle defaults to `"/maxwell-web"`, so if you name the repo
-   `maxwell-web` it works as-is. Otherwise change `base` to match your repo name.
+```bash
+npm install
+npm run dev      # http://localhost:4321/website/
+npm run build    # static output into dist/
+npm run preview  # serve the built dist/
+```
 
-3. **Install and preview locally** (optional):
-   ```
-   npm install
-   npm run build
-   npm run preview
-   ```
+Astro is the only dependency.
 
-## Deploy to GitHub Pages
+## Layout
 
-1. Create a new GitHub repository (e.g. `maxwell-web`).
-2. Commit and push everything, including `public/wp-content` and
-   `public/wp-includes`.
-3. In the repo: Settings > Pages > Build and deployment > Source: **GitHub Actions**.
-4. The included workflow (`.github/workflows/deploy.yml`) builds and deploys on
-   every push to `main`. The live test URL appears in the Actions run summary,
-   typically `https://<user>.github.io/<repo>/`.
+```
+src/
+  pages/        one file per route (8 routes)
+  layouts/      Site.astro — the document shell, header and footer
+  components/
+    site/       shared: Header, Footer, PageIntro, PageTitle, Prose,
+                CtaBanner, ReadMore, ScrollDarken, TypeReveal
+    home/       homepage sections: Hero, IntroStatement, ServiceAccordion,
+                SectorStrip, StatCounters
+  data/         the editable content (see below)
+  legal/        the legal-notice and privacy-policy body copy, as HTML
+  styles/       tokens.css (design tokens), global.css (reset + base), fonts.css
+  assets/       images and fonts, processed by Astro's build
+  lib/          site.ts (nav + URL helper), images.ts (the image registry)
+```
 
-## Notes
+Every page is plain Astro with scoped `<style>` blocks. There is no CSS
+framework and no client framework; the handful of interactive pieces (the
+service accordion, the two carousels, the counters, the overlay menu) are small
+inline scripts.
 
-- **Test deploy is set to no-index.** `public/robots.txt` disallows crawling and
-  every page carries `<meta name="robots" content="noindex, nofollow">` so the
-  test site cannot affect your live search rankings. Remove these before any
-  production launch.
-- **Editing.** Header/footer: edit the two component files. Page text: open the
-  relevant file in `src/pages/` (or its chunk in `src/chunks/`) and edit the
-  markup. The markup is Elementor's original output, preserved for exact
-  fidelity; it can be cleaned up page by page later without changing appearance.
-- **Moving to a real domain later.** Set `base` to `"/"` and `site` to the real
-  domain in `astro.config.mjs`.
+## Editing content
+
+Repeating content lives in typed data files — edit the array and the page
+follows.
+
+| File | Controls |
+|---|---|
+| `src/data/services.ts` | homepage service accordion |
+| `src/data/sectors.ts` | homepage sector strip |
+| `src/data/stats.ts` | homepage "Our data" counters |
+| `src/data/team.ts` | the /team carousel |
+| `src/data/trackRecord.ts` | the /track-record grid and its panels |
+| `src/data/forCompanies.ts` | /for-companies copy |
+| `src/data/forInvestors.ts` | /for-investors copy |
+
+One-off copy lives directly in the relevant `src/pages/*.astro`. The two legal
+pages read their body from `src/legal/*.html`.
+
+### Images
+
+Put the file in `src/assets/images/` and refer to it **by filename** from a data
+file or a page. `src/lib/images.ts` maps the name to the processed asset and
+**fails the build** if it is missing, so a typo never ships as a 404. Astro
+generates the responsive WebP variants.
+
+### Design tokens
+
+Colours, type sizes, spacing and timings are all in `src/styles/tokens.css`.
+They step at breakpoints (>1360 / 1024–1360 / <1024 / ≤767) rather than scaling
+fluidly, because the design they were taken from does the same. Change a value
+there and it applies everywhere.
+
+## Deployment
+
+GitHub Actions builds and publishes to GitHub Pages on every push to `main`
+(`.github/workflows/deploy.yml`). Pages "Source" is set to **GitHub Actions**.
+
+`astro.config.mjs` sets `base: '/website'` for the project-pages URL. When the
+site moves to the root domain, set `base` to `/` and `site` to the real domain —
+or override them at build time with `BASE_PATH` and `SITE_URL`.
+
+## Windows note
+
+This repo needs `git config core.longpaths true`, and it must **not** live
+inside a live cloud-sync folder — Proton Drive corrupted `.git` repeatedly when
+it did.

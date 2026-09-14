@@ -26,7 +26,6 @@
 
   --c-lilac: #e0e5fc;        /* the oversized MAXWELL ADVISORY wordmark       */
   --c-forest: #465845;       /* green feature band                           */
-  --c-navy: #32323a;         /* dark services / feature section              */
   --c-slate: #686d84;        /* track-record intro band                      */
 
   /* --- Semantic aliases -------------------------------------------------- */
@@ -38,10 +37,8 @@
   --font-sans: "PP Neue Montreal", -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  --fw-thin: 300;
   --fw-book: 400;
   --fw-medium: 500;
-  --fw-bold: 700;
 
   /* Type scale — desktop tier (live "secondary"/"6827eb6"/"41f1e0f"/"d5b0afe") */
   --fs-h1: 50px;             --lh-h1: 60px;      /* hero headline              */
@@ -66,10 +63,6 @@
   --fs-caption: 13px;                            /* hero tagline               */
   --menu-logo-w: 414px;                          /* popup wordmark: 414/360/280 */
   --fs-menu: 70px;                               /* overlay menu items (live "primary") */
-  --fs-display: var(--fs-acc-title);
-  --fs-h2: 40px;
-  --fs-lead: var(--fs-eyebrow);
-  --fs-wordmark: var(--fs-counter);
 
   /* Component dimensions (live declares these as fixed px, not fluid) */
   --acc-row-h: 115px;        /* accordion closed-row height                   */
@@ -80,7 +73,6 @@
   --intro-min-h: 370px;      /* lilac band height                             */
   --hero-pad-top: 330px;     /* pushes hero content into the lower half       */
 
-  --lh-tight: 1;
   --lh-heading: 1.2;
   --lh-body: 1.5;
 
@@ -89,7 +81,6 @@
      -0.01em on headings/labels/buttons, which rendered all our text slightly
      tighter than the original. Keep this at 0 to match. */
   --tracking-tight: 0em;
-  --tracking-normal: 0em;
 
   /* Overbold compensation. The type matches the live site by every CSS measure
      (PP Neue Montreal 400, identical sizes/widths), but renders a touch lighter
@@ -112,10 +103,8 @@
      against a 20px gutter's 335/728. Above it the 1140px container centres
      itself and the gutter never bites. */
   --container-pad: clamp(1.25rem, 2.5vw, 2.5rem);
-  --hero-height: 720px;
 
   /* --- Spacing scale (8px base) ----------------------------------------- */
-  --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
   --space-sm: 1rem;
   --space-md: 1.5rem;
@@ -128,7 +117,6 @@
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --dur-fast: 180ms;
   --dur: 320ms;
-  --dur-slow: 600ms;
 
   --z-header: 100;
   --z-overlay: 200;

@@ -2,11 +2,3 @@ node_modules/
 /dist/
 .astro/
 .DS_Store
-
-# live-site mirror used by the comparison tooling (regenerate with
-# bash tools/mirror-all.sh && npm run compare:refresh)
-tools/live-cache/
-tools/shots/
-tools/compare-report.json
-.shots/
-.probe/

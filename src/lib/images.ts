@@ -6,8 +6,8 @@
 // fails the build if a file is missing (a broken path in public/ would only
 // show up as a 404 in the browser).
 //
-// Data files still refer to images by plain filename, e.g. 'Grid-2.png'; this
-// module maps that name to the processed asset.
+// Data files refer to images by plain filename, e.g. 'Grid-2.png'; this module
+// maps that name to the processed asset.
 //
 //   import { image } from '../lib/images.ts';
 //   <Image src={image('Grid-2.png')} alt="" />            // <img> case
@@ -33,11 +33,10 @@ const byName = new Map<string, ImageMetadata>(
  * typo or a deleted file is caught before it ships.
  */
 export function image(name: string): ImageMetadata {
-  // tolerate legacy "__BASE__/wp-content/uploads/2025/12/foo.jpg" strings
   const file = name.split('/').pop() as string;
-  // Data files may still name a WordPress size-variant ("foo-1024x576.jpg").
-  // We keep only the original of each family and let Astro generate its own
-  // responsive set, so fall back to the base name and to WP's "-scaled".
+  // Tolerate a WordPress size-variant name ("foo-1024x576.jpg"): we keep only
+  // the original of each family and let Astro generate its own responsive set,
+  // so fall back to the base name and to WordPress's "-scaled" spelling.
   const base = file.replace(/-\d+x\d+(?=\.[a-z]+$)/i, '');
   const scaled = base.replace(/(\.[a-z]+)$/i, '-scaled$1');
   const found = byName.get(file) ?? byName.get(base) ?? byName.get(scaled);

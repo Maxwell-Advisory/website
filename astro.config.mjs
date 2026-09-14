@@ -1,15 +1,16 @@
 import { defineConfig } from 'astro/config';
 
-// For the GitHub Pages TEST deploy, the site lives at:
-//   https://<user>.github.io/<repo>/
-// Set `base` to "/<repo>". When you later move to maxwelladvisory.eu
-// (a root domain), change `base` to "/" and `site` to the real domain.
+// On GitHub Pages the site lives at https://<user>.github.io/<repo>/, so `base`
+// is "/<repo>". When it moves to maxwelladvisory.eu (a root domain), set `base`
+// to "/" and `site` to the real domain — or override both at build time with
+// the BASE_PATH and SITE_URL environment variables.
 export default defineConfig({
   site: process.env.SITE_URL || 'https://maxwell-advisory.github.io',
   base: process.env.BASE_PATH || '/website',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  // The ported pages already contain full, hand-written <head> markup,
-  // so let Astro pass it through untouched.
+  // Scope component styles with :where(), so a component rule and a global rule
+  // both weigh 0,1,0 and the component (injected later) wins ties. Keeps
+  // tokens.css and global.css overridable from a component without !important.
   scopedStyleStrategy: 'where',
 });
