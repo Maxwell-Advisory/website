@@ -1,8 +1,13 @@
 ---
 // Contact. Live is a single full-width section split into two equal columns:
 // a forest-green panel (#465845) on the left with its content bottom-aligned,
-// and an empty white column on the right. Copy is lilac (#e0e5fc).
+// and a wind-turbine photograph filling the right (background-size: cover,
+// positioned 50% 100%). Copy is lilac (#e0e5fc). Below 768 the two stack, the
+// copy centres, and the address drops to 24px.
 import Site from '../layouts/Site.astro';
+import { url } from '../lib/site.ts';
+
+const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-unsplash-scaled.jpg');
 ---
 <Site title="Contact">
   <!-- live has no heading on this page; a hidden one keeps the document
@@ -19,7 +24,12 @@ import Site from '../layouts/Site.astro';
         contact@maxwelladvisory.eu
       </a>
     </div>
-    <div class="contact__blank" aria-hidden="true"></div>
+    <div
+      class="contact__photo"
+      style={`background-image:url('${photo}')`}
+      role="img"
+      aria-label="Wind turbines at sunset"
+    ></div>
   </section>
 </Site>
 
@@ -39,7 +49,12 @@ import Site from '../layouts/Site.astro';
     justify-content: flex-end;        /* live bottom-aligns the content */
     padding: 0 0 50px 2%;
   }
-  .contact__blank { flex: 0 0 50%; }
+  .contact__photo {
+    flex: 0 0 50%;
+    background-size: cover;
+    background-position: 50% 100%;   /* live: bottom-centred */
+    background-repeat: no-repeat;
+  }
 
   .contact__address {
     font-size: 36px;
@@ -70,10 +85,19 @@ import Site from '../layouts/Site.astro';
   }
   .contact__btn:hover { color: var(--c-white); border-color: var(--c-white); }
 
+  /* Live stacks the panel over the photo, centres the copy and drops the
+     address to 24px, and centres the block vertically instead of bottom-aligning. */
   @media (max-width: 767px) {
     .contact { flex-direction: column; min-height: 0; }
-    .contact__panel { flex: 1 1 auto; min-height: 60vh; padding-inline: var(--container-pad); }
-    .contact__blank { display: none; }
-    .contact__address { font-size: 28px; line-height: 34px; }
+    .contact__panel {
+      flex: 1 1 auto;
+      min-height: 55vh;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: var(--space-2xl) var(--container-pad);
+    }
+    .contact__photo { flex: 1 1 auto; min-height: 45vh; }
+    .contact__address { font-size: 24px; line-height: 30px; }
   }
 </style>
