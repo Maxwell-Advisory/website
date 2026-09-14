@@ -4,10 +4,12 @@
 // that drift horizontally with a blur as the page scrolls — a faithful port of
 // the live site's Elementor motion-fx (translateX + blur, "out-in", desktop/
 // tablet only). Colours/sizes from tokens.
+import { Image } from 'astro:assets';
 import { url, siteMeta } from '../../lib/site.ts';
-const maxwellImg = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-05-1-1024x157.png');
-const advisoryImg = url('/wp-content/uploads/2025/12/advisory-1024x157.png');
-const mark = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-26-1.png');
+import { image } from '../../lib/images.ts';
+const maxwellImg = image('ASSETS-MAXWELLadvisory-05-1-1024x157.png');
+const advisoryImg = image('advisory-1024x157.png');
+const mark = image('ASSETS-MAXWELLadvisory-26-1.png');
 
 // Footer menu order matches the live site. It flows column-major into a 2-row
 // grid: [For Companies/For Investors] [Team/Track Record] [Contact/Legal Notice]
@@ -32,18 +34,18 @@ const footerLinks = [
       </ul>
     </nav>
     <a class="site-footer__totop" href="#top" aria-label="Back to top">
-      <img class="site-footer__mark" src={mark} width="46" height="46" alt="" aria-hidden="true" />
+      <Image class="site-footer__mark" src={mark} alt="" aria-hidden="true" />
     </a>
   </div>
 
   <div class="site-footer__wordmark" aria-label={siteMeta.name} role="img">
-    <img
+    <Image
       class="site-footer__word"
       src={maxwellImg}
       alt=""
       data-drift='{"speed":2,"blur":13,"end":34,"flip":true}'
     />
-    <img
+    <Image
       class="site-footer__word"
       src={advisoryImg}
       alt=""

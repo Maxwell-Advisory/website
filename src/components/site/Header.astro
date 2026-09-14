@@ -3,17 +3,19 @@
 // the trigger is the circular pictogram that rests at 0.8 scale and spins 360°
 // on hover (matching the live site); on mobile it's a hamburger. Opens a
 // full-viewport overlay menu. Behaviour is a tiny inline script, no framework.
+import { Image } from 'astro:assets';
 import { primaryNav, url, siteMeta } from '../../lib/site.ts';
+import { image } from '../../lib/images.ts';
 
 interface Props { overlay?: boolean; }
 const { overlay = false } = Astro.props;
-const logo = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-40-1-1024x78.png');
-const icon = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-26-1.png');
+const logo = image('ASSETS-MAXWELLadvisory-40-1-1024x78.png');
+const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
 ---
 <header class:list={["site-header", overlay && "site-header--overlay"]} id="top">
   <div class="site-header__bar container">
     <a class="site-header__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
-      <img src={logo} width="800" height="61" alt={siteMeta.name} />
+      <Image src={logo} alt={siteMeta.name} />
     </a>
 
     <button
@@ -24,7 +26,7 @@ const icon = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-26-1.png');
       data-menu-open
     >
       <span class="visually-hidden">Open menu</span>
-      <img class="site-header__toggle-icon" src={icon} width="52" height="52" alt="" aria-hidden="true" />
+      <Image class="site-header__toggle-icon" src={icon} alt="" aria-hidden="true" />
       <svg class="site-header__toggle-burger" width="23" height="21" viewBox="0 0 23 21" fill="none" aria-hidden="true">
         <line x1="0" y1="1"     x2="23" y2="1"     stroke="currentColor" stroke-width="2" />
         <line x1="0" y1="10.25" x2="23" y2="10.25" stroke="currentColor" stroke-width="2" />
@@ -42,11 +44,11 @@ const icon = url('/wp-content/uploads/2025/12/ASSETS-MAXWELLadvisory-26-1.png');
   <div class="site-menu__panel">
     <div class="site-menu__bar">
       <a class="site-menu__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
-        <img src={logo} width="800" height="61" alt={siteMeta.name} />
+        <Image src={logo} alt={siteMeta.name} />
       </a>
       <button class="site-menu__close" type="button" data-menu-close>
         <span class="visually-hidden">Close menu</span>
-        <img class="site-menu__close-icon" src={icon} width="51" height="51" alt="" aria-hidden="true" />
+        <Image class="site-menu__close-icon" src={icon} alt="" aria-hidden="true" />
         <svg class="site-menu__close-x" width="21" height="22" viewBox="0 0 21 22" fill="none" aria-hidden="true">
           <line x1="0.707" y1="0.707" x2="20.3" y2="20.3" stroke="currentColor" stroke-width="2" />
           <line x1="20.3" y1="1.0" x2="0.707" y2="20.6" stroke="currentColor" stroke-width="2" />

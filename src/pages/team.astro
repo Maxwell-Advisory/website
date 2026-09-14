@@ -4,11 +4,12 @@
 // column holding a drag carousel of member cards, two visible at a time.
 // Members come from src/data/team.ts.
 import Site from '../layouts/Site.astro';
+import { Image } from 'astro:assets';
 import { team } from '../data/team.ts';
-import { asset, assetSrcset, url } from '../lib/site.ts';
+import { image } from '../lib/images.ts';
 
 const tagline = 'Experienced investors and advisors dedicated to accelerating the energy transition.';
-const motif = url('/wp-content/uploads/2025/12/Calque_1.png');
+const motif = image('Calque_1.png');
 ---
 <Site title="Team">
   <h1 class="visually-hidden">Team</h1>
@@ -16,21 +17,20 @@ const motif = url('/wp-content/uploads/2025/12/Calque_1.png');
   <section class="team">
     <div class="team__intro">
       <p class="team__tagline">{tagline}</p>
-      <img class="team__motif" src={motif} alt="" aria-hidden="true" />
+      <Image class="team__motif" src={motif} alt="" aria-hidden="true" />
     </div>
 
     <div class="team__carousel" data-team-carousel>
       <ul class="team__track" data-team-track role="list">
         {team.map((m) => (
           <li class="member">
-            <img
+            <Image
               class="member__photo"
-              src={asset(m.image)}
-              srcset={m.srcset ? assetSrcset(m.srcset) : undefined}
+              src={image(m.image)}
+              widths={[364, 728]}
               sizes="(max-width: 767px) 90vw, 364px"
               alt={m.name}
               loading="lazy"
-              decoding="async"
             />
             <h2 class="member__name">{m.name}</h2>
             <p class="member__role">{m.role}</p>

@@ -135,19 +135,29 @@ Live's mailto button sits at x=142 while the address above it starts at x=25 —
 it is neither left-aligned with the copy nor centred in the 632px panel. We
 left-align it with the copy, which looks tidier. Worth a look.
 
+## Images
+
+All images live in `src/assets/images/` and go through Astro, which emits
+responsive WebP with fingerprinted names. `src/lib/images.ts` maps a plain
+filename to the processed asset and **throws at build time if it is missing**,
+so a bad path fails the build instead of 404-ing in the browser. It also
+normalises WordPress size-variant names (`foo-1024x576.jpg` -> `foo-scaled.jpg`),
+so the data files did not have to change.
+
+CSS backgrounds (hero, sector cards, contact photo) use `getImage()` rather than
+`<Image>`, since they are not `<img>` elements.
+
+`public/wp-content` (52MB) and `public/wp-includes` (20MB) are gone — nothing
+referenced them. `dist` is now 3.3MB, of which 2.8MB is imagery.
+
 ## Still open
 
-- **Images** still resolve from `public/wp-content/uploads/` (52MB). Migrating to
-  Astro `<Image>` (WebP/AVIF, responsive) is the remaining big win and was in the
-  original plan.
-- **`.scroll-darken` is implemented twice** — the homepage version is scroll
-  -position driven, for-investors uses live's own timing (IntersectionObserver
-  then 17ms/char). Reconcile into one shared component; live's is the 17ms one.
-- **`.shine` is defined twice** — globally in `global.css` and scoped in Hero.
 - Homepage has ~25 minor box/type flags (13 are the intentional PP-Neue-Montreal
   -instead-of-Roboto button deviation). Run `npm run compare` to see them.
-- The track-record panel slide (0.5s from the top) is our choice; live's exact
-  Elementor off-canvas easing was not readable from CSS.
+- The data files still spell image paths as `__BASE__/wp-content/uploads/...`.
+  Harmless (only the filename is used) but worth simplifying to bare filenames.
+- The track-record panel entrance is a short fade/scale: live sets no CSS
+  transition on it, so there was nothing to copy.
 
 ## Definition of done (per page)
 

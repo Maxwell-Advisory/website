@@ -5,8 +5,9 @@
 // a full-screen panel over a 51% black overlay showing the title, the full
 // description and (where present) the client logo.
 import Site from '../layouts/Site.astro';
+import { Image } from 'astro:assets';
 import { trackRecord } from '../data/trackRecord.ts';
-import { asset, assetSrcset } from '../lib/site.ts';
+import { image } from '../lib/images.ts';
 ---
 <Site title="Track Record">
   <h1 class="visually-hidden">Track Record</h1>
@@ -50,15 +51,7 @@ import { asset, assetSrcset } from '../lib/site.ts';
         <h2 class="tr-panel__title">{entry.title}</h2>
         <p class="tr-panel__desc">{entry.description}</p>
         {entry.logo && (
-          <img
-            class="tr-panel__logo"
-            src={asset(entry.logo.src)}
-            srcset={entry.logo.srcset ? assetSrcset(entry.logo.srcset) : undefined}
-            width={entry.logo.width}
-            height={entry.logo.height}
-            alt=""
-            loading="lazy"
-          />
+          <Image class="tr-panel__logo" src={image(entry.logo.src)} alt="" loading="lazy" />
         )}
       </div>
     </div>

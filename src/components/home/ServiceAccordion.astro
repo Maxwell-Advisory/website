@@ -2,8 +2,9 @@
 // Services accordion. Native <details>/<summary> for accessibility + no-JS
 // fallback; a tiny script enforces single-open behaviour and animates height.
 // Content comes from src/data/services.ts.
+import { Image } from 'astro:assets';
 import { services } from '../../data/services.ts';
-import { asset, assetSrcset } from '../../lib/site.ts';
+import { image } from '../../lib/images.ts';
 ---
 <section class="services section" aria-label="What we do">
   <p class="eyebrow services__eyebrow">Three service cards</p>
@@ -16,16 +17,13 @@ import { asset, assetSrcset } from '../../lib/site.ts';
           </summary>
           <div class="service__body">
             <div class="service__text" set:html={c.body} />
-            <img
+            <Image
               class="service__image"
-              src={asset(c.image)}
-              srcset={assetSrcset(c.srcset)}
-              sizes={c.sizes}
-              width={c.width}
-              height={c.height}
+              src={image(c.image)}
+              widths={[500, 1000]}
+              sizes="(max-width: 1024px) 98vw, 26vw"
               alt=""
               loading="lazy"
-              decoding="async"
             />
           </div>
         </details>

@@ -3,19 +3,22 @@
 // and the two pill CTAs ("For Companies" / "For Investors") — matching the live
 // site. No dark overlay. On load, the circular "Pictogramme" logo plays a
 // one-shot intro (scales up, spins 520°, shrinks + fades away).
+import { Image, getImage } from 'astro:assets';
 import { url } from '../../lib/site.ts';
+import { image } from '../../lib/images.ts';
 
 interface Props {
   title: string;
   tagline: string;
 }
 const { title, tagline } = Astro.props;
-const bg = url('/wp-content/uploads/2025/12/fabian-wiktor-pPITJDEYR78-unsplash-scaled.jpg');
-const motif = url('/wp-content/uploads/2025/12/Pictogramme.png');
+// the hero photo is a CSS background, so it needs getImage() rather than <Image>
+const bg = (await getImage({ src: image('fabian-wiktor-pPITJDEYR78-unsplash-scaled.jpg'), format: 'webp', width: 2560 })).src;
+const motif = image('Pictogramme.png');
 ---
 <section class="hero">
   <div class="hero__media" style={`background-image:url('${bg}')`} role="img" aria-label="Wind turbines on a ridgeline"></div>
-  <img class="hero__motif" src={motif} alt="" width="300" height="300" fetchpriority="high" />
+  <Image class="hero__motif" src={motif} alt="" width={300} height={300} loading="eager" />
   <div class="hero__inner">
     <div class="hero__content">
       <h1 class="hero__title">{title}</h1>

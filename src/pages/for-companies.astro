@@ -6,8 +6,9 @@ import Site from '../layouts/Site.astro';
 import PageIntro from '../components/site/PageIntro.astro';
 import ReadMore from '../components/site/ReadMore.astro';
 import CtaBanner from '../components/site/CtaBanner.astro';
+import { Image } from 'astro:assets';
 import { forCompanies } from '../data/forCompanies.ts';
-import { asset } from '../lib/site.ts';
+import { image } from '../lib/images.ts';
 ---
 <Site title="For Companies">
   <h1 class="visually-hidden">For Companies</h1>
@@ -17,7 +18,7 @@ import { asset } from '../lib/site.ts';
     {forCompanies.blocks.map((b) => (
       <article class="block">
         <h2 class="block__heading">{b.heading}</h2>
-        <img class="block__image" src={asset(b.image)} alt={b.alt} loading="lazy" decoding="async" />
+        <Image class="block__image" src={image(b.image)} widths={[604, 1208]} sizes="(max-width: 1024px) 96vw, 604px" alt={b.alt} loading="lazy" />
         <ReadMore visible={b.visible} hidden={b.hidden} />
       </article>
     ))}

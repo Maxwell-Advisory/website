@@ -5,9 +5,10 @@
 // positioned 50% 100%). Copy is lilac (#e0e5fc). Below 768 the two stack, the
 // copy centres, and the address drops to 24px.
 import Site from '../layouts/Site.astro';
-import { url } from '../lib/site.ts';
+import { getImage } from 'astro:assets';
+import { image } from '../lib/images.ts';
 
-const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-unsplash-scaled.jpg');
+const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-unsplash-scaled.jpg'), format: 'webp', width: 1400 })).src;
 ---
 <Site title="Contact">
   <!-- live has no heading on this page; a hidden one keeps the document

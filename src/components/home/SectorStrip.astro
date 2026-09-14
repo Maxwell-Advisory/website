@@ -3,16 +3,25 @@
 // progress bar — matching the live Swiper. Cards are NOT links (the live cards
 // don't navigate). Drag/swipe to advance; it deliberately does NOT scroll with
 // the mouse wheel (transform-based, no overflow scroll). Data: src/data/sectors.ts.
+import { getImage } from 'astro:assets';
 import { sectors } from '../../data/sectors.ts';
-import { asset } from '../../lib/site.ts';
+import { image } from '../../lib/images.ts';
+
+// card art is a CSS background, so resolve each through getImage()
+const cards = await Promise.all(
+  sectors.map(async (s) => ({
+    ...s,
+    bg: (await getImage({ src: image(s.image), format: 'webp', width: 900 })).src,
+  })),
+);
 ---
 <section class="sectors section" aria-label="Sectors">
   <p class="eyebrow sectors__eyebrow">Sectors strip</p>
   <div class="sectors__viewport" data-carousel>
     <ul class="sectors__track" data-track role="list">
-      {sectors.map((s) => (
+      {cards.map((s) => (
         <li class="sector-card">
-          <span class="sector-card__media" style={`background-image:url('${asset(s.image)}')`}></span>
+          <span class="sector-card__media" style={`background-image:url('${s.bg}')`}></span>
           <span class="sector-card__overlay"></span>
           <h3 class="sector-card__title">{s.title}</h3>
         </li>
