@@ -1,17 +1,156 @@
 ---
-import Base from '../layouts/Base.astro';
-import head from '../chunks/team.head.html?raw';
-import pre  from '../chunks/team.pre.html?raw';
-import mid  from '../chunks/team.mid.html?raw';
-import post from '../chunks/team.post.html?raw';
-import { team, renderMember } from '../data/team';
-// Team carousel slides are generated from src/data/team.ts (see <!--LOOP:team--> in the chunk).
-const midHtml = mid.replace('<!--LOOP:team-->', team.map(renderMember).join(''));
+// Team. Live @1280: one row with 200px of top padding — a 434px left column
+// (36px/45 tagline in #222 plus a large rotated motif) and an 806px right
+// column holding a drag carousel of member cards, two visible at a time.
+// Members come from src/data/team.ts.
+import Site from '../layouts/Site.astro';
+import { team } from '../data/team.ts';
+import { asset, assetSrcset, url } from '../lib/site.ts';
+
+const tagline = 'Experienced investors and advisors dedicated to accelerating the energy transition.';
+const motif = url('/wp-content/uploads/2025/12/Calque_1.png');
 ---
-<Base
-  head={head}
-  pre={pre}
-  mid={midHtml}
-  post={post}
-  bodyClass="wp-singular page-template page-template-elementor_header_footer page page-id-737 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-737"
-/>
+<Site title="Team">
+  <h1 class="visually-hidden">Team</h1>
+
+  <section class="team">
+    <div class="team__intro">
+      <p class="team__tagline">{tagline}</p>
+      <img class="team__motif" src={motif} alt="" aria-hidden="true" />
+    </div>
+
+    <div class="team__carousel" data-team-carousel>
+      <ul class="team__track" data-team-track role="list">
+        {team.map((m) => (
+          <li class="member">
+            <img
+              class="member__photo"
+              src={asset(m.image)}
+              srcset={m.srcset ? assetSrcset(m.srcset) : undefined}
+              sizes="(max-width: 767px) 90vw, 364px"
+              alt={m.name}
+              loading="lazy"
+              decoding="async"
+            />
+            <h2 class="member__name">{m.name}</h2>
+            <p class="member__role">{m.role}</p>
+            <p class="member__bio">{m.bio}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Site>
+
+<style>
+  .team {
+    display: flex;
+    gap: 0;
+    padding: 200px var(--container-pad) var(--space-2xl);
+  }
+  .team__intro {
+    flex: 0 0 434px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .team__tagline {
+    font-size: var(--fs-intro);     /* live: 36/45 */
+    line-height: var(--lh-intro);
+    color: var(--c-near-black);     /* live: #222222 */
+  }
+  .team__motif {
+    width: 190px;                   /* live renders it at 190px, rotated */
+    height: auto;
+    margin-block-start: auto;
+    transform: rotate(138deg) scale(0.8);
+  }
+
+  .team__carousel {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    padding: 10px;
+    cursor: grab;
+    touch-action: pan-y;
+  }
+  .team__carousel.is-dragging { cursor: grabbing; }
+  .team__track {
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    will-change: transform;
+    transition: transform var(--dur) var(--ease);
+    user-select: none;
+  }
+  .member {
+    flex: 0 0 calc((100% - 20px) / 2);   /* live shows two at a time */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .member__photo {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+  }
+  .member__name {
+    font-size: var(--fs-eyebrow);   /* live: 25px/25 */
+    line-height: 25px;
+    color: var(--c-ink-muted);
+  }
+  .member__role { font-size: 13px; line-height: 19.5px; color: var(--c-ink-muted); }
+  .member__bio  { font-size: 20px; line-height: 25px; color: var(--c-ink-muted); }
+
+  @media (max-width: 1024px) {
+    .team { flex-direction: column; gap: var(--space-2xl); padding-top: var(--space-3xl); }
+    .team__intro { flex: 1 1 auto; }
+    .team__motif { margin-block-start: 0; }
+    .member { flex-basis: 100%; }
+    .member__bio { font-size: 18px; }
+  }
+</style>
+
+<script>
+  // Pointer-drag carousel, same approach as the homepage sector strip.
+  const vp = document.querySelector<HTMLElement>('[data-team-carousel]');
+  const track = vp?.querySelector<HTMLElement>('[data-team-track]');
+  if (vp && track) {
+    const total = track.children.length;
+    let index = 0, trackX = 0, startX = 0, dragging = false;
+    const step = () => {
+      const first = track.children[0] as HTMLElement;
+      const gap = parseFloat(getComputedStyle(track).columnGap || '20') || 20;
+      return first.getBoundingClientRect().width + gap;
+    };
+    const perView = () => Math.max(1, Math.round(vp.clientWidth / step()));
+    const maxIndex = () => Math.max(0, total - perView());
+    const goTo = (i: number) => {
+      index = Math.max(0, Math.min(maxIndex(), i));
+      trackX = -index * step();
+      track.style.transform = `translateX(${trackX}px)`;
+    };
+    vp.addEventListener('pointerdown', (e) => {
+      dragging = true; startX = e.clientX;
+      vp.setPointerCapture(e.pointerId);
+      vp.classList.add('is-dragging');
+      track.style.transition = 'none';
+    });
+    vp.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      track.style.transform = `translateX(${trackX + (e.clientX - startX)}px)`;
+    });
+    const end = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      vp.classList.remove('is-dragging');
+      track.style.transition = '';
+      const dx = e.clientX - startX;
+      goTo(Math.abs(dx) > 40 ? index + Math.round(-dx / step()) : index);
+    };
+    vp.addEventListener('pointerup', end);
+    vp.addEventListener('pointercancel', end);
+    vp.addEventListener('dragstart', (e) => e.preventDefault());
+    window.addEventListener('resize', () => goTo(index));
+  }
+</script>
