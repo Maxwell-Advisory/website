@@ -30,7 +30,9 @@ const {
   description = siteMeta.tagline,
   lang = 'en',
   bodyClass,
-  overlayHeader = false,
+  // Live pulls the first section up under its header on every page, so the
+  // section colour runs to the very top. Overlay is therefore the default.
+  overlayHeader = true,
   headerOnDark = false,
 } = Astro.props;
 
