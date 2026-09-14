@@ -1,0 +1,42 @@
+---
+// Port of live's `.scroll-darken`: the text is split into per-character spans
+// which light from #c7c7c7 to #222222 in sequence, 17ms apart, each fading over
+// 0.55s.
+//
+// DEVIATION, deliberate: live fires this on DOMContentLoaded, so on any band
+// below the fold the cascade has finished before you scroll to it and you never
+// see it. We trigger on an IntersectionObserver instead (20% visible) and keep
+// live's 17ms cadence, so the effect plays where it is meant to be seen.
+interface Props { text: string; class?: string; }
+const { text, class: className } = Astro.props;
+const chars = [...text];
+---
+<p class:list={['scroll-darken', className]} data-scroll-darken>
+  {chars.map((ch) => <span>{ch}</span>)}
+</p>
+
+<style>
+  .scroll-darken :global(span) {
+    color: var(--c-hairline);        /* live: #c7c7c7 */
+    transition: color 0.55s ease;
+  }
+  .scroll-darken :global(span.is-lit) { color: var(--c-near-black); }  /* #222222 */
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-scroll-darken]').forEach((el) => {
+    const spans = [...el.querySelectorAll('span')];
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      spans.forEach((s) => s.classList.add('is-lit'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        spans.forEach((s, i) => setTimeout(() => s.classList.add('is-lit'), i * 17));
+        io.disconnect();
+      });
+    }, { threshold: 0.2 });
+    io.observe(el);
+  });
+</script>

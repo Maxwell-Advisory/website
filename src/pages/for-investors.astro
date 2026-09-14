@@ -4,6 +4,7 @@
 // services in a row, a white band with the typed closing paragraph, then the CTA.
 import Site from '../layouts/Site.astro';
 import TypeReveal from '../components/site/TypeReveal.astro';
+import ScrollDarken from '../components/site/ScrollDarken.astro';
 import CtaBanner from '../components/site/CtaBanner.astro';
 import { forInvestors } from '../data/forInvestors.ts';
 ---
@@ -13,7 +14,7 @@ import { forInvestors } from '../data/forInvestors.ts';
   <section class="inv-intro">
     <div class="inv-intro__col">
       <p class="inv-intro__eyebrow">{forInvestors.eyebrow}</p>
-      <p class="inv-intro__text" data-darken>{forInvestors.intro}</p>
+      <ScrollDarken text={forInvestors.intro} class="inv-intro__text" />
     </div>
   </section>
 
@@ -54,9 +55,6 @@ import { forInvestors } from '../data/forInvestors.ts';
     font-size: var(--fs-intro);
     line-height: var(--lh-intro);
   }
-  /* per-character darkening, as on the homepage intro */
-  .inv-intro__text :global(span) { color: var(--c-hairline); transition: color 0.55s ease; }
-  .inv-intro__text :global(span.is-lit) { color: var(--c-near-black); }
 
   /* live @1280: forest green, 370 tall; lilac 25px lead-in, four 20px items in a row */
   .inv-list {
@@ -97,27 +95,3 @@ import { forInvestors } from '../data/forInvestors.ts';
   }
 </style>
 
-<script>
-  // Live splits this paragraph into per-character spans and lights them in
-  // sequence (17ms apart) once it is in view — the same effect as the homepage
-  // intro band.
-  const el = document.querySelector<HTMLElement>('[data-darken]');
-  if (el) {
-    const text = el.textContent || '';
-    // plain characters (NOT &nbsp;) so the line can still wrap
-    el.innerHTML = text.split('').map((ch) => `<span>${ch}</span>`).join('');
-    const spans = [...el.querySelectorAll('span')];
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      spans.forEach((s) => s.classList.add('is-lit'));
-    } else {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (!e.isIntersecting) return;
-          spans.forEach((s, i) => setTimeout(() => s.classList.add('is-lit'), i * 17));
-          io.disconnect();
-        });
-      }, { threshold: 0.2 });
-      io.observe(el);
-    }
-  }
-</script>

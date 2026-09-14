@@ -21,8 +21,8 @@ const motif = url('/wp-content/uploads/2025/12/Pictogramme.png');
       <h1 class="hero__title">{title}</h1>
       <p class="hero__tagline">{tagline}</p>
       <div class="hero__actions">
-        <a class="hero__btn hero__btn--ghost" href={url('/for-companies/')}>For Companies</a>
-        <a class="hero__btn hero__btn--solid" href={url('/for-investors/')}>For Investors</a>
+        <a class="hero__btn hero__btn--ghost shine" href={url('/for-companies/')}>For Companies</a>
+        <a class="hero__btn hero__btn--solid shine" href={url('/for-investors/')}>For Investors</a>
       </div>
     </div>
   </div>
@@ -135,8 +135,7 @@ const motif = url('/wp-content/uploads/2025/12/Pictogramme.png');
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: relative;   /* anchor for the ::after shine sweep */
-    overflow: hidden;     /* clips the sweep to the pill */
+    /* .shine (global) supplies position:relative + overflow:hidden + the sweep */
     min-height: 36px;
     max-width: 100%;
     /* live: padding 10px 150px (90/97px on mobile) — this, not a min-width, is
@@ -153,33 +152,6 @@ const motif = url('/wp-content/uploads/2025/12/Pictogramme.png');
        behind the pill, which flattened it and lost the shimmer as the border
        and text fade to white over 0.8s. */
   }
-  /* THE SHIMMER. Live puts a custom `.shine` class on BOTH button widgets
-     (wp-custom-css): a skewed, translucent-white gradient band that sweeps
-     across the pill from left to right over 1.4s on hover. This is the effect
-     that was missing — the pills were otherwise only changing colour. */
-  .hero__btn::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 85%;
-    height: 100%;
-    background: linear-gradient(
-      120deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.32) 50%,
-      transparent 100%
-    );
-    transform: skewX(-20deg);
-    transition: all 1.4s ease;
-    pointer-events: none;
-  }
-  .hero__btn:hover::after,
-  .hero__btn:focus-visible::after { left: 150%; }
-  @media (prefers-reduced-motion: reduce) {
-    .hero__btn::after { transition: none; }
-  }
-
   /* Live styles the two pills differently, and ONLY the first has a hover
      state (the second declares no :hover and no transition at all). */
   .hero__btn--ghost {

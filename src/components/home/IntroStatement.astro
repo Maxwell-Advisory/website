@@ -1,19 +1,16 @@
 ---
-// Lilac intro/mission band below the hero. Large centred statement that starts
-// muted grey and fills to dark, character by character, as it scrolls through
-// the viewport — a port of the live site's `scroll-darken` effect. The text is
-// split into per-character spans; a scroll handler lights them left-to-right.
+// Lilac intro/mission band below the hero. The statement fills from grey to
+// near-black character by character — see components/site/ScrollDarken.astro,
+// which is shared with the for-investors intro.
+import ScrollDarken from '../site/ScrollDarken.astro';
 interface Props {
   text: string;
 }
 const { text } = Astro.props;
-const chars = [...text];
 ---
 <section class="intro">
   <div class="intro__inner">
-    <p class="intro__text" data-scroll-darken>
-      {chars.map((ch) => <span class="intro__char">{ch === ' ' ? ' ' : ch}</span>)}
-    </p>
+    <ScrollDarken text={text} class="intro__text" />
   </div>
 </section>
 
@@ -41,40 +38,5 @@ const chars = [...text];
   @media (max-width: 767px) {
     .intro__text { max-width: 100%; margin-block-start: 10px; }
   }
-  .intro__char {
-    /* live: .scroll-darken span { color:#c7c7c7; transition: color .55s ease }
-       -> a much lighter start than our old #787575, so the darkening reads. */
-    color: var(--c-hairline);
-    transition: color 0.55s ease;
-  }
-  .intro__char.is-lit { color: var(--c-near-black); }  /* live: #222222 */
 </style>
 
-<script>
-  const block = document.querySelector<HTMLElement>('[data-scroll-darken]');
-  if (block) {
-    const chars = [...block.querySelectorAll<HTMLElement>('.intro__char')];
-    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce) {
-      chars.forEach((c) => c.classList.add('is-lit'));
-    } else {
-      let ticking = false;
-      const update = () => {
-        ticking = false;
-        const rect = block.getBoundingClientRect();
-        const vh = window.innerHeight;
-        // 0 when the block's top sits at 80% of the viewport height,
-        // 1 by the time it reaches 25% — so it fills as you scroll it into view.
-        const prog = (0.8 * vh - rect.top) / (0.55 * vh);
-        const lit = Math.max(0, Math.min(chars.length, Math.round(prog * chars.length)));
-        for (let i = 0; i < chars.length; i++) {
-          chars[i].classList.toggle('is-lit', i < lit);
-        }
-      };
-      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-      update();
-    }
-  }
-</script>

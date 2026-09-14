@@ -98,6 +98,9 @@ import { asset, assetSrcset } from '../lib/site.ts';
   .tr-item {
     /* live: every entry is a 1px #333 box, 600x436, padded 28px */
     border: 1px solid var(--c-ink);
+    /* grid items default to min-width:auto, so a long word in the 70px title
+       can push the column wider than its track — this pins it */
+    min-width: 0;
   }
   .tr-item__btn {
     width: 100%;
@@ -118,6 +121,7 @@ import { asset, assetSrcset } from '../lib/site.ts';
     font-size: 70px;                /* live: 70px/70 uppercase */
     line-height: 70px;
     text-transform: uppercase;
+    overflow-wrap: break-word;      /* long words must not widen the card */
     color: var(--c-ink-muted);      /* live: #787575 at rest */
     transition: color var(--dur-fast) var(--ease);
   }
