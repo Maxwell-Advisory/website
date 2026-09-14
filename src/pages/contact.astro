@@ -70,6 +70,9 @@ const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-
   .contact__enquiry {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;      /* between 768 and 1024 the half-panel is too narrow
+                             for the label + pill on one line */
+    gap: var(--space-xs);
     margin-block-start: 27px;
   }
   .contact__label {
@@ -83,7 +86,7 @@ const photo = url('/wp-content/uploads/2025/12/usukhbayar-gankhuyag-mbVjn3eKVcI-
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    flex: none;
+    max-width: 100%;
     min-height: 36px;
     padding: 10px 50px;
     border: 1px solid var(--c-lilac);

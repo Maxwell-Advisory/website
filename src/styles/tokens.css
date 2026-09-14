@@ -27,6 +27,7 @@
   --c-lilac: #e0e5fc;        /* the oversized MAXWELL ADVISORY wordmark       */
   --c-forest: #465845;       /* green feature band                           */
   --c-navy: #32323a;         /* dark services / feature section              */
+  --c-slate: #686d84;        /* track-record intro band                      */
 
   /* --- Semantic aliases -------------------------------------------------- */
   --bg-page: var(--c-white);

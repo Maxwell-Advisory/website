@@ -1,17 +1,231 @@
 ---
-import Base from '../layouts/Base.astro';
-import head from '../chunks/track-record.head.html?raw';
-import pre  from '../chunks/track-record.pre.html?raw';
-import mid  from '../chunks/track-record.mid.html?raw';
-import post from '../chunks/track-record.post.html?raw';
-import { trackRecord, renderTrackItem } from '../data/trackRecord';
-// Track-record entries (grid cards + popups) are generated from src/data/trackRecord.ts.
-const midHtml = mid.replace('<!--LOOP:trackrecord-->', trackRecord.map(renderTrackItem).join(''));
+// Track Record. Live @1280: a slate intro band (#686d84, white 36/45 copy), an
+// "Experience" label, then a two-column grid of entries. Each entry is a 70px
+// uppercase title plus a short description with a +/- mark; activating it opens
+// a full-screen panel over a 51% black overlay showing the title, the full
+// description and (where present) the client logo.
+import Site from '../layouts/Site.astro';
+import { trackRecord } from '../data/trackRecord.ts';
+import { asset, assetSrcset } from '../lib/site.ts';
 ---
-<Base
-  head={head}
-  pre={pre}
-  mid={midHtml}
-  post={post}
-  bodyClass="wp-singular page-template page-template-elementor_header_footer page page-id-898 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-898"
-/>
+<Site title="Track Record">
+  <h1 class="visually-hidden">Track Record</h1>
+
+  <section class="tr-intro">
+    <p class="tr-intro__text">
+      Maxwell Advisory and its founders have advised or executed more than 40
+      transactions across the energy transition, infrastructure, and industrial
+      sectors. Below is a selection of our experience.
+    </p>
+  </section>
+
+  <section class="tr-body">
+    <h2 class="tr-body__label">Experience</h2>
+    <ul class="tr-grid" role="list">
+      {trackRecord.map((entry) => (
+        <li class="tr-item">
+          <button class="tr-item__btn" type="button" data-tr-open={String(entry.id)} aria-haspopup="dialog">
+            <span class="tr-item__text">
+              <span class="tr-item__title">{entry.title}</span>
+              <span class="tr-item__desc">{entry.description}</span>
+            </span>
+            <span class="tr-item__icon" aria-hidden="true"></span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {trackRecord.map((entry) => (
+    <div class="tr-panel" data-tr-panel={String(entry.id)} hidden>
+      <div class="tr-panel__overlay" data-tr-close></div>
+      <div class="tr-panel__main" role="dialog" aria-modal="true" aria-label={entry.title}>
+        <button class="tr-panel__close" type="button" data-tr-close>
+          <span class="visually-hidden">Close</span>
+          <svg width="21" height="22" viewBox="0 0 21 22" fill="none" aria-hidden="true">
+            <line x1="0.7" y1="0.7" x2="20.3" y2="20.3" stroke="currentColor" stroke-width="2" />
+            <line x1="20.3" y1="1" x2="0.7" y2="20.6" stroke="currentColor" stroke-width="2" />
+          </svg>
+        </button>
+        <h2 class="tr-panel__title">{entry.title}</h2>
+        <p class="tr-panel__desc">{entry.description}</p>
+        {entry.logo && (
+          <img
+            class="tr-panel__logo"
+            src={asset(entry.logo.src)}
+            srcset={entry.logo.srcset ? assetSrcset(entry.logo.srcset) : undefined}
+            width={entry.logo.width}
+            height={entry.logo.height}
+            alt=""
+            loading="lazy"
+          />
+        )}
+      </div>
+    </div>
+  ))}
+</Site>
+
+<style>
+  /* live: 1265x525, background #686d84, padding 100px 0 110px, white 36/45 */
+  .tr-intro {
+    background: var(--c-slate);
+    color: var(--c-white);
+    padding: 100px var(--container-pad) 110px;
+  }
+  .tr-intro__text {
+    max-width: 967px;
+    font-size: var(--fs-intro);
+    line-height: var(--lh-intro);
+  }
+
+  .tr-body { padding: var(--space-2xl) var(--container-pad); }
+  .tr-body__label {
+    font-size: var(--fs-eyebrow);   /* live: 25px/25 grey */
+    line-height: 25px;
+    color: var(--c-ink-muted);
+  }
+
+  /* live: two columns, 30px row gap / 15px column gap, items 600x436 */
+  .tr-grid {
+    margin: var(--space-lg) 0 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px 15px;
+  }
+  .tr-item__btn {
+    width: 100%;
+    min-height: 436px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-md);
+    background: none;
+    border: 0;
+    padding: 0;
+    text-align: start;
+    cursor: pointer;
+    color: var(--c-ink-muted);
+  }
+  .tr-item__text { display: flex; flex-direction: column; gap: var(--space-lg); }
+  .tr-item__title {
+    font-size: 70px;                /* live: 70px/70 uppercase */
+    line-height: 70px;
+    text-transform: uppercase;
+    color: var(--c-heading-muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .tr-item__btn:hover .tr-item__title { color: var(--c-ink-muted); }
+  .tr-item__desc { font-size: 20px; line-height: 25px; }
+
+  /* the same +/- mark as the service accordion, at live's 50px */
+  .tr-item__icon {
+    flex: none;
+    position: relative;
+    width: 50px;
+    height: 50px;
+  }
+  .tr-item__icon::before,
+  .tr-item__icon::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    width: 50px;
+    height: 2px;
+    background: grey;
+    border-radius: 2px;
+  }
+  .tr-item__icon::after { transform: rotate(90deg); }
+
+  /* --- panel --- */
+  .tr-panel { position: fixed; inset: 0; z-index: var(--z-overlay); }
+  .tr-panel[hidden] { display: none; }
+  .tr-panel__overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.51); }
+  .tr-panel__main {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-lg);
+    background: var(--c-white);
+    padding: var(--space-2xl) var(--container-pad);
+    overflow-y: auto;
+    transform: translateY(-100%);
+    transition: transform 0.5s var(--ease);
+  }
+  .tr-panel.is-open .tr-panel__main { transform: translateY(0); }
+  .tr-panel__close {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--container-pad);
+    background: none;
+    border: 0;
+    padding: var(--space-xs);
+    cursor: pointer;
+    color: var(--c-ink-muted);
+  }
+  .tr-panel__title {
+    font-size: var(--fs-acc-title);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .tr-panel__desc {
+    max-width: 931px;
+    font-size: 20px;
+    line-height: 25px;
+    color: var(--c-ink-muted);
+  }
+  .tr-panel__logo { width: auto; max-height: 120px; object-fit: contain; }
+
+  @media (max-width: 1024px) {
+    .tr-grid { grid-template-columns: 1fr; }
+    .tr-item__btn { min-height: 0; }
+    .tr-item__title { font-size: 53px; line-height: 53px; }
+  }
+  @media (max-width: 767px) {
+    .tr-item__title { font-size: 35px; line-height: 35px; }
+    .tr-item__desc, .tr-panel__desc { font-size: 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tr-panel__main { transition: none; }
+  }
+</style>
+
+<script>
+  const panels = new Map<string, HTMLElement>();
+  document.querySelectorAll<HTMLElement>('[data-tr-panel]').forEach((p) => {
+    panels.set(p.dataset.trPanel as string, p);
+  });
+  let openPanel: HTMLElement | null = null;
+
+  const close = () => {
+    if (!openPanel) return;
+    const p = openPanel;
+    openPanel = null;
+    p.classList.remove('is-open');
+    document.documentElement.style.overflow = '';
+    const done = () => { p.hidden = true; p.removeEventListener('transitionend', done); };
+    p.addEventListener('transitionend', done);
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-tr-open]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const p = panels.get(btn.dataset.trOpen as string);
+      if (!p) return;
+      close();
+      p.hidden = false;
+      requestAnimationFrame(() => p.classList.add('is-open'));
+      document.documentElement.style.overflow = 'hidden';
+      openPanel = p;
+      p.querySelector<HTMLElement>('.tr-panel__close')?.focus();
+    });
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-tr-close]').forEach((el) => {
+    el.addEventListener('click', close);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && openPanel) close();
+  });
+</script>

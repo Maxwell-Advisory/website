@@ -1,8 +1,10 @@
 # Clean-rebuild progress (resumable)
 
-Tracks the port of the remaining pages from the legacy Elementor chunks
-(`layouts/Base.astro`) to the hand-authored rebuild (`layouts/Site.astro`).
-**Update the status table as you go** — this file is the handoff between sessions.
+**THE PORT IS COMPLETE (2026-09-14).** All 8 routes are hand-authored Astro on
+`layouts/Site.astro`. The legacy system — `layouts/Base.astro`, `src/chunks/`
+(88 files) and the old chunk-injecting `components/{Header,Footer}.astro` — has
+been deleted. This file is kept as the record of how the site was reverse-
+engineered and what remains open.
 
 ## How to resume in a new session
 
@@ -46,8 +48,8 @@ signature diff). **16 remaining pages are only 7 templates.**
 | 3 | contact | `contact` | **done** |
 | 4 | for-companies | `for-companies` | **done** |
 | 5 | for-investors | `for-investors` | **done** |
-| 6 | team (loop-carousel) | `team` | todo |
-| 7 | track-record (loop-grid + off-canvas) | `track-record` | todo |
+| 6 | team (loop-carousel) | `team` | **done** |
+| 7 | track-record (loop-grid + off-canvas) | `track-record` | **done** |
 
 Suggested order: 1 → 2 → 3 → 4 → 5 → 6 → 7 (cheapest first; 7 is by far the
 most complex and is the one Joe already wanted redesigned).
@@ -77,8 +79,8 @@ already hold the content.
 | `/contact/` | 3 | Site | **done** | green half-panel; button offset flagged below |
 | `/for-companies/` | 4 | Site | **done** | `data/forCompanies.ts`; PageIntro + ReadMore + CtaBanner |
 | `/for-investors/` | 5 | Site | **done** | `data/forInvestors.ts`; TypeReveal + per-char darken |
-| `/team/` | 6 | Base | todo | member loop-carousel |
-| `/track-record/` | 7 | Base | todo | loop-grid + off-canvas popups |
+| `/team/` | 6 | Site | **done** | reuses `data/team.ts`; drag carousel, 2-up |
+| `/track-record/` | 7 | Site | **done** | `data/trackRecord.ts`; 2-col grid + full-screen panels |
 
 ## Custom live behaviours ported (all were bespoke JS/CSS, not Elementor defaults)
 
@@ -132,6 +134,20 @@ overflow at every width (hit on for-investors).
 Live's mailto button sits at x=142 while the address above it starts at x=25 —
 it is neither left-aligned with the copy nor centred in the 632px panel. We
 left-align it with the copy, which looks tidier. Worth a look.
+
+## Still open
+
+- **Images** still resolve from `public/wp-content/uploads/` (52MB). Migrating to
+  Astro `<Image>` (WebP/AVIF, responsive) is the remaining big win and was in the
+  original plan.
+- **`.scroll-darken` is implemented twice** — the homepage version is scroll
+  -position driven, for-investors uses live's own timing (IntersectionObserver
+  then 17ms/char). Reconcile into one shared component; live's is the 17ms one.
+- **`.shine` is defined twice** — globally in `global.css` and scoped in Hero.
+- Homepage has ~25 minor box/type flags (13 are the intentional PP-Neue-Montreal
+  -instead-of-Roboto button deviation). Run `npm run compare` to see them.
+- The track-record panel slide (0.5s from the top) is our choice; live's exact
+  Elementor off-canvas easing was not readable from CSS.
 
 ## Definition of done (per page)
 
