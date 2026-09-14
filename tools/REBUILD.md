@@ -34,6 +34,19 @@ Then read the status table below and continue at the first `todo` row.
 6. **Astro scoping specificity:** with `scopedStyleStrategy: 'where'` a component
    rule and a global rule are both 0,1,0 and the component (injected later) wins
    ties. Remove component overrides rather than fighting them.
+7. **Mirror the IMAGES too, not just the HTML.** Until 2026-09-14 the mirror had
+   no `wp-content/uploads` at all, so every "live" screenshot rendered without
+   its photographs — which is how two whole images on /for-investors/ went
+   unnoticed. `bash tools/mirror-uploads.sh` fixes this; run it after
+   `mirror-all.sh`.
+8. **A section that looks empty may be a full-bleed photo.** Elementor paints
+   backgrounds on the CONTAINER, and a probe that walks `querySelectorAll('*')`
+   misses the element itself. Always read the container's own computed
+   `background-image`.
+9. **Check the breakpoint, not just the value.** Elementor's tablet range is
+   768-1024; several components here stay in a row at 768 and stack only at
+   <=767. Defaulting to `max-width: 1024px` for stacking silently broke four
+   components at 768.
 
 ## Structural clustering of the live site
 
@@ -111,6 +124,9 @@ overflow at every width (hit on for-investors).
 | `MSYS_NO_PATHCONV=1 node tools/rhythm.mjs /path/ [width]` | **text-anchored** vertical-rhythm diff vs live for ANY page — pairs landmarks by their text, so it works across different DOM structures |
 | `MSYS_NO_PATHCONV=1 node tools/sections.mjs /path/` | live's top-level section boxes (padding, min-height, background) |
 | `python tools/outline.py <slug>` | prints a live page's container/widget skeleton — the fastest way to understand a page before porting |
+| `bash tools/mirror-uploads.sh` | caches every `wp-content/uploads` asset the mirrored pages reference — **required**, or live renders image-less |
+| `MSYS_NO_PATHCONV=1 node tools/shots.mjs /path/ [width]` | full-page screenshots of live and mine side by side into `.shots/`, plus the height delta — the fastest way to SEE a difference |
+| `MSYS_NO_PATHCONV=1 node tools/boxes.mjs /path/ [width]` | per-element box/type diff vs live, matched by text: width, x, font-size, line-height, colour |
 
 ⚠️ In Git Bash **always prefix `pagecheck` with `MSYS_NO_PATHCONV=1`**, or leading
 `/` args get rewritten to `C:/Program Files/Git/...`.
@@ -167,6 +183,15 @@ Measure those against the REAL site in the Browser pane (which has working
 network). `rhythm.mjs` and `sections.mjs` carry this warning in their headers.
 Two "differences" were chased before this was understood — check the page for
 JS-built layout before believing a large delta.
+
+## Live's first-section pull
+
+Live pulls the page content up so the **first section's top sits at exactly
+`header height - 85px`** — measured -49 / -19 / -9 / -6 at 375 / 768 / 1280 /
+1440 against headers of 36 / 66 / 76 / 79px. Reproduced by `--header-h`
+(`calc(51px + 2vw)`, `calc(28px + 2vw)` on mobile) and a
+`margin-block-start: calc(var(--header-h) - 85px)` on `main` whenever the header
+overlays. Without it every page's content sat too low, by 49px at mobile.
 
 ## Still open
 
