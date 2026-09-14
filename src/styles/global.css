@@ -147,3 +147,33 @@ ol[role="list"] {
   transition: top var(--dur-fast) var(--ease);
 }
 .skip-link:focus { top: var(--space-sm); }
+
+/* Sheen sweep on CTA pills — live defines this site-wide in wp-custom-css and
+   puts it on every button widget. A skewed translucent band crosses the pill
+   over 1.4s on hover. The host must be position:relative + overflow:hidden. */
+.shine {
+  position: relative;
+  overflow: hidden;
+}
+.shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 85%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  transition: all 1.4s ease;
+  pointer-events: none;
+}
+.shine:hover::after,
+.shine:focus-visible::after { left: 150%; }
+@media (prefers-reduced-motion: reduce) {
+  .shine::after { transition: none; }
+}

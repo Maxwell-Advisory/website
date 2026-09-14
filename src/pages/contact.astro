@@ -1,8 +1,79 @@
 ---
-import Base from '../layouts/Base.astro';
-import head from '../chunks/contact.head.html?raw';
-import pre  from '../chunks/contact.pre.html?raw';
-import mid  from '../chunks/contact.mid.html?raw';
-import post from '../chunks/contact.post.html?raw';
+// Contact. Live is a single full-width section split into two equal columns:
+// a forest-green panel (#465845) on the left with its content bottom-aligned,
+// and an empty white column on the right. Copy is lilac (#e0e5fc).
+import Site from '../layouts/Site.astro';
 ---
-<Base head={head} pre={pre} mid={mid} post={post} bodyClass="wp-singular page-template page-template-elementor_header_footer page page-id-40 wp-custom-logo wp-embed-responsive wp-theme-hello-elementor wp-child-theme-hello-theme-child-master cookies-not-set hello-elementor-default elementor-default elementor-template-full-width elementor-kit-6 elementor-page elementor-page-40" />
+<Site title="Contact">
+  <!-- live has no heading on this page; a hidden one keeps the document
+       outline valid without changing the visuals -->
+  <h1 class="visually-hidden">Contact</h1>
+  <section class="contact">
+    <div class="contact__panel">
+      <p class="contact__address">
+        Maxwell Advisory Climate House<br />
+        39 rue du Caire 75002 Paris, France
+      </p>
+      <p class="contact__label">General Enquiries:</p>
+      <a class="contact__btn shine" href="mailto:contact@maxwelladvisory.eu">
+        contact@maxwelladvisory.eu
+      </a>
+    </div>
+    <div class="contact__blank" aria-hidden="true"></div>
+  </section>
+</Site>
+
+<style>
+  /* live @1280: section 1265x725, flex row, two 632px columns */
+  .contact {
+    display: flex;
+    min-height: 725px;
+  }
+  .contact__panel {
+    flex: 0 0 50%;
+    background: var(--c-forest);      /* #465845 */
+    color: var(--c-lilac);            /* #e0e5fc */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;        /* live bottom-aligns the content */
+    padding: 0 0 50px 2%;
+  }
+  .contact__blank { flex: 0 0 50%; }
+
+  .contact__address {
+    font-size: 36px;
+    line-height: 45px;
+    font-weight: var(--fw-book);
+  }
+  .contact__label {
+    font-size: 13px;
+    line-height: 19.5px;
+    margin-block-start: var(--space-lg);
+  }
+  /* same pill as the hero CTAs, in lilac */
+  .contact__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    margin-block-start: var(--space-xs);
+    padding: 10px 50px;
+    border: 1px solid var(--c-lilac);
+    border-radius: 80px;
+    background: #E0E5FC00;
+    color: var(--c-lilac);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    line-height: 1;
+    transition: all 0.8s;
+  }
+  .contact__btn:hover { color: var(--c-white); border-color: var(--c-white); }
+
+  @media (max-width: 767px) {
+    .contact { flex-direction: column; min-height: 0; }
+    .contact__panel { flex: 1 1 auto; min-height: 60vh; padding-inline: var(--container-pad); }
+    .contact__blank { display: none; }
+    .contact__address { font-size: 28px; line-height: 34px; }
+  }
+</style>

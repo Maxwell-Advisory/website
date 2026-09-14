@@ -43,7 +43,7 @@ signature diff). **16 remaining pages are only 7 templates.**
 | 0 | homepage | `index` | **done** (matches: rhythm 0/6, no overlap/overflow) |
 | 1 | **title-only stub** | 7 sectors + 2 team members (9 pages) | **done** |
 | 2 | legal text | `legal-notice`, `privacy-policy` | **done** |
-| 3 | contact | `contact` | todo |
+| 3 | contact | `contact` | **done** |
 | 4 | for-companies | `for-companies` | todo |
 | 5 | for-investors | `for-investors` | todo |
 | 6 | team (loop-carousel) | `team` | todo |
@@ -87,7 +87,7 @@ adrien-dormesson}/`.
 | `/team/adrien-dormesson/` | 1 | Site | **done** | via `team/[slug].astro` |
 | `/legal-notice/` | 2 | Site | **done** | copy in `src/content/legal/*.html`, rendered by `Prose.astro` |
 | `/privacy-policy/` | 2 | Site | **done** | same |
-| `/contact/` | 3 | Base | todo | address + email + button |
+| `/contact/` | 3 | Site | **done** | green half-panel; button offset flagged below |
 | `/for-companies/` | 4 | Base | todo | 27 widgets |
 | `/for-investors/` | 5 | Base | todo | 28 widgets |
 | `/team/` | 6 | Base | todo | member loop-carousel |
@@ -114,9 +114,18 @@ adrien-dormesson}/`.
   #333, left) in the brand face.
 - `data/stubPages.ts` + `pages/sectors/[slug].astro` + `pages/team/[slug].astro`
   replace 9 one-off files.
+- `.shine` is now a **global utility** in `global.css` (live defines it site-wide
+  and puts it on every button widget); the contact CTA uses it. Hero still has
+  its own scoped copy — worth de-duplicating.
 - `components/site/Prose.astro` — long-form copy: centred 1140 column,
   13px/19.5px #787575, h2 32px/38.4px w500 (live's measured values). Content
   is raw HTML in `src/content/legal/`, so its rules are `:global()`.
+
+### Open question on /contact/
+
+Live's mailto button sits at x=142 while the address above it starts at x=25 —
+it is neither left-aligned with the copy nor centred in the 632px panel. We
+left-align it with the copy, which looks tidier. Worth a look.
 
 ## Definition of done (per page)
 
