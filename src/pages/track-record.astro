@@ -1,9 +1,12 @@
 ---
 // Track Record. Live @1280: a slate intro band (#686d84, white 36/45 copy), an
 // "Experience" label, then a two-column grid of entries. Each entry is a 70px
-// uppercase title plus a short description with a +/- mark; activating it opens
-// a full-screen panel over a 51% black overlay showing the title, the full
-// description and (where present) the client logo.
+// uppercase title plus a short description with a +/- mark.
+//
+// Live opened a modal over a dimmed page. Here the card expands in place
+// instead: it widens to span the row and grows to fit its own copy, and the
+// cards below slide down to make room. See the script at the foot of the file
+// for how the motion is done.
 import Site from '../layouts/Site.astro';
 import { Image } from 'astro:assets';
 import { trackRecord } from '../data/trackRecord.ts';
@@ -25,7 +28,7 @@ import { image } from '../lib/images.ts';
     <ul class="tr-grid" role="list">
       {trackRecord.map((entry) => (
         <li class="tr-item">
-          <button class="tr-item__btn" type="button" data-tr-open={String(entry.id)} aria-haspopup="dialog">
+          <button class="tr-item__btn" type="button" data-tr-toggle aria-expanded="false">
             <span class="tr-item__row">
               <span class="tr-item__title">{entry.title}</span>
               <span class="tr-item__icon" aria-hidden="true"></span>
@@ -40,25 +43,6 @@ import { image } from '../lib/images.ts';
     </ul>
   </section>
 
-  {trackRecord.map((entry) => (
-    <div class="tr-panel" data-tr-panel={String(entry.id)} hidden>
-      <div class="tr-panel__overlay" data-tr-close></div>
-      <div class="tr-panel__main" role="dialog" aria-modal="true" aria-label={entry.title}>
-        <button class="tr-panel__close" type="button" data-tr-close>
-          <span class="visually-hidden">Close</span>
-          <svg width="21" height="22" viewBox="0 0 21 22" fill="none" aria-hidden="true">
-            <line x1="0.7" y1="0.7" x2="20.3" y2="20.3" stroke="currentColor" stroke-width="2" />
-            <line x1="20.3" y1="1" x2="0.7" y2="20.6" stroke="currentColor" stroke-width="2" />
-          </svg>
-        </button>
-        <h2 class="tr-panel__title">{entry.title}</h2>
-        <div class="tr-panel__desc" set:html={entry.description} />
-        {entry.logo && (
-          <Image class="tr-panel__logo" src={image(entry.logo.src)} alt="" loading="lazy" />
-        )}
-      </div>
-    </div>
-  ))}
 </Site>
 
 <style>
@@ -86,6 +70,8 @@ import { image } from '../lib/images.ts';
   /* live: 70px above the EXPERIENCE label (50 on mobile), nothing below the
      grid — the footer follows straight on. Grid is 1214 wide at x25. */
   .tr-body { padding: 70px 2% 0; }
+  /* the motion Joe picked: span the row, 900ms, the site's own --ease */
+  .tr-grid { --tr-dur: 900ms; }
   .tr-body__label {
     font-size: var(--fs-eyebrow);   /* live: 25px/25 grey, uppercase */
     line-height: 25px;
@@ -107,6 +93,36 @@ import { image } from '../lib/images.ts';
     /* grid items default to min-width:auto, so a long word in the 70px title
        can push the column wider than its track — this pins it */
     min-width: 0;
+    overflow: hidden;   /* a closed card clips the copy it cannot yet show */
+  }
+
+  /* --- the expansion ---
+     Without JS the grid above is the whole story: four boxes, each showing a
+     four-line excerpt. The engine then adds .is-flip, takes the cards out of
+     flow and drives their geometry itself, which is what lets a card widen
+     and its neighbours slide out of the way in one continuous movement. */
+  .tr-grid.is-flip { position: relative; display: block; }
+  .tr-grid.is-flip .tr-item {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    transition:
+      transform var(--tr-dur) var(--ease),
+      width     var(--tr-dur) var(--ease),
+      height    var(--tr-dur) var(--ease);
+    will-change: transform, width, height;
+  }
+  .tr-grid.is-flip .tr-item__btn { min-height: 0; height: 100%; }
+  /* an open card shows all of its copy instead of the four-line excerpt */
+  .tr-item.is-open .tr-item__desc { -webkit-line-clamp: unset; overflow: visible; }
+  .tr-item.is-open .tr-item__title { color: var(--c-ink); }
+  /* the +/- becomes an × on the way open, on the same curve as the box */
+  .tr-item__icon { transition: transform var(--tr-dur) var(--ease); }
+  .tr-item.is-open .tr-item__icon { transform: rotate(45deg); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tr-grid.is-flip .tr-item,
+    .tr-item__icon { transition: none; }
   }
   .tr-item__btn {
     width: 100%;
@@ -156,10 +172,11 @@ import { image } from '../lib/images.ts';
     align-self: flex-end;
     margin-block-start: auto;
   }
-  .tr-item__desc :global(p),
-  .tr-panel__desc :global(p) { margin-block-end: 0.75em; }
-  .tr-item__desc :global(p:last-child),
-  .tr-panel__desc :global(p:last-child) { margin-block-end: 0; }
+  /* open, the box is sized to its copy, so the logo sits under the text
+     rather than being pushed to the foot of a tall empty box */
+  .tr-item.is-open .tr-item__logo { margin-block-start: var(--space-md); }
+  .tr-item__desc :global(p) { margin-block-end: 0.75em; }
+  .tr-item__desc :global(p:last-child) { margin-block-end: 0; }
 
   /* the same +/- mark as the service accordion, at live's 50px */
   .tr-item__icon {
@@ -181,73 +198,6 @@ import { image } from '../lib/images.ts';
   }
   .tr-item__icon::after { transform: rotate(90deg); }
 
-  /* --- panel ---
-     Live is NOT a full-screen sheet: a 600x670 white modal centred over a 51%
-     black overlay, with a 1px black border and an inset shadow. Its content is
-     padded 20px with a 20px gap; title 70px/70 uppercase, copy 20px/25. */
-  .tr-panel {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-overlay);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .tr-panel[hidden] { display: none; }
-  .tr-panel__overlay { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.51); }
-  .tr-panel__main {
-    position: relative;
-    width: 600px;
-    max-width: calc(100% - 2 * var(--container-pad));
-    height: 670px;
-    max-height: calc(100% - 2 * var(--space-lg));
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 20px;
-    padding: 20px;
-    background: var(--c-white);
-    border: 1px solid var(--c-black);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-    overflow-y: auto;
-    opacity: 0;
-    transform: scale(0.98);
-    transition: opacity 0.25s var(--ease), transform 0.25s var(--ease);
-  }
-  .tr-panel.is-open .tr-panel__main { opacity: 1; transform: none; }
-  .tr-panel__close {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    background: none;
-    border: 0;
-    padding: var(--space-xs);
-    cursor: pointer;
-    color: var(--c-ink-muted);
-  }
-  .tr-panel__title {
-    font-size: 70px;                 /* live: 70px/70 uppercase #787575 */
-    line-height: 70px;
-    text-transform: uppercase;
-    color: var(--c-ink-muted);
-  }
-  .tr-panel__desc {
-    font-size: 20px;
-    line-height: 25px;
-    color: var(--c-ink-muted);
-  }
-  /* a column flex container stretches its items, which blew the logo up past
-     its natural width — pin it to its own size */
-  .tr-panel__logo {
-    flex: none;
-    align-self: flex-end;   /* live: --align-self: flex-end */
-    max-width: 100%;
-    height: auto;
-    width: 150px;          /* live renders the panel logo at 150px too */
-    max-height: 90px;
-    object-fit: contain;
-  }
-
   /* Live keeps the two columns down to 768 and steps the entry title
      70 -> 28 -> 25px (measured on the live site, not the mirror, whose loop
      grid never initialises). */
@@ -262,52 +212,120 @@ import { image } from '../lib/images.ts';
     .tr-intro { min-height: 420px; }
     .tr-item__btn { min-height: 379px; }   /* live's entry height at 375 */
     .tr-item__title { font-size: 25px; line-height: 25px; }
-    .tr-item__desc, .tr-panel__desc { font-size: 16px; }
-    .tr-panel__main { height: auto; max-height: calc(100% - 2 * var(--space-md)); }
-    .tr-panel__title { font-size: 35px; line-height: 35px; }
-  }
-  @media (max-width: 1024px) {
-    .tr-panel__title { font-size: 53px; line-height: 53px; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .tr-panel__main { transition: none; }
+    .tr-item__desc { font-size: 16px; }
   }
 </style>
 
 <script>
-  const panels = new Map<string, HTMLElement>();
-  document.querySelectorAll<HTMLElement>('[data-tr-panel]').forEach((p) => {
-    panels.set(p.dataset.trPanel as string, p);
-  });
-  let openPanel: HTMLElement | null = null;
+  // "Span the row": the clicked card widens to the full grid width and grows
+  // to fit its own copy; its row-mate is displaced onto the row below and
+  // everything under it slides down.
+  //
+  // The grid cannot animate that on its own — grid-column and grid-row jump —
+  // so once this runs the cards come out of flow and their geometry is set
+  // here instead. CSS still carries the motion, on the duration and easing
+  // declared in the stylesheet. Without JS the plain grid above stands.
+  const grid = document.querySelector<HTMLElement>('.tr-grid');
+  const items = grid ? [...grid.querySelectorAll<HTMLElement>('.tr-item')] : [];
 
-  const close = () => {
-    if (!openPanel) return;
-    const p = openPanel;
-    openPanel = null;
-    p.classList.remove('is-open');
-    document.documentElement.style.overflow = '';
-    const done = () => { p.hidden = true; p.removeEventListener('transitionend', done); };
-    p.addEventListener('transitionend', done);
-  };
+  if (grid && items.length) {
+    const GAP_X = 15, GAP_Y = 30;
+    let open: number | null = null;
 
-  document.querySelectorAll<HTMLElement>('[data-tr-open]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const p = panels.get(btn.dataset.trOpen as string);
-      if (!p) return;
-      close();
-      p.hidden = false;
-      requestAnimationFrame(() => p.classList.add('is-open'));
-      document.documentElement.style.overflow = 'hidden';
-      openPanel = p;
-      p.querySelector<HTMLElement>('.tr-panel__close')?.focus();
+    const cols = () => (window.matchMedia('(max-width: 767px)').matches ? 1 : 2);
+    /** live's closed entry height at each breakpoint */
+    const closedH = () =>
+      window.matchMedia('(max-width: 767px)').matches ? 379
+      : window.matchMedia('(max-width: 1024px)').matches ? 407
+      : 436;
+
+    /** Height the open card needs for its copy at the width it will have. */
+    const measure = (el: HTMLElement, w: number) => {
+      const prev = el.style.cssText;
+      el.style.transition = 'none';
+      el.style.width = `${w}px`;
+      el.style.height = 'auto';
+      const h = el.offsetHeight;
+      el.style.cssText = prev;
+      void el.offsetHeight;   // flush, so the restored values do not animate from auto
+      return h;
+    };
+
+    const apply = (animate = true) => {
+      const n = cols();
+      const W = grid.clientWidth;
+      const colW = (W - GAP_X * (n - 1)) / n;
+      const base = closedH();
+
+      const openH = open === null
+        ? base
+        : Math.max(base, measure(items[open], colW * n + GAP_X * (n - 1)));
+
+      // pack left to right, the open card taking every column in its row
+      const rows: { i: number; span: number; h: number }[][] = [];
+      let row: { i: number; span: number; h: number }[] = [], used = 0;
+      items.forEach((_, i) => {
+        const span = i === open ? n : 1;
+        if (used + span > n) { rows.push(row); row = []; used = 0; }
+        row.push({ i, span, h: i === open ? openH : base });
+        used += span;
+      });
+      if (row.length) rows.push(row);
+
+      if (!animate) grid.style.setProperty('--tr-dur', '0ms');
+
+      let y = 0;
+      for (const r of rows) {
+        const h = Math.max(...r.map((it) => it.h));
+        let x = 0;
+        for (const it of r) {
+          const w = colW * it.span + GAP_X * (it.span - 1);
+          const el = items[it.i];
+          el.style.transform = `translate(${x}px, ${y}px)`;
+          el.style.width = `${w}px`;
+          el.style.height = `${h}px`;
+          el.style.zIndex = it.i === open ? '2' : '1';
+          x += w + GAP_X;
+        }
+        y += h + GAP_Y;
+      }
+      grid.style.height = `${Math.max(0, y - GAP_Y)}px`;
+
+      if (!animate) {
+        void grid.offsetHeight;
+        grid.style.removeProperty('--tr-dur');
+      }
+    };
+
+    items.forEach((el, i) => {
+      const btn = el.querySelector<HTMLButtonElement>('.tr-item__btn');
+      btn?.addEventListener('click', () => {
+        open = open === i ? null : i;
+        items.forEach((li, n) => {
+          const isOpen = n === open;
+          li.classList.toggle('is-open', isOpen);
+          li.querySelector('.tr-item__btn')?.setAttribute('aria-expanded', String(isOpen));
+        });
+        apply();
+      });
     });
-  });
 
-  document.querySelectorAll<HTMLElement>('[data-tr-close]').forEach((el) => {
-    el.addEventListener('click', close);
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && openPanel) close();
-  });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || open === null) return;
+      items[open].querySelector<HTMLButtonElement>('.tr-item__btn')?.click();
+    });
+
+    // Fonts land after first paint and change how the copy wraps, so an open
+    // card measured before then would be the wrong height.
+    document.fonts?.ready.then(() => apply(false));
+
+    let pending = 0;
+    new ResizeObserver(() => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(() => apply(false));
+    }).observe(grid);
+
+    grid.classList.add('is-flip');
+    apply(false);
+  }
 </script>

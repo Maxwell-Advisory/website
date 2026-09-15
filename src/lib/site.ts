@@ -47,7 +47,7 @@ export const siteMeta = {
 // address, and cannot be used to read anything.
 // ---------------------------------------------------------------------------
 export const contactForm = {
-  accessKey: '',
+  accessKey: 'c13fa07c-c780-4bd5-a79a-8745aa74f03a',
   /** Subject line on the email that lands in the inbox. */
   subject: 'Website enquiry — maxwelladvisory.eu',
   /** Shown, and used as the fallback, if the key is missing or the post fails. */
