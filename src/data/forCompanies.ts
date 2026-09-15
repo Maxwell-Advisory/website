@@ -23,7 +23,7 @@ export const forCompanies = {
       heading: 'Development Support',
       image: 'patrik-maki-RKRvSeX2sPs-unsplash-scaled.jpg',
       alt: '',
-      visible: "We make projects investible before you go to market — structuring the business model, the contracts and the economics around what infrastructure investors actually require.",
+      visible: "We make projects investible before you go to market – structuring the business model, the contracts and the economics around what infrastructure investors actually require.",
       hidden: [
         "We work alongside your management team on the deliverables that decide the outcome of a fundraise: commercial negotiations, financial models, and a business plan that carries your project’s fundamentals with credibility. In practice that means testing revenue assumptions before an investor does, reworking contracts that leave risk in the wrong place, and building a financial model that answers the questions an investment committee will actually ask.",
         "We have spent our careers on the other side of these decisions, at infrastructure funds and institutional investors. Diligence tends to come apart over the same handful of things. We would rather find those ourselves, early, while there is still room to address them.",
@@ -46,7 +46,7 @@ export const forCompanies = {
       visible: "We advise energy and infrastructure clients on debt financing: what the market will lend, on what terms, and how to raise it.",
       hidden: [
         "That runs from early questions about how much leverage an asset will carry, through structuring and lender selection, to credit approval, documentation and close. Some mandates are a full raise; others are a view on what is achievable before you commit to a strategy, or a refinancing of something already built.",
-        "The lender market is not one market. Commercial banks, infrastructure debt funds, private credit, development finance institutions, export credit agencies and national green banks each price the same asset differently and each want something different in return. Knowing which to approach, and in what order, is a critical part of the job. The rest of the value is in the structure: covenants and flexibility matter as much as margin, and the right structure is the one that delivers your objectives whilst still securing credit committee approval.",
+        "The lender market is not one market. Commercial banks, infrastructure debt funds, private credit, development finance institutions, export credit agencies and national green banks each price the same asset differently and each want something different in return. Knowing which to approach, and in what order, is a critical part of the job. The rest of the value is in the structure: covenants and flexibility matter as much as margin, and the right structure is the one that delivers your objectives while still securing credit committee approval.",
       ],
     },
   ] satisfies ContentBlock[],
