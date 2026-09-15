@@ -4,9 +4,15 @@
 // and a wind-turbine photograph filling the right (background-size: cover,
 // positioned 50% 100%). Copy is lilac (#e0e5fc). Below 768 the two stack, the
 // copy centres, and the address drops to 24px.
+//
+// Added since: an enquiry form fills the panel's dead space above the address
+// (live bottom-aligns the content, leaving ~430px empty at 1280). It posts to
+// Web3Forms, which relays to contact@maxwelladvisory.eu — see contactForm in
+// src/lib/site.ts for the key.
 import Site from '../layouts/Site.astro';
 import { getImage } from 'astro:assets';
 import { image } from '../lib/images.ts';
+import { contactForm } from '../lib/site.ts';
 
 const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-unsplash-scaled.jpg'), format: 'webp', width: 1400 })).src;
 ---
@@ -16,6 +22,41 @@ const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-uns
   <h1 class="visually-hidden">Contact</h1>
   <section class="contact">
     <div class="contact__panel">
+      <form class="cform" data-cform novalidate>
+        <h2 class="cform__title">Send us a message</h2>
+
+        <div class="cform__field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" autocomplete="name" required />
+        </div>
+        <div class="cform__field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" autocomplete="email" required />
+        </div>
+        <div class="cform__field">
+          <label for="cf-company">Company <span class="cform__opt">(optional)</span></label>
+          <input id="cf-company" name="company" type="text" autocomplete="organization" />
+        </div>
+        <div class="cform__field">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" rows="3" required></textarea>
+        </div>
+
+        {/* Web3Forms discards anything that fills this in; it is hidden from
+            people and from screen readers, and only bots ever reach it. */}
+        <input
+          class="cform__trap"
+          type="checkbox"
+          name="botcheck"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+        />
+
+        <button class="contact__btn shine cform__send" type="submit">Send</button>
+        <p class="cform__status" data-cform-status role="status" aria-live="polite"></p>
+      </form>
+
       {/* Live's source breaks this with U+2028 LINE SEPARATORs, which render
           as four lines. Plain <br />s here — same rendering, and the U+2028
           characters do not survive the build. */}
@@ -51,7 +92,7 @@ const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-uns
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-end;        /* live bottom-aligns the content */
+    justify-content: flex-end;        /* live bottom-aligns the address */
     padding: 0 0 50px 2%;
   }
   .contact__photo {
@@ -59,6 +100,87 @@ const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-uns
     background-size: cover;
     background-position: 50% 100%;   /* live: bottom-centred */
     background-repeat: no-repeat;
+  }
+
+  /* --- enquiry form ---
+     Underlined fields rather than boxes: the panel is a flat colour field and
+     input boxes would be the only framed objects anywhere on the site. */
+  .cform {
+    position: relative;   /* containing block for .cform__trap */
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-block-end: auto;
+    /* the header overlays the top of this panel (it starts at y=-8 so the
+       green runs under the bar), so the form has to clear the wordmark
+       itself, not just the panel's own edge */
+    padding-block-start: 150px;
+    padding-inline-end: 2%;
+  }
+  .cform__title {
+    font-size: var(--fs-eyebrow);
+    line-height: 25px;
+    text-transform: uppercase;
+    color: var(--c-lilac);
+  }
+  .cform__field { display: flex; flex-direction: column; gap: 6px; }
+  .cform__field label {
+    font-size: 13px;
+    line-height: 19.5px;
+    color: var(--c-lilac);
+  }
+  .cform__opt { opacity: 0.65; }
+  .cform input:not(.cform__trap),
+  .cform textarea {
+    width: 100%;
+    font: inherit;
+    font-size: 16px;      /* under 16px iOS zooms the page on focus */
+    line-height: 25px;
+    color: var(--c-white);
+    background: transparent;
+    border: 0;
+    border-block-end: 1px solid var(--c-lilac);
+    border-radius: 0;
+    padding: 4px 0;
+    transition: border-color 0.3s var(--ease);
+  }
+  .cform textarea { resize: vertical; min-height: 60px; }
+  .cform input:not(.cform__trap):hover,
+  .cform textarea:hover { border-block-end-color: var(--c-white); }
+  .cform input:not(.cform__trap):focus-visible,
+  .cform textarea:focus-visible {
+    outline: none;
+    border-block-end-color: var(--c-white);
+    border-block-end-width: 2px;
+    padding-block-end: 3px;   /* keep the field from shifting as it thickens */
+  }
+  .cform [aria-invalid='true'] { border-block-end-color: #ffb4a8; }
+  .cform__send {
+    align-self: flex-start;
+    margin-block-start: 4px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .cform__send[disabled] { opacity: 0.55; cursor: progress; }
+  .cform__status {
+    font-size: 13px;
+    line-height: 19.5px;
+    color: var(--c-lilac);
+    min-height: 19.5px;
+  }
+  .cform__status[data-state='error'] { color: #ffb4a8; }
+  /* offscreen rather than display:none — a hidden control is not submitted,
+     and Web3Forms needs the field to arrive */
+  .cform__trap {
+    position: absolute;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* live: the address block is held to 307px, which is what wraps it onto four
@@ -117,8 +239,18 @@ const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-uns
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 0;
+      padding: 50px var(--container-pad);
     }
+    /* the form keeps its left alignment — centred labels over left-aligned
+       fields read as a mistake */
+    .cform {
+      max-width: 100%;
+      padding-block-start: 60px;   /* clears the mobile header bar */
+      padding-inline-end: 0;
+      margin-block-end: 50px;
+      text-align: start;
+    }
+    .cform__send { align-self: stretch; }
     .contact__photo { flex: none; min-height: 500px; }   /* live: --min-height:500px */
     .contact__address { width: 232px; font-size: 24px; line-height: 30px; }
     /* live centres and stacks this block below 768 */
@@ -126,3 +258,85 @@ const photo = (await getImage({ src: image('usukhbayar-gankhuyag-mbVjn3eKVcI-uns
     .contact__label { width: auto; }
   }
 </style>
+
+<script define:vars={{ cfg: contactForm }}>
+  // Posts to Web3Forms and keeps the visitor on the page. Every failure path
+  // ends with the mailto address rather than a dead end, so an enquiry is
+  // never lost to a network error or an unconfigured key.
+  const form = document.querySelector('[data-cform]');
+  const status = form?.querySelector('[data-cform-status]');
+  if (form && status) {
+    const send = form.querySelector('button[type="submit"]');
+    const mailto = `<a href="mailto:${cfg.fallbackEmail}">${cfg.fallbackEmail}</a>`;
+
+    const say = (text, state) => {
+      status.innerHTML = text;
+      if (state) status.dataset.state = state;
+      else delete status.dataset.state;
+    };
+
+    // Native validation with novalidate on the form, so the message lands in
+    // our own status line instead of a browser bubble.
+    const firstInvalid = () => {
+      for (const el of form.querySelectorAll('input[required], textarea[required]')) {
+        const ok = el.checkValidity();
+        el.setAttribute('aria-invalid', String(!ok));
+        if (!ok) return el;
+      }
+      return null;
+    };
+
+    form.addEventListener('input', (e) => {
+      const el = e.target;
+      if (el.hasAttribute('aria-invalid') && el.checkValidity()) {
+        el.setAttribute('aria-invalid', 'false');
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const bad = firstInvalid();
+      if (bad) {
+        bad.focus();
+        say(bad.validity.typeMismatch
+          ? 'That email address does not look right.'
+          : 'Please fill in your name, email and message.', 'error');
+        return;
+      }
+
+      if (!cfg.accessKey) {
+        say(`This form is not connected yet — please email ${mailto}.`, 'error');
+        return;
+      }
+
+      const data = Object.fromEntries(new FormData(form));
+      send.disabled = true;
+      say('Sending…');
+
+      try {
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            ...data,
+            access_key: cfg.accessKey,
+            subject: cfg.subject,
+            from_name: 'maxwelladvisory.eu',
+          }),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok && out.success) {
+          form.reset();
+          say('Thank you — your message is on its way. We will come back to you shortly.');
+        } else {
+          say(`That did not send. Please email ${mailto} and we will pick it up there.`, 'error');
+        }
+      } catch {
+        say(`That did not send — check your connection, or email ${mailto}.`, 'error');
+      } finally {
+        send.disabled = false;
+      }
+    });
+  }
+</script>

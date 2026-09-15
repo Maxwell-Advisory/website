@@ -30,3 +30,26 @@ export const siteMeta = {
   tagline: 'Advisors for the energy transition and industrial decarbonisation',
   wordmark: 'Maxwell Advisory',
 };
+
+// ---------------------------------------------------------------------------
+// CONTACT FORM
+//
+// The site is static, so the /contact/ form hands off to Web3Forms, which
+// relays the submission to the address the key was registered against
+// (contact@maxwelladvisory.eu).
+//
+// To switch it on: request a key at https://web3forms.com using
+// contact@maxwelladvisory.eu, then paste it below. Until it is set, the form
+// still renders but tells the visitor to email instead, so nothing is
+// silently swallowed.
+//
+// The key is meant to be public — it only permits posting to that one
+// address, and cannot be used to read anything.
+// ---------------------------------------------------------------------------
+export const contactForm = {
+  accessKey: '',
+  /** Subject line on the email that lands in the inbox. */
+  subject: 'Website enquiry — maxwelladvisory.eu',
+  /** Shown, and used as the fallback, if the key is missing or the post fails. */
+  fallbackEmail: 'contact@maxwelladvisory.eu',
+};

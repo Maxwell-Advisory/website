@@ -98,9 +98,16 @@ const motif = image('Calque_1.png');
     will-change: transform;
     transition: transform var(--dur) var(--ease);
     user-select: none;
+    /* How much of the next member shows past the right edge. The autoplay
+       only says “there are more people here” once it moves; the sliver says
+       it in the first still frame, and keeps saying it while a reader hovers
+       and the autoplay is held. */
+    --peek: 44px;
   }
+  /* live showed two at a time with nothing past them; two plus the sliver
+     means two gaps sit inside the viewport, not one */
   .member {
-    flex: 0 0 calc((100% - 20px) / 2);   /* live shows two at a time */
+    flex: 0 0 calc((100% - 2 * 20px - var(--peek)) / 2);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -153,8 +160,8 @@ const motif = image('Calque_1.png');
     .team { padding-inline: 0; }
     .team__intro { padding-inline: var(--container-pad); }
     .team__carousel { padding: 0; }
-    .team__track { gap: 18px; }
-    .member { flex-basis: 100%; }
+    .team__track { gap: 18px; --peek: 40px; }
+    .member { flex-basis: calc(100% - 18px - var(--peek)); }
     .member__photo { height: 390px; }
     .member__name, .member__role, .member__bio { padding-inline: var(--container-pad); }
   }
@@ -165,18 +172,20 @@ const motif = image('Calque_1.png');
   const vp = document.querySelector<HTMLElement>('[data-team-carousel]');
   const track = vp?.querySelector<HTMLElement>('[data-team-track]');
   if (vp && track) {
-    const total = track.children.length;
     let index = 0, trackX = 0, startX = 0, dragging = false;
     const step = () => {
       const first = track.children[0] as HTMLElement;
       const gap = parseFloat(getComputedStyle(track).columnGap || '20') || 20;
       return first.getBoundingClientRect().width + gap;
     };
-    const perView = () => Math.max(1, Math.round(vp.clientWidth / step()));
-    const maxIndex = () => Math.max(0, total - perView());
+    // How far the track can travel before its last card is flush with the
+    // right edge. Clamping to this rather than to a slide count means the
+    // final position never leaves an empty strip where the peek was.
+    const maxShift = () => Math.max(0, track.scrollWidth - track.clientWidth);
+    const maxIndex = () => Math.ceil(maxShift() / step());
     const goTo = (i: number) => {
       index = Math.max(0, Math.min(maxIndex(), i));
-      trackX = -index * step();
+      trackX = -Math.min(index * step(), maxShift());
       track.style.transform = `translateX(${trackX}px)`;
     };
     vp.addEventListener('pointerdown', (e) => {
