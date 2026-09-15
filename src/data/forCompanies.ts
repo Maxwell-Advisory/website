@@ -3,14 +3,16 @@
 //   eyebrow / intro  – the lilac band at the top
 //   blocks           – each is a heading, an image (a filename in
 //                      src/assets/images/), and body copy split into a
-//                      visible excerpt plus a "READ MORE" continuation
+//                      visible excerpt plus a "READ MORE" continuation, which
+//                      may be a single string or an array of paragraphs
 // ---------------------------------------------------------------------------
 export interface ContentBlock {
   heading: string;
   image: string;
   alt: string;
   visible: string;
-  hidden: string;
+  /** the continuation behind READ MORE — one paragraph, or several. */
+  hidden: string | string[];
 }
 
 export const forCompanies = {
@@ -21,8 +23,11 @@ export const forCompanies = {
       heading: 'Development Support',
       image: 'patrik-maki-RKRvSeX2sPs-unsplash-scaled.jpg',
       alt: '',
-      visible: "We assist with project and company development prior to fundraising, ensuring that business models, contracts, and economics are structured to meet investor expectations.",
-      hidden: "Our team works closely with company management teams across a range of project deliverables, including contract negotiation, building financial models, and communicating project fundamentals to investors.",
+      visible: "We make projects investible before you go to market — structuring the business model, the contracts and the economics around what infrastructure investors actually require.",
+      hidden: [
+        "We work alongside your management team on the deliverables that decide the outcome of a fundraise: commercial negotiations, financial models, and a business plan that carries your project’s fundamentals with credibility. In practice that means testing revenue assumptions before an investor does, reworking contracts that leave risk in the wrong place, and building a financial model that answers the questions an investment committee will actually ask.",
+        "We have spent our careers on the other side of these decisions, at infrastructure funds and institutional investors. Diligence tends to come apart over the same handful of things. We would rather find those ourselves, early, while there is still room to address them.",
+      ],
     },
     {
       heading: 'Fundraising & M&A',

@@ -1,15 +1,23 @@
 ---
-// Port of live's `.smooth-readmore`: a visible excerpt, a continuation that is
+// Port of live's `.smooth-readmore`: a visible excerpt, a continuation (one
+// paragraph or several) that is
 // collapsed to max-height 0, and a READ MORE toggle. Live's exact values —
 // excerpt 20px/25 (18 <=1024, 16 <=767) in #787575; the hidden part animates
 // max-height 0.5s ease + opacity 0.4s ease; the button is 14px uppercase with
 // 0.5px tracking and fades to 0.6 opacity on hover.
-interface Props { visible: string; hidden: string; }
+interface Props {
+  visible: string;
+  /** one paragraph, or several. */
+  hidden: string | string[];
+}
 const { visible, hidden } = Astro.props;
+const hiddenParas = Array.isArray(hidden) ? hidden : [hidden];
 ---
 <div class="readmore" data-readmore>
   <p class="readmore__excerpt">{visible}</p>
-  <p class="readmore__excerpt readmore__excerpt--hidden" data-readmore-hidden>{hidden}</p>
+  <div class="readmore__excerpt readmore__excerpt--hidden" data-readmore-hidden>
+    {hiddenParas.map((para) => <p>{para}</p>)}
+  </div>
   <button class="readmore__btn" type="button" data-readmore-btn aria-expanded="false">READ MORE +</button>
 </div>
 
@@ -21,6 +29,11 @@ const { visible, hidden } = Astro.props;
   }
 
   .readmore__excerpt--hidden {
+    /* the continuation can run to several paragraphs; space them from each
+       other rather than letting them run together */
+    display: flex;
+    flex-direction: column;
+    gap: 0.7em;
     max-height: 0;
     overflow: hidden;
     opacity: 0;
@@ -30,6 +43,8 @@ const { visible, hidden } = Astro.props;
     opacity: 1;
     margin-block-start: 1em;
   }
+
+  .readmore__excerpt--hidden p { margin: 0; }
 
   .readmore__btn {
     display: inline-block;
