@@ -5,15 +5,18 @@
 //
 //   name  – full name (shown as the heading)
 //   role  – title under the name
-//   bio   – one paragraph of biography
-//   image – filename in src/assets/images/
+//   bio   – a paragraph of biography, or an array of paragraphs
+//   image – filename in src/assets/images/; omit it and the card renders a
+//           neutral placeholder block instead of a photograph
 // ---------------------------------------------------------------------------
 
 export interface TeamMember {
   name: string;
   role: string;
-  bio: string;
-  image: string;
+  /** one paragraph, or several. */
+  bio: string | string[];
+  /** filename in src/assets/images/. Omit to render a neutral placeholder. */
+  image?: string;
 }
 
 export const team: TeamMember[] = [
@@ -26,7 +29,16 @@ export const team: TeamMember[] = [
   {
     name: 'Joe Davis',
     role: 'Co-Founder and Director',
-    bio: 'Joe has more than a decade of experience across infrastructure investment and advisory. Before founding Maxwell, he held senior roles at Foresight Group and the Pensions Infrastructure Platform (PiP), leading investments across energy, storage, hydrogen, and social infrastructure sectors. His blend of advisory and buy-side experience has shaped a pragmatic and hands-on investment approach focused on capital-intensive climate businesses.',
+    bio: [
+      'Joe has 15 years of experience across infrastructure investment and advisory.',
+      'Before founding Maxwell, he held senior roles at Foresight Group and the Pensions Infrastructure Platform, leading investments across energy generation, energy storage and flexibility, transport and social infrastructure sectors.',
+      'His blend of advisory and buy-side experience has shaped a pragmatic and hands-on investment approach focused on capital-intensive climate businesses.',
+    ],
     image: 'Photo-couleur-Joe.jpeg',
+  },
+  {
+    name: 'Grégoire Schimpff',
+    role: 'Head of Debt Advisory',
+    bio: 'PLACEHOLDER — biography to follow. Replace this paragraph, and add a portrait to src/assets/images/ and name it in the `image` field, when they are ready.',
   },
 ];

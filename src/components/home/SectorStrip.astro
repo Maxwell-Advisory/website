@@ -119,59 +119,102 @@ const cards = await Promise.all(
 </style>
 
 <script>
+  // Discrete slides, as live, but the strip now runs on endlessly in both
+  // directions. One repeat of the cards is appended, so stepping past the last
+  // card lands on a copy of the first; once that step has finished the track
+  // silently rewinds a whole set with the transition off, and the same in
+  // reverse. Nothing on screen changes at the moment of the rewind.
   const vp = document.querySelector<HTMLElement>('[data-carousel]');
   const track = vp?.querySelector<HTMLElement>('[data-track]');
   const bar = document.querySelector<HTMLElement>('[data-progress]');
+
   if (vp && track && bar) {
-    const total = track.children.length;
-    let index = 0, trackX = 0, startX = 0, dragging = false, pointerId = -1;
+    const originals = [...track.children] as HTMLElement[];
+    const total = originals.length;
+
+    for (const el of originals) {
+      const c = el.cloneNode(true) as HTMLElement;
+      c.setAttribute('aria-hidden', 'true');   // the same sectors, said once
+      track.appendChild(c);
+    }
+
+    let index = 0, startX = 0, dragging = false, settling = false;
 
     const step = () => {
-      const first = track.children[0] as HTMLElement;
       const gap = parseFloat(getComputedStyle(track).columnGap || '10') || 10;
-      return first.getBoundingClientRect().width + gap;
+      return originals[0].getBoundingClientRect().width + gap;
     };
     const perView = () => Math.max(1, Math.round(vp.clientWidth / step()));
-    const maxIndex = () => Math.max(0, total - perView());
 
+    const place = (animate: boolean) => {
+      track.style.transition = animate ? '' : 'none';
+      track.style.transform = `translateX(${-index * step()}px)`;
+      if (!animate) void track.offsetHeight;   // commit before the next change
+    };
+
+    // the bar reports position within one pass of the real cards
     const updateBar = () => {
       const frac = Math.min(1, perView() / total);
+      const at = ((index % total) + total) % total;
       bar.style.width = `${frac * 100}%`;
-      const mi = maxIndex();
-      const p = mi ? index / mi : 0;
-      bar.style.left = `${p * (100 - frac * 100)}%`;
+      bar.style.left = `${(at / total) * 100}%`;
     };
+
+    // After a step that crossed a set boundary, rewind by a whole set so the
+    // index stays in range. Visually identical, so the jump is invisible.
+    const rewind = () => {
+      if (index >= total) index -= total;
+      else if (index < 0) index += total;
+      else return;
+      place(false);
+    };
+
     const goTo = (i: number) => {
-      index = Math.max(0, Math.min(maxIndex(), i));
-      trackX = -index * step();
-      track.style.transform = `translateX(${trackX}px)`;
+      // Stepping back past the first card would travel onto empty space —
+      // the repeat sits after the originals, not before. Hop forward a whole
+      // set first (invisibly, the cards there are identical) so there is
+      // something to move onto, then animate from there.
+      if (i < 0) {
+        index += total;
+        i += total;
+        place(false);
+      }
+      index = i;
+      settling = true;
+      place(true);
       updateBar();
     };
 
+    track.addEventListener('transitionend', (e) => {
+      if (e.propertyName !== 'transform' || !settling) return;
+      settling = false;
+      rewind();
+    });
+
     vp.addEventListener('pointerdown', (e) => {
-      dragging = true; startX = e.clientX; pointerId = e.pointerId;
+      dragging = true; startX = e.clientX;
       vp.setPointerCapture(e.pointerId);
       vp.classList.add('is-dragging');
       track.style.transition = 'none';
     });
     vp.addEventListener('pointermove', (e) => {
       if (!dragging) return;
-      track.style.transform = `translateX(${trackX + (e.clientX - startX)}px)`;
+      track.style.transform = `translateX(${-index * step() + (e.clientX - startX)}px)`;
     });
     const end = (e: PointerEvent) => {
       if (!dragging) return;
       dragging = false;
       vp.classList.remove('is-dragging');
-      track.style.transition = '';
       const dx = e.clientX - startX;
-      if (Math.abs(dx) > 40) goTo(index + Math.round(-dx / step()));
-      else goTo(index);
+      goTo(Math.abs(dx) > 40 ? index + Math.round(-dx / step()) : index);
     };
     vp.addEventListener('pointerup', end);
     vp.addEventListener('pointercancel', end);
     // Keep image drag from hijacking the gesture
     vp.addEventListener('dragstart', (e) => e.preventDefault());
-    window.addEventListener('resize', () => goTo(index));
+
+    window.addEventListener('resize', () => { place(false); updateBar(); });
+    place(false);
     updateBar();
   }
 </script>

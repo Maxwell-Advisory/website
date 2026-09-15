@@ -70,7 +70,7 @@ const footerGroups = [
   /* The footer's own gutter — measured on live at 25px from 768 up and 46px at
      375 — rather than the page gutter, which is narrower. */
   .site-footer__top {
-    padding-inline: 25px;
+    padding-inline: var(--footer-pad);
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -136,7 +136,6 @@ const footerGroups = [
   /* Live keeps all four groups in one row down to 768 (measured at
      x 25/209/371/525); on mobile they wrap to two per row. */
   @media (max-width: 767px) {
-    .site-footer__top { padding-inline: 46px; }
     .site-footer__nav { flex-wrap: wrap; gap: 0; }
     .site-footer__nav ul { flex: 0 0 50%; }
   }

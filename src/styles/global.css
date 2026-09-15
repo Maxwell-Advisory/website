@@ -115,15 +115,11 @@ ol[role="list"] {
   letter-spacing: var(--tracking-tight);
   /* margin (not padding) so the element's own width matches live's, where the
      2% indent sits on the widget wrapper rather than the text element. */
-  margin-inline-start: 2%;
+  margin-inline-start: var(--eyebrow-indent);
   /* Measured gap from eyebrow bottom to the following element on live is +14px
      (its -20px widget margin is offset by the <p>'s own default margin, which
      our reset removes). */
-  margin-block-end: 14px;
-}
-@media (max-width: 767px) {
-  /* mobile keeps more air below the eyebrow (measured ~44px on live) */
-  .eyebrow { margin-inline-start: 3%; margin-block-end: 44px; }
+  margin-block-end: var(--eyebrow-gap);
 }
 
 .visually-hidden {

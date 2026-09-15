@@ -162,7 +162,9 @@ const motif = image('Pictogramme.png');
   }
   /* Live styles the two pills differently, and ONLY the first has a hover
      state (the second declares no :hover and no transition at all). */
+  /* live: 90px of side padding on a phone, 150px on a desktop */
   .hero__btn--ghost {
+    padding: 10px var(--btn-pad-ghost);
     border-color: var(--c-heading-muted);   /* #CFCFCF */
     color: var(--c-heading-muted);
     background: #E0E5FC00;                  /* transparent lilac, as live */
@@ -173,16 +175,12 @@ const motif = image('Pictogramme.png');
     border-color: var(--c-white);
   }
   .hero__btn--solid {
+    padding: 10px var(--btn-pad-solid);
     border-color: var(--c-white);
     color: var(--c-white);
     background: #FFFFFF54;                  /* white @ 33%, as live */
   }
 
-  /* live shrinks the padding only at <=767 (90px / 97px per button) */
-  @media (max-width: 767px) {
-    .hero__btn--ghost { padding: 10px 90px; }
-    .hero__btn--solid { padding: 10px 97px; }
-  }
   /* live stacks them only at <=767, centred and shrink-to-fit (measured 285px
      wide at 375 with a 20px gap) */
   @media (max-width: 767px) {

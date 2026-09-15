@@ -17,7 +17,7 @@ export interface Stat {
 }
 
 export const stats: Stat[] = [
-  { label: 'years buy\u2011side and advisory',        value: 20, suffix: '+' },
-  { label: 'successful transactions',            value: 40, suffix: '+' },
-  { label: 'specialist investors across Europe', value: 60, suffix: '+' },
+  { label: 'years buy\u2011side and advisory',        value: 40, suffix: '+' },
+  { label: 'successful transactions',            value: 70, suffix: '+' },
+  { label: 'specialist investors across Europe', value: 100, suffix: '+' },
 ];

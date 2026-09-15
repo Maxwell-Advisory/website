@@ -127,6 +127,11 @@ import { image } from '../../lib/images.ts';
     object-fit: cover;
     margin-top: -114px;   /* spans heading + body, keeping the box compact */
     margin-right: 0;      /* flush to the right edge, as live renders it */
+    /* The body's bottom padding gives the TEXT room to breathe, but it also
+       left a 40px strip of white under the photograph before the next card's
+       rule. Pulling the image down through that padding sits it on the rule,
+       while the text keeps its clearance. */
+    margin-bottom: calc(-1 * var(--space-lg));
     /* live fades the image out over 0.45s just before the panel closes
        (its JS toggles a .fadeout class on the image widget) */
     transition: opacity 0.45s ease;
@@ -145,7 +150,7 @@ import { image } from '../../lib/images.ts';
     .service__image {
       /* live measures 752w@768 and 1003w@1024 (~98%) and stays 525px tall */
       flex: none; width: 98%; max-width: 98%; height: 525px;
-      margin: 0;
+      margin: 0 0 calc(-1 * var(--space-lg));   /* sit on the rule here too */
     }
   }
 </style>
