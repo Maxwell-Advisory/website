@@ -41,7 +41,7 @@ export const forCompanies = {
     },
     {
       heading: 'Debt Advisory',
-      image: 'hazel-OhUURadmw-k-unsplash.jpg',
+      image: 'sander-weeteling-iGDg_f_mlWo-unsplash.jpg',
       alt: '',
       visible: "We advise energy and infrastructure clients on debt financing: what the market will lend, on what terms, and how to raise it.",
       hidden: [
