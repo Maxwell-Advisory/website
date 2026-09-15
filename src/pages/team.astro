@@ -39,7 +39,9 @@ const motif = image('Calque_1.png');
             )}
             <h2 class="member__name">{m.name}</h2>
             <p class="member__role">{m.role}</p>
-            <p class="member__bio">{m.bio}</p>
+            <div class="member__bio">
+              {(Array.isArray(m.bio) ? m.bio : [m.bio]).map((para) => <p>{para}</p>)}
+            </div>
           </li>
         ))}
       </ul>
@@ -113,7 +115,7 @@ const motif = image('Calque_1.png');
   }
   .member__photo {
     width: 100%;
-    height: 500px;
+    height: var(--team-photo-h);
     object-fit: cover;
     /* Portraits rest in black and white and warm to full colour on hover.
        Gated on (hover: hover) so touch devices — which can never satisfy the
@@ -139,20 +141,27 @@ const motif = image('Calque_1.png');
   }
   .member__role { font-size: 13px; line-height: 19.5px; color: var(--c-ink-muted); }
   /* live insets the bio from the photo edge (335 wide in a 384 slide) */
+  /* the card's own 20px gap is right between photo, name and role, but too
+     loose between paragraphs of the same biography */
   .member__bio {
-    font-size: 20px;
-    line-height: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    font-size: var(--team-bio-fs);
+    line-height: 1.25;
     color: var(--c-ink-muted);
     max-width: 335px;
   }
+  .member__bio p { margin: 0; }
 
   /* Live stacks the intro above the carousel at <=1024 and centres the motif,
      but keeps the carousel TWO-up down to 768 (measured 352px slides at 768). */
+  /* Structural only: live stacks the intro above the carousel at <=1024 and
+     centres the motif. The sizes travel with the tokens. */
   @media (max-width: 1024px) {
     .team { flex-direction: column; gap: var(--space-2xl); padding-top: var(--space-3xl); }
     .team__intro { flex: 1 1 auto; }
     .team__motif { margin-block-start: 0; align-self: center; }
-    .member__bio { font-size: 18px; }
   }
   /* Mobile: one full-bleed 390px-tall slide at a time, as live. */
   @media (max-width: 767px) {
@@ -161,7 +170,6 @@ const motif = image('Calque_1.png');
     .team__carousel { padding: 0; }
     .team__track { gap: 18px; --peek: 40px; }
     .member { flex-basis: calc(100% - 18px - var(--peek)); }
-    .member__photo { height: 390px; }
     .member__name, .member__role, .member__bio { padding-inline: var(--container-pad); }
   }
 </style>

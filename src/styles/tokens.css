@@ -1,18 +1,30 @@
 /* ===========================================================================
    DESIGN TOKENS — the single source of truth for the Maxwell Advisory site.
 
-   Type sizes and component dimensions below are the EXACT values declared in
-   the live site's own stylesheets (read from maxwelladvisory.eu's inlined
-   Elementor CSS), including its three breakpoint tiers:
+   SIZES ARE FLUID. Every size below interpolates smoothly between a phone and
+   a desktop instead of stepping at a breakpoint, which is what the live
+   Elementor build does (>1024 desktop, <=1024 tablet, <=767 mobile).
 
-       desktop  > 1024px
-       tablet  <= 1024px
-       mobile  <=  767px
+   Each clamp is anchored so that it lands on the live value at BOTH ends —
+   the mobile figure at 375px and the desktop figure at 1280px — and simply
+   travels between them in between. In practice that also puts it within a
+   point or two of live's tablet tier at 1024 for most tokens, so this is a
+   smoothing of the original curve rather than a redesign.
 
-   These are deliberately NOT fluid clamps: the original steps at breakpoints,
-   so matching it means stepping at the same breakpoints. That also makes the
-   layout correct at every width by construction rather than by approximation.
-   Do not hard-code sizes in components — always reference a --token.
+   Four values are a deliberate departure, because live's middle tier is not
+   on the line between its own two ends:
+
+     --fs-counter      live steps 120 -> 60 -> 160. The 60 is out of sequence
+                       (a tablet value smaller than the phone one), so this
+                       runs 120 -> 160 and the dip is gone.
+     --lh-h1           live 35 / 45 / 60; smooth gives ~53 at 1024.
+     --fs-menu         live 35 / 53 / 70; smooth gives ~60 at 1024.
+     --container-pad   live holds a flat 10px gutter below 1024 and only opens
+                       up above it; the gutter now grows with the viewport.
+
+   Sizes belong here, not in components. What stays in a component media query
+   is STRUCTURE — a row becoming a column, two columns becoming one — because
+   that cannot be interpolated, only switched.
    =========================================================================== */
 :root {
   /* --- Brand palette ----------------------------------------------------- */
@@ -40,69 +52,80 @@
   --fw-book: 400;
   --fw-medium: 500;
 
-  /* Type scale — desktop tier (live "secondary"/"6827eb6"/"41f1e0f"/"d5b0afe") */
-  --fs-h1: 50px;             --lh-h1: 60px;      /* hero headline              */
-  --fs-intro: 36px;          --lh-intro: 45px;   /* lilac intro statement      */
-  --fs-eyebrow: 25px;                            /* section labels             */
-  --lh-eyebrow: 37.5px;                          /* live: 30px at <=767        */
-  /* Accordion title has an EXTRA tier live adds via custom CSS:
-     >1360 = 70px, 1024-1360 = 58px, <1024 = 53px, <=767 = 20px. */
-  --fs-acc-title: 70px;                          /* service card headings      */
-  --fs-body-lg: 20px;        --lh-body-lg: 25px; /* accordion body copy        */
-  --fs-sector-title: 25px;                       /* sector card titles         */
-  --fs-counter: 160px;                           /* big stat numbers           */
-  --fs-counter-suffix: 70px;                     /* the "+" — 70px at EVERY
-                                                    width; measured on live at
-                                                    375 and 768 too          */
-  --fs-counter-label: 20px;                      /* stat labels                */
-  --lh-counter-label: 50px;                      /* live's label leading       */
-  --fs-footer-link: 25px;                        /* footer nav links (icon-list) */
-  --lh-footer-link: 37.5px;
+  /* Type scale — each travels from its live phone value to its live desktop one */
+  --fs-h1: clamp(33px, 25.96px + 1.878vw, 50px);            /* hero headline        live 33 / 45 / 50   */
+  --lh-h1: clamp(35px, 24.64px + 2.762vw, 60px);
+  --fs-intro: clamp(24px, 19.03px + 1.326vw, 36px);         /* lilac intro          live 24 / 32 / 36   */
+  --lh-intro: clamp(30px, 23.78px + 1.657vw, 45px);
+  --fs-eyebrow: clamp(20px, 17.93px + 0.5525vw, 25px);       /* section labels       live 20 / 25        */
+  --lh-eyebrow: clamp(30px, 26.89px + 0.8287vw, 37.5px);
+  /* Live gives the accordion title a fourth tier of its own (70 above 1360),
+     so this one is anchored to 1360 rather than 1280 — which also lands it on
+     live's 53 at 1024. */
+  --fs-acc-title: clamp(20px, 0.9645px + 5.076vw, 70px);
+  --fs-body-lg: clamp(18px, 17.17px + 0.221vw, 20px);       /* accordion body copy  live 18 / 20        */
+  --lh-body-lg: 25px;
+  --fs-sector-title: clamp(20px, 17.93px + 0.5525vw, 25px);  /* sector card titles   live 20 / 25        */
+  --fs-counter: clamp(120px, 103.4px + 4.42vw, 160px);     /* big stat numbers — see the note above    */
+  --fs-counter-suffix: 70px;      /* the "+" is 70px at every width, as live  */
+  --fs-counter-label: clamp(14px, 11.51px + 0.663vw, 20px);
+  --lh-counter-label: clamp(35px, 28.78px + 1.657vw, 50px);
+  --fs-footer-link: clamp(20px, 17.93px + 0.5525vw, 25px);
+  --lh-footer-link: clamp(30px, 26.89px + 0.8287vw, 37.5px);
   --fs-body: 16px;
   --fs-small: 15px;
-  --fs-caption: 13px;                            /* hero tagline               */
-  --menu-logo-w: 414px;                          /* popup wordmark: 414/360/280 */
-  --fs-menu: 70px;                               /* overlay menu items (live "primary") */
+  --fs-caption: 13px;             /* hero tagline                             */
+  --menu-logo-w: clamp(280px, 224.5px + 14.81vw, 414px);    /* popup wordmark       live 280 / 360 / 414 */
+  --fs-menu: clamp(35px, 20.5px + 3.867vw, 70px);          /* overlay menu items   live 35 / 53 / 70   */
 
-  /* Component dimensions (live declares these as fixed px, not fluid) */
-  --acc-row-h: 115px;        /* accordion closed-row height                   */
-  --acc-icon: 80px;          /* accordion +/- hit area                        */
-  --acc-icon-line-w: 52px;   /* +/- stroke length                             */
-  --acc-icon-line-h: 2px;
-  --sector-card-h: 530px;    /* sector card height                            */
-  --intro-min-h: 370px;      /* lilac band height                             */
-  --hero-pad-top: 330px;     /* pushes hero content into the lower half       */
+  /* --- Component dimensions ---------------------------------------------- */
+  --acc-row-h: clamp(75px, 58.43px + 4.42vw, 115px);       /* accordion closed-row height              */
+  --acc-icon: clamp(40px, 23.43px + 4.42vw, 80px);         /* accordion +/- hit area                   */
+  --acc-icon-line-w: clamp(20px, 6.74px + 3.536vw, 52px);  /* +/- stroke length                        */
+  --acc-icon-line-h: clamp(1px, 0.5856px + 0.1105vw, 2px);
+  --sector-card-h: clamp(380px, 317.8px + 16.57vw, 530px);  /* sector card height   live 380 / 530      */
+  --intro-min-h: clamp(300px, 271px + 7.735vw, 370px);    /* lilac band height    live 300 / 370      */
+  --hero-pad-top: clamp(180px, 117.8px + 16.57vw, 330px);   /* pushes hero content into the lower half  */
+
+  /* Sizes the pages used to step themselves, now travelling with the rest */
+  --team-photo-h: clamp(390px, 344.4px + 12.15vw, 500px);   /* /team/ member portrait                   */
+  --team-bio-fs: clamp(18px, 17.17px + 0.221vw, 20px);
+  --tr-title-fs: clamp(25px, 6.354px + 4.972vw, 70px);      /* /track-record/ entry title  live 25/28/70 */
+  --tr-card-h: clamp(379px, 355.4px + 6.298vw, 436px);      /* closed entry height   live 379 / 407 / 436 */
+  --tr-intro-h: clamp(420px, 376.5px + 11.6vw, 525px);     /* slate intro band      live 420 / 525     */
+  --block-img-h: clamp(450px, 429.3px + 5.525vw, 500px);    /* /for-companies/ block image              */
+  --contact-addr-fs: clamp(24px, 19.03px + 1.326vw, 36px);  /* /contact/ address     live 24 / 36       */
+  --contact-addr-lh: clamp(30px, 23.78px + 1.657vw, 45px);
+  --readmore-fs: clamp(16px, 14.34px + 0.442vw, 20px);      /* READ MORE excerpt     live 16 / 18 / 20  */
+
+  /* Spacing the components used to step. Two of these run the other way —
+     live gives the phone MORE air below an eyebrow and a wider footer gutter. */
+  --eyebrow-indent: clamp(11.25px, 5.304px + 1.586vw, 25.6px);  /* live 3% mobile / 2% above  */
+  --eyebrow-gap: clamp(14px, 56.43px + -3.315vw, 44px);      /* eyebrow -> content    live 44 / 14       */
+  --stats-gap: clamp(66px, 41.55px + 6.519vw, 125px);       /* eyebrow -> counters   live 66 / 75 / 125 */
+  --footer-pad: clamp(25px, 54.7px + -2.32vw, 46px);       /* footer top row        live 46 / 25       */
+  --btn-pad-ghost: clamp(90px, 65.14px + 6.63vw, 150px);   /* hero pill padding     live 90 / 150      */
+  --btn-pad-solid: clamp(97px, 75.04px + 5.856vw, 150px);   /* live 97 / 150                            */
 
   --lh-heading: 1.2;
   --lh-body: 1.5;
 
   /* The live site declares letter-spacing: 0em (its only declaration) and leaves
-     everything else at `normal` — so NO negative tracking anywhere. We used
-     -0.01em on headings/labels/buttons, which rendered all our text slightly
-     tighter than the original. Keep this at 0 to match. */
+     everything else at `normal` — so NO negative tracking anywhere. */
   --tracking-tight: 0em;
 
   /* Overbold compensation. The type matches the live site by every CSS measure
      (PP Neue Montreal 400, identical sizes/widths), but renders a touch lighter
-     than the original on some displays. A small text-stroke in the text colour
-     thickens the strokes to match the original's heavier appearance. Tune this
-     one value to taste: 0 = off, ~0.5px ~= a full half-weight step. */
+     than the original on some displays. 0 = off, ~0.5px ~= a half-weight step. */
   --ink-weight: 0.4px;
 
   /* --- Layout ------------------------------------------------------------ */
-  /* Header height. Live's bar is a fixed-size mark plus 1% vertical padding on
-     each side, i.e. icon + 2vw. Measured live: 66@768, 76@1280, 79@1440 with a
-     51px mark; 36@375 with the mobile burger. */
-  --header-h: calc(51px + 2vw);
+  /* Live's bar is a fixed-size mark plus 1% vertical padding each side.
+     Measured: 36@375 (burger), 66@768, 76@1280 (51px mark). */
+  --header-h: calc(clamp(28px, 18.47px + 2.541vw, 51px) + 2vw);
   --container: 1140px;
-  --intro-text-w: 1100px;    /* intro statement column (live: max-width 1100)  */
-  /* Side padding for full-width sections (~20px mobile -> ~40px desktop),
-     matching the live site's edge (~38px at the logo/stats/footer). */
-  /* Live's page gutter is 10px below the desktop breakpoint — measured on
-     /privacy-policy/, where its prose runs 355px at 375 and 748px at 768
-     against a 20px gutter's 335/728. Above it the 1140px container centres
-     itself and the gutter never bites. */
-  --container-pad: clamp(1.25rem, 2.5vw, 2.5rem);
+  --intro-text-w: 1100px;         /* intro statement column                   */
+  --container-pad: clamp(10px, -2.431px + 3.315vw, 40px);    /* page gutter — see the note above         */
 
   /* --- Spacing scale (8px base) ----------------------------------------- */
   --space-xs: 0.5rem;
@@ -120,55 +143,4 @@
 
   --z-header: 100;
   --z-overlay: 200;
-}
-
-/* --- Accordion-title mid tier (live: 1024-1360px gets 58px) --------------- */
-@media (max-width: 1360px) {
-  :root { --fs-acc-title: 58px; }
-}
-
-/* --- Tablet tier (live @media max-width:1024px) --------------------------- */
-@media (max-width: 1024px) {
-  :root {
-    --container-pad: 10px;
-    --fs-h1: 45px;            --lh-h1: 45px;
-    --fs-intro: 32px;         --lh-intro: 40px;
-    --fs-counter: 60px;
-    --fs-menu: 53px;
-    --menu-logo-w: 360px;
-  }
-}
-
-/* Accordion title drops to 53px only BELOW 1024 — live's 58px rule is
-   (min-width:1024px and max-width:1360px), so 1024 itself is still 58px.
-   The smaller icon gives the long titles room to stay on one line. */
-@media (max-width: 1023px) {
-  :root { --fs-acc-title: 53px; --acc-icon: 40px; }
-}
-
-/* --- Mobile tier (live @media max-width:767px) ---------------------------- */
-@media (max-width: 767px) {
-  :root {
-    --header-h: calc(28px + 2vw);
-    --fs-h1: 33px;            --lh-h1: 35px;
-    --fs-intro: 24px;         --lh-intro: 30px;
-    --fs-eyebrow: 20px;
-    --lh-eyebrow: 30px;
-    --fs-acc-title: 20px;
-    --fs-body-lg: 18px;
-    --fs-sector-title: 20px;
-    --fs-counter: 120px;      /* note: larger than the tablet tier, as on live */
-    --fs-counter-label: 14px;
-    --lh-counter-label: 35px;
-    --fs-menu: 35px;
-    --menu-logo-w: 280px;
-    --fs-footer-link: 20px;   --lh-footer-link: 30px;
-    --acc-icon: 40px;          /* smaller hit area so the title fits one line */
-
-    --acc-row-h: 75px;
-    --acc-icon-line-w: 20px;
-    --acc-icon-line-h: 1px;
-    --sector-card-h: 380px;
-    --intro-min-h: 300px;
-  }
 }

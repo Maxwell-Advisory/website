@@ -67,13 +67,8 @@ import { image } from '../lib/images.ts';
   }
   .block__image {
     width: 100%;
-    height: 500px;                  /* live: 500px at 1280, 450 below */
+    height: var(--block-img-h);
     object-fit: cover;
-  }
-  /* Live shortens the images at <=1024 but keeps the two blocks SIDE BY SIDE
-     down to 768 — they stack only on mobile. */
-  @media (max-width: 1024px) {
-    .block__image { height: 450px; }
   }
   @media (max-width: 767px) {
     .blocks { grid-template-columns: 1fr; gap: 55px; padding-inline: 11px; }

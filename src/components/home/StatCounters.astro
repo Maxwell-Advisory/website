@@ -62,7 +62,7 @@ import { stats } from '../../data/stats.ts';
     gap: var(--space-xl) var(--space-lg);
     max-width: var(--container);   /* numbers stay in a centred ~1140 band */
     margin-inline: auto;
-    margin-block-start: 125px;     /* measured live gap: eyebrow -> counter = 125px */
+    margin-block-start: var(--stats-gap);
   }
   .stat {
     display: flex;
@@ -121,12 +121,6 @@ import { stats } from '../../data/stats.ts';
   /* Below 1024 the measured eyebrow -> counter gap is smaller than desktop's
      125px, so the grid offset steps down (tuned against live: 125 at 768,
      285 at 375). */
-  @media (max-width: 1023px) {
-    .stats__grid { margin-block-start: 75px; }
-  }
-  @media (max-width: 767px) {
-    .stats__grid { margin-block-start: 66px; }
-  }
 
   /* live keeps all three counters in one row down to 768; it stacks only
      at <=767 (measured: same top at 768, ~205px apart at 375). */

@@ -15,12 +15,10 @@ const { visible, hidden } = Astro.props;
 
 <style>
   .readmore__excerpt {
-    font-size: 20px;
-    line-height: 25px;
+    font-size: var(--readmore-fs);
+    line-height: 1.25;
     color: var(--c-ink-muted);
   }
-  @media (max-width: 1024px) { .readmore__excerpt { font-size: 18px; } }
-  @media (max-width: 767px)  { .readmore__excerpt { font-size: 16px; } }
 
   .readmore__excerpt--hidden {
     max-height: 0;
