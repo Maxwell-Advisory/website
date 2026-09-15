@@ -96,7 +96,6 @@ const motif = image('Calque_1.png');
     gap: 20px;
     margin: 0;
     will-change: transform;
-    transition: transform var(--dur) var(--ease);
     user-select: none;
     /* How much of the next member shows past the right edge. The autoplay
        only says “there are more people here” once it moves; the sliver says
@@ -168,93 +167,105 @@ const motif = image('Calque_1.png');
 </style>
 
 <script>
-  // Pointer-drag carousel, same approach as the homepage sector strip.
+  // A continuous, circular drift rather than discrete slides: the track is
+  // always moving, so the members off screen are never in doubt, and there is
+  // no moment at which the carousel looks like a static pair of photographs.
+  //
+  // Circularity is the usual trick — the member list is repeated until it is
+  // comfortably wider than the viewport, and the offset wraps at the width of
+  // one set, so the seam never arrives.
   const vp = document.querySelector<HTMLElement>('[data-team-carousel]');
   const track = vp?.querySelector<HTMLElement>('[data-team-track]');
-  if (vp && track) {
-    let index = 0, trackX = 0, startX = 0, dragging = false;
-    const step = () => {
-      const first = track.children[0] as HTMLElement;
-      const gap = parseFloat(getComputedStyle(track).columnGap || '20') || 20;
-      return first.getBoundingClientRect().width + gap;
+
+  if (vp && track && track.children.length) {
+    const SPEED = 42;            // px per second
+    const originals = [...track.children] as HTMLElement[];
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const gap = () => parseFloat(getComputedStyle(track).columnGap || '20') || 20;
+    /** width of one full pass of the real members, including the trailing gap */
+    const setWidth = () =>
+      originals.reduce((w, el) => w + el.getBoundingClientRect().width + gap(), 0);
+
+    // Repeat the members until the track can cover the viewport twice over,
+    // which is what lets the wrap happen off screen.
+    const stock = () => {
+      track.querySelectorAll('[data-clone]').forEach((el) => el.remove());
+      let guard = 12;
+      // offset wraps at one set width, so the track has to cover that plus a
+      // full viewport for the seam to land off screen
+      while (track.scrollWidth < setWidth() + vp.clientWidth + 1 && guard-- > 0) {
+        for (const el of originals) {
+          const c = el.cloneNode(true) as HTMLElement;
+          c.dataset.clone = '';
+          c.setAttribute('aria-hidden', 'true');   // the same people, said once
+          track.appendChild(c);
+        }
+      }
     };
-    // How far the track can travel before its last card is flush with the
-    // right edge. Clamping to this rather than to a slide count means the
-    // final position never leaves an empty strip where the peek was.
-    const maxShift = () => Math.max(0, track.scrollWidth - track.clientWidth);
-    const maxIndex = () => Math.ceil(maxShift() / step());
-    const goTo = (i: number) => {
-      index = Math.max(0, Math.min(maxIndex(), i));
-      trackX = -Math.min(index * step(), maxShift());
-      track.style.transform = `translateX(${trackX}px)`;
+
+    let offset = 0, held = false, hovering = false, onScreen = true, raf = 0, last = 0;
+
+    const draw = (now: number) => {
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      last = now;
+      if (!held && !reduced.matches) offset += SPEED * dt;
+      const w = setWidth();
+      if (w > 0) offset = ((offset % w) + w) % w;   // wrap in both directions
+      track.style.transform = `translateX(${-offset}px)`;
+      raf = requestAnimationFrame(draw);
     };
+
+    const run = (on: boolean) => {
+      if (on && !raf) { last = 0; raf = requestAnimationFrame(draw); }
+      if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
+    };
+    const sync = () => run(onScreen && !document.hidden);
+
+    // --- drag still works, and simply moves the same offset ---------------
+    let startX = 0, startOffset = 0, dragging = false;
     vp.addEventListener('pointerdown', (e) => {
-      dragging = true; startX = e.clientX;
+      dragging = true; held = true;
+      startX = e.clientX; startOffset = offset;
       vp.setPointerCapture(e.pointerId);
       vp.classList.add('is-dragging');
-      track.style.transition = 'none';
     });
     vp.addEventListener('pointermove', (e) => {
-      if (!dragging) return;
-      track.style.transform = `translateX(${trackX + (e.clientX - startX)}px)`;
+      if (dragging) offset = startOffset - (e.clientX - startX);
     });
-    const end = (e: PointerEvent) => {
+    const end = () => {
       if (!dragging) return;
       dragging = false;
       vp.classList.remove('is-dragging');
-      track.style.transition = '';
-      const dx = e.clientX - startX;
-      goTo(Math.abs(dx) > 40 ? index + Math.round(-dx / step()) : index);
+      held = hovering;
     };
     vp.addEventListener('pointerup', end);
     vp.addEventListener('pointercancel', end);
     vp.addEventListener('dragstart', (e) => e.preventDefault());
-    window.addEventListener('resize', () => goTo(index));
 
-    // --- autoplay -------------------------------------------------------
-    // The carousel holds more members than fit on screen, so it advances on
-    // its own to make the off-screen ones evident. Three rules keep that from
-    // becoming a nuisance:
-    //   * it only starts once the carousel is actually on screen, so a visitor
-    //     cannot scroll past during the pause before the first advance;
-    //   * it stops while the reader is hovering, dragging, focused inside it,
-    //     or on another browser tab;
-    //   * it is skipped entirely under prefers-reduced-motion.
-    const DELAY = 4000;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let timer: number | undefined;
-    let held = false;      // pointer or focus is holding it
-    let onScreen = false;
-
-    const advance = () => goTo(index >= maxIndex() ? 0 : index + 1);
-    const tick = () => { if (!held) advance(); };
-    const sync = () => {
-      const run = onScreen && !held && !document.hidden && !reduced.matches
-        && maxIndex() > 0;
-      if (run && timer === undefined) timer = window.setInterval(tick, DELAY);
-      if (!run && timer !== undefined) { clearInterval(timer); timer = undefined; }
-    };
-    const hold = (v: boolean) => { held = v; sync(); };
-
-    new IntersectionObserver((entries) => {
-      onScreen = entries[0].isIntersecting;
-      sync();
-    }, { threshold: 0.4 }).observe(vp);
-
-    // Hover-hold only where hovering exists: on touch, `pointerenter` fires on
-    // tap and its matching `pointerleave` may never arrive, which would stall
-    // the autoplay for good. Touch drags are covered by the drag hold below.
+    // Hold while a reader is actually reading. Hover-hold only where hovering
+    // exists: on touch, pointerenter fires on tap and its pointerleave may
+    // never arrive, which would stall the drift for good.
     if (window.matchMedia('(hover: hover)').matches) {
-      vp.addEventListener('pointerenter', () => hold(true));
-      vp.addEventListener('pointerleave', () => hold(false));
+      vp.addEventListener('pointerenter', () => { hovering = true; held = true; });
+      vp.addEventListener('pointerleave', () => { hovering = false; if (!dragging) held = false; });
     }
-    vp.addEventListener('pointerdown', () => hold(true));
-    vp.addEventListener('pointerup', () => hold(false));
-    vp.addEventListener('pointercancel', () => hold(false));
-    vp.addEventListener('focusin', () => hold(true));
-    vp.addEventListener('focusout', () => hold(false));
+    vp.addEventListener('focusin', () => { held = true; });
+    vp.addEventListener('focusout', () => { held = hovering; });
+
     document.addEventListener('visibilitychange', sync);
-    reduced.addEventListener('change', sync);
-    window.addEventListener('resize', sync);
+    new IntersectionObserver((es) => { onScreen = es[0].isIntersecting; sync(); },
+      { threshold: 0 }).observe(vp);
+
+    let pending = 0;
+    new ResizeObserver(() => {
+      cancelAnimationFrame(pending);
+      pending = requestAnimationFrame(stock);
+    }).observe(vp);
+
+    // Photographs decide the card widths, so re-stock once they have landed.
+    window.addEventListener('load', stock);
+    stock();
+    sync();
   }
 </script>

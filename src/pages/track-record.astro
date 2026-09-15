@@ -101,7 +101,11 @@ import { image } from '../lib/images.ts';
      four-line excerpt. The engine then adds .is-flip, takes the cards out of
      flow and drives their geometry itself, which is what lets a card widen
      and its neighbours slide out of the way in one continuous movement. */
-  .tr-grid.is-flip { position: relative; display: block; }
+  .tr-grid.is-flip {
+    position: relative;
+    display: block;
+    transition: height var(--tr-dur) var(--ease);
+  }
   .tr-grid.is-flip .tr-item {
     position: absolute;
     inset-block-start: 0;
@@ -121,6 +125,7 @@ import { image } from '../lib/images.ts';
   .tr-item.is-open .tr-item__icon { transform: rotate(45deg); }
 
   @media (prefers-reduced-motion: reduce) {
+    .tr-grid.is-flip,
     .tr-grid.is-flip .tr-item,
     .tr-item__icon { transition: none; }
   }
@@ -239,15 +244,19 @@ import { image } from '../lib/images.ts';
       : window.matchMedia('(max-width: 1024px)').matches ? 407
       : 436;
 
-    /** Height the open card needs for its copy at the width it will have. */
+    /** Height the open card needs for its copy at the width it will have.
+        Measured on a hidden clone: resizing the real card to read it back
+        restarted its transition mid-flight, which is what made the expansion
+        snap instead of travel. */
     const measure = (el: HTMLElement, w: number) => {
-      const prev = el.style.cssText;
-      el.style.transition = 'none';
-      el.style.width = `${w}px`;
-      el.style.height = 'auto';
-      const h = el.offsetHeight;
-      el.style.cssText = prev;
-      void el.offsetHeight;   // flush, so the restored values do not animate from auto
+      const clone = el.cloneNode(true) as HTMLElement;
+      clone.classList.add('is-open');
+      clone.style.cssText =
+        `position:absolute;left:0;top:0;width:${w}px;height:auto;` +
+        'visibility:hidden;pointer-events:none;transition:none;';
+      grid.appendChild(clone);
+      const h = clone.offsetHeight;
+      clone.remove();
       return h;
     };
 
@@ -261,10 +270,26 @@ import { image } from '../lib/images.ts';
         ? base
         : Math.max(base, measure(items[open], colW * n + GAP_X * (n - 1)));
 
+      // Order the cards so the open one leads the row it already sat in. A
+      // right-hand card that simply widened in place would wrap to the row
+      // below and appear to jump; leading its row instead keeps it where it
+      // was and pushes its left-hand neighbour down, which is what the
+      // movement reads as.
+      const seq: number[] = [];
+      for (let r = 0; r * n < items.length; r++) {
+        const inRow: number[] = [];
+        for (let k = 0; k < n && r * n + k < items.length; k++) inRow.push(r * n + k);
+        if (open !== null && inRow.includes(open)) {
+          seq.push(open, ...inRow.filter((i) => i !== open));
+        } else {
+          seq.push(...inRow);
+        }
+      }
+
       // pack left to right, the open card taking every column in its row
       const rows: { i: number; span: number; h: number }[][] = [];
       let row: { i: number; span: number; h: number }[] = [], used = 0;
-      items.forEach((_, i) => {
+      seq.forEach((i) => {
         const span = i === open ? n : 1;
         if (used + span > n) { rows.push(row); row = []; used = 0; }
         row.push({ i, span, h: i === open ? openH : base });
