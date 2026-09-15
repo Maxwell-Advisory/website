@@ -31,5 +31,12 @@ export const forCompanies = {
       visible: "Our fundraising services cover the full transaction cycle, including preparation of investor materials, deal structuring, and transaction execution.",
       hidden: "We also support clients in buy-side and sell-side M&A processes, using our experience in infrastructure-style transactions to secure competitive outcomes. We have privileged access to over 60 specialist investors spanning European mid-market infrastructure funds, family offices, climate PE, and corporate investors.",
     },
+    {
+      heading: 'Debt Advisory',
+      image: 'hazel-OhUURadmw-k-unsplash.jpg',
+      alt: '',
+      visible: "PLACEHOLDER — a short description of the debt advisory offering, sized to sit alongside the two blocks either side of it.",
+      hidden: "PLACEHOLDER — the continuation revealed by READ MORE. Replace both strings with the real copy when it is ready.",
+    },
   ] satisfies ContentBlock[],
 };

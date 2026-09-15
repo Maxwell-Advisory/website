@@ -24,14 +24,19 @@ const motif = image('Calque_1.png');
       <ul class="team__track" data-team-track role="list">
         {team.map((m) => (
           <li class="member">
-            <Image
-              class="member__photo"
-              src={image(m.image)}
-              widths={[364, 728]}
-              sizes="(max-width: 767px) 90vw, 364px"
-              alt={m.name}
-              loading="lazy"
-            />
+            {m.image ? (
+              <Image
+                class="member__photo"
+                src={image(m.image)}
+                widths={[364, 728]}
+                sizes="(max-width: 767px) 90vw, 364px"
+                alt={m.name}
+                loading="lazy"
+              />
+            ) : (
+              /* no portrait yet — a neutral block keeps the card's geometry */
+              <div class="member__photo member__photo--placeholder" aria-hidden="true"></div>
+            )}
             <h2 class="member__name">{m.name}</h2>
             <p class="member__role">{m.role}</p>
             <p class="member__bio">{m.bio}</p>
@@ -104,6 +109,22 @@ const motif = image('Calque_1.png');
     width: 100%;
     height: 500px;
     object-fit: cover;
+    /* Portraits rest in black and white and warm to full colour on hover.
+       Gated on (hover: hover) so touch devices — which can never satisfy the
+       hover — get the colour photograph rather than a permanently grey one. */
+    transition: filter var(--dur) var(--ease);
+  }
+  @media (hover: hover) {
+    .member__photo { filter: grayscale(1); }
+    .member:hover .member__photo,
+    .member:focus-within .member__photo { filter: grayscale(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .member__photo { transition: none; }
+  }
+  .member__photo--placeholder {
+    background: var(--c-hairline);
+    filter: none;
   }
   .member__name {
     font-size: var(--fs-eyebrow);   /* live: 25px/25 */
@@ -180,5 +201,51 @@ const motif = image('Calque_1.png');
     vp.addEventListener('pointercancel', end);
     vp.addEventListener('dragstart', (e) => e.preventDefault());
     window.addEventListener('resize', () => goTo(index));
+
+    // --- autoplay -------------------------------------------------------
+    // The carousel holds more members than fit on screen, so it advances on
+    // its own to make the off-screen ones evident. Three rules keep that from
+    // becoming a nuisance:
+    //   * it only starts once the carousel is actually on screen, so a visitor
+    //     cannot scroll past during the pause before the first advance;
+    //   * it stops while the reader is hovering, dragging, focused inside it,
+    //     or on another browser tab;
+    //   * it is skipped entirely under prefers-reduced-motion.
+    const DELAY = 4000;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let timer: number | undefined;
+    let held = false;      // pointer or focus is holding it
+    let onScreen = false;
+
+    const advance = () => goTo(index >= maxIndex() ? 0 : index + 1);
+    const tick = () => { if (!held) advance(); };
+    const sync = () => {
+      const run = onScreen && !held && !document.hidden && !reduced.matches
+        && maxIndex() > 0;
+      if (run && timer === undefined) timer = window.setInterval(tick, DELAY);
+      if (!run && timer !== undefined) { clearInterval(timer); timer = undefined; }
+    };
+    const hold = (v: boolean) => { held = v; sync(); };
+
+    new IntersectionObserver((entries) => {
+      onScreen = entries[0].isIntersecting;
+      sync();
+    }, { threshold: 0.4 }).observe(vp);
+
+    // Hover-hold only where hovering exists: on touch, `pointerenter` fires on
+    // tap and its matching `pointerleave` may never arrive, which would stall
+    // the autoplay for good. Touch drags are covered by the drag hold below.
+    if (window.matchMedia('(hover: hover)').matches) {
+      vp.addEventListener('pointerenter', () => hold(true));
+      vp.addEventListener('pointerleave', () => hold(false));
+    }
+    vp.addEventListener('pointerdown', () => hold(true));
+    vp.addEventListener('pointerup', () => hold(false));
+    vp.addEventListener('pointercancel', () => hold(false));
+    vp.addEventListener('focusin', () => hold(true));
+    vp.addEventListener('focusout', () => hold(false));
+    document.addEventListener('visibilitychange', sync);
+    reduced.addEventListener('change', sync);
+    window.addEventListener('resize', sync);
   }
 </script>

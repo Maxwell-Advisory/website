@@ -1,7 +1,9 @@
 ---
-// For Companies. Live: lilac intro band, then two blocks (heading, image,
+// For Companies. Live: lilac intro band, then blocks (heading, image,
 // read-more copy) side by side down to 768 and stacked only on mobile, then
-// the oversized "get in touch" CTA.
+// the oversized "get in touch" CTA. Live had two blocks; we now carry three
+// (Development Support / Fundraising & M&A / Debt Advisory) from
+// src/data/forCompanies.ts.
 import Site from '../layouts/Site.astro';
 import PageIntro from '../components/site/PageIntro.astro';
 import ReadMore from '../components/site/ReadMore.astro';
@@ -31,17 +33,31 @@ import { image } from '../lib/images.ts';
   /* live @1280: the two blocks sit side by side inside a 2% padded row,
      each 604px wide with a 20px column gap; below 1024 they stack. */
   .blocks {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     /* live: the block row is 763 tall and its headings sit 70px below the
        lilac band; no bottom padding (the CTA section supplies that) */
     padding: 104px 2% 0;
   }
   .block {
-    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 20px;
+  }
+  /* A heading that wraps onto two lines (“Development Support” does, once the
+     columns narrow to three) would otherwise push its own image down and break
+     the row. Subgrid gives heading / image / copy a shared set of rows, so all
+     three columns stay level whatever the copy does. */
+  @supports (grid-template-rows: subgrid) {
+    .blocks { grid-template-rows: auto auto auto; }
+    .block {
+      display: grid;
+      grid-row: span 3;
+      grid-template-rows: subgrid;
+      align-content: start;
+    }
   }
   .block__heading {
     font-size: var(--fs-eyebrow);   /* live: 25px, uppercase, grey */
@@ -60,7 +76,12 @@ import { image } from '../lib/images.ts';
     .block__image { height: 450px; }
   }
   @media (max-width: 767px) {
-    .blocks { flex-direction: column; gap: 55px; padding-inline: 11px; }
+    .blocks { grid-template-columns: 1fr; gap: 55px; padding-inline: 11px; }
+    @supports (grid-template-rows: subgrid) {
+      /* stacked: each block owns its own rows again */
+      .blocks { grid-template-rows: none; }
+      .block { grid-row: auto; grid-template-rows: none; display: flex; }
+    }
     .block__heading { line-height: 20px; }   /* live drops the leading on mobile */
   }
 </style>
