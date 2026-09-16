@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// /for-companies/ content. Edit the strings here to change the page.
+// /our-services/ content. Edit the strings here to change the page.
 //   eyebrow / intro  – the lilac band at the top
 //   blocks           – each is a heading, an image (a filename in
 //                      src/assets/images/), and body copy split into a
@@ -15,8 +15,8 @@ export interface ContentBlock {
   hidden: string | string[];
 }
 
-export const forCompanies = {
-  eyebrow: "For companies",
+export const ourServices = {
+  eyebrow: "Our services",
   intro: "Maxwell Advisory supports companies at every stage of their growth journey, helping founders and management teams transition from early-stage funding to infrastructure-scale investment. Our expertise in the energy transition and industrial sectors ensures our clients can access the capital and strategic guidance they need to scale successfully.",
   blocks: [
     {

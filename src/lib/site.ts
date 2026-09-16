@@ -18,8 +18,7 @@ export interface NavLink {
 /** The overlay menu's links. The footer keeps its own grouped list. */
 export const primaryNav: NavLink[] = [
   { label: 'Home', href: '/' },
-  { label: 'For Companies', href: '/for-companies/' },
-  { label: 'For Investors', href: '/for-investors/' },
+  { label: 'Our Services', href: '/our-services/' },
   { label: 'Team', href: '/team/' },
   { label: 'Track Record', href: '/track-record/' },
   { label: 'Contact', href: '/contact/' },

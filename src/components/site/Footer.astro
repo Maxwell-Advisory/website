@@ -11,15 +11,14 @@ const maxwellImg = image('ASSETS-MAXWELLadvisory-05-1-1024x157.png');
 const advisoryImg = image('advisory-1024x157.png');
 const mark = image('ASSETS-MAXWELLadvisory-26-1.png');
 
-// Live's footer menu is FOUR GROUPS of (up to) two links that wrap, not a
-// single column-major grid. That distinction only shows at mobile, where live
-// puts two groups per row — col 1 reads For Companies / For Investors /
-// Contact / Legal Notice, col 2 Team / Track Record / Privacy Policy.
+// Groups of two links, not a single column-major grid. That distinction shows
+// at mobile, where two groups sit per row. Live carried four groups of 2/2/2/1,
+// the last a lone Privacy Policy; retiring For Investors leaves six links,
+// which divide evenly into three groups of two and lose the orphan.
 const footerGroups = [
-  [{ label: 'For Companies', href: '/for-companies/' }, { label: 'For Investors', href: '/for-investors/' }],
-  [{ label: 'Team', href: '/team/' }, { label: 'Track Record', href: '/track-record/' }],
-  [{ label: 'Contact', href: '/contact/' }, { label: 'Legal Notice', href: '/legal-notice/' }],
-  [{ label: 'Privacy Policy', href: '/privacy-policy/' }],
+  [{ label: 'Our Services', href: '/our-services/' }, { label: 'Team', href: '/team/' }],
+  [{ label: 'Track Record', href: '/track-record/' }, { label: 'Contact', href: '/contact/' }],
+  [{ label: 'Legal Notice', href: '/legal-notice/' }, { label: 'Privacy Policy', href: '/privacy-policy/' }],
 ];
 ---
 <footer class="site-footer">
@@ -76,7 +75,7 @@ const footerGroups = [
     justify-content: space-between;
     gap: var(--space-lg);
   }
-  /* Four groups spread across the full width; they wrap two-per-row on mobile.
+  /* Three groups spread across the full width; they wrap two-per-row on mobile.
      No row gap — live's rows are exactly one 37.5px leading tall. */
   .site-footer__nav {
     flex: 1;
@@ -108,8 +107,11 @@ const footerGroups = [
     .site-footer__totop { display: none; }
   }
   .site-footer__mark {
-    width: 40px;
-    height: 40px;
+    /* sized to the height of the two link rows beside it (2 x --lh-footer-link),
+       so the mark reads as part of that block rather than a detail floating
+       next to it */
+    width: calc(2 * var(--lh-footer-link));
+    height: calc(2 * var(--lh-footer-link));
     filter: brightness(1.78) contrast(0);   /* light-grey mark, like live */
     /* live spins the footer mark continuously at 3s — faster than the
        header's 10s spin */

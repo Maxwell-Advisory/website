@@ -105,7 +105,6 @@
   --stats-gap: clamp(66px, 41.55px + 6.519vw, 125px);       /* eyebrow -> counters   live 66 / 75 / 125 */
   --footer-pad: clamp(25px, 54.7px + -2.32vw, 46px);       /* footer top row        live 46 / 25       */
   --btn-pad-ghost: clamp(90px, 65.14px + 6.63vw, 150px);   /* hero pill padding     live 90 / 150      */
-  --btn-pad-solid: clamp(97px, 75.04px + 5.856vw, 150px);   /* live 97 / 150                            */
 
   --lh-heading: 1.2;
   --lh-body: 1.5;

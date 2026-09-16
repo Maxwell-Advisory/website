@@ -1,23 +1,24 @@
 ---
-// For Companies. Live: lilac intro band, then blocks (heading, image,
+// Our Services (live called this For Companies, at /for-companies/; both old
+// paths now redirect here). Lilac intro band, then blocks (heading, image,
 // read-more copy) side by side down to 768 and stacked only on mobile, then
 // the oversized "get in touch" CTA. Live had two blocks; we now carry three
 // (Development Support / Fundraising & M&A / Debt Advisory) from
-// src/data/forCompanies.ts.
+// src/data/ourServices.ts.
 import Site from '../layouts/Site.astro';
 import PageIntro from '../components/site/PageIntro.astro';
 import ReadMore from '../components/site/ReadMore.astro';
 import CtaBanner from '../components/site/CtaBanner.astro';
 import { Image } from 'astro:assets';
-import { forCompanies } from '../data/forCompanies.ts';
+import { ourServices } from '../data/ourServices.ts';
 import { image } from '../lib/images.ts';
 ---
-<Site title="For Companies">
-  <h1 class="visually-hidden">For Companies</h1>
-  <PageIntro eyebrow={forCompanies.eyebrow} intro={forCompanies.intro} />
+<Site title="Our Services">
+  <h1 class="visually-hidden">Our Services</h1>
+  <PageIntro eyebrow={ourServices.eyebrow} intro={ourServices.intro} />
 
   <section class="blocks">
-    {forCompanies.blocks.map((b) => (
+    {ourServices.blocks.map((b) => (
       <article class="block">
         <h2 class="block__heading">{b.heading}</h2>
         <Image class="block__image" src={image(b.image)} widths={[604, 1208]} sizes="(max-width: 1024px) 96vw, 604px" alt={b.alt} loading="lazy" />
