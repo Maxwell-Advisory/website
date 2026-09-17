@@ -1,6 +1,7 @@
 ---
 // Homepage hero: full-height turbine image, centred uppercase headline, tagline,
-// and the two pill CTAs ("For Companies" / "For Investors") — matching the live
+// and a single pill CTA ("Our Services"; live carried two, For Companies and
+// For Investors, before the investor page was retired) — matching the live
 // site. No dark overlay. On load, the circular "Pictogramme" logo plays a
 // one-shot intro (scales up, spins 520°, shrinks + fades away).
 import { Image, getImage } from 'astro:assets';
@@ -24,8 +25,7 @@ const motif = image('Pictogramme.png');
       <h1 class="hero__title">{title}</h1>
       <p class="hero__tagline">{tagline}</p>
       <div class="hero__actions">
-        <a class="hero__btn hero__btn--ghost shine" href={url('/for-companies/')}>For Companies</a>
-        <a class="hero__btn hero__btn--solid shine" href={url('/for-investors/')}>For Investors</a>
+        <a class="hero__btn hero__btn--ghost shine" href={url('/our-services/')}>Our Services</a>
       </div>
     </div>
   </div>
@@ -173,12 +173,6 @@ const motif = image('Pictogramme.png');
   .hero__btn--ghost:focus-visible {
     color: var(--c-white);
     border-color: var(--c-white);
-  }
-  .hero__btn--solid {
-    padding: 10px var(--btn-pad-solid);
-    border-color: var(--c-white);
-    color: var(--c-white);
-    background: #FFFFFF54;                  /* white @ 33%, as live */
   }
 
   /* live stacks them only at <=767, centred and shrink-to-fit (measured 285px

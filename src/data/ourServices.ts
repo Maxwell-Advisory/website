@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// /for-companies/ content. Edit the strings here to change the page.
+// /our-services/ content. Edit the strings here to change the page.
 //   eyebrow / intro  – the lilac band at the top
 //   blocks           – each is a heading, an image (a filename in
 //                      src/assets/images/), and body copy split into a
@@ -15,9 +15,9 @@ export interface ContentBlock {
   hidden: string | string[];
 }
 
-export const forCompanies = {
-  eyebrow: "For companies",
-  intro: "Maxwell Advisory supports companies at every stage of their growth journey, helping founders and management teams transition from early-stage funding to infrastructure-scale investment. Our expertise in the energy transition and industrial sectors ensures our clients can access the capital and strategic guidance they need to scale successfully.",
+export const ourServices = {
+  eyebrow: "Our services",
+  intro: "We take energy transition and infrastructure businesses across the gap between early-stage funding and infrastructure-scale capital. That means preparing projects for investment, raising the equity and the debt needed to build them, and running the sale when the time comes.",
   blocks: [
     {
       heading: 'Development Support',
@@ -33,10 +33,10 @@ export const forCompanies = {
       heading: 'Capital Raising and M&A',
       image: 'usgs-1_IV9CRLnd8-unsplash.jpg',
       alt: '',
-      visible: "We run capital raisings and M&A processes end to end, taking them to our network of more than 100 specialist investors. Your terms come out of bespoke marketing and competition rather than a single conversation.",
+      visible: "We run capital raisings and M&A processes end to end, taking them to our network of more than 100 specialist investors. Your terms come out of bespoke marketing and competition based on direct knowledge of what investors want to invest in.",
       hidden: [
         "A typical mandate runs from pre-transaction preparation and strategic planning through investor marketing, due diligence, documentation and negotiation, to close. We prepare the materials, build the model, shortlist and approach the investors, and stay on your side of the table through negotiation – on capital raises and on buy-side and sell-side M&A alike.",
-        "Our network covers European mid-market infrastructure funds, global climate private equity, family offices, and corporate investors active in the energy transition. We know which of them are deploying right now, what they are looking for, and which conversations are worth your time. Each process we run is tailored to the needs and profile of your company, rather than simply shared with a list of 200 investors.",
+        "Our network covers European mid-market infrastructure funds, global climate private equity, family offices, and corporate investors active in the energy transition. We know which of them are deploying right now, what they are looking for, and which conversations are worth your time. Each process we run is tailored to the needs and profile of your company, rather than simply shared with a generic list of investors.",
       ],
     },
     {

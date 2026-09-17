@@ -1,20 +1,26 @@
 ---
-// Lilac intro band used at the top of the "for ..." pages.
+// Lilac intro band at the top of /our-services/.
 // Live @1280: 1265x527, padding 100px 0 110px, background #e0e5fc, column with
 // a 20px gap; eyebrow 25px/37.5 centred #787575; intro paragraph on the shared
 // --fs-intro tier (36/32/24) in the same grey.
+import ScrollDarken from './ScrollDarken.astro';
 interface Props { eyebrow: string; intro: string; }
 const { eyebrow, intro } = Astro.props;
 ---
 <section class="page-intro">
   <p class="page-intro__eyebrow">{eyebrow}</p>
-  <p class="page-intro__text">{intro}</p>
+  {/* The intro lights character by character as the band comes into view.
+      Sitting at the top of the page, that is on load. */}
+  <ScrollDarken text={intro} />
 </section>
 
 <style>
   .page-intro {
     background: var(--c-lilac);
     color: var(--c-ink-muted);
+    /* The cascade lands on the band's own ink rather than live's #222222, so
+       the paragraph rests where it always did and only the arrival is new. */
+    --darken-to: var(--c-ink-muted);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,7 +34,7 @@ const { eyebrow, intro } = Astro.props;
     width: 494px;                   /* live's eyebrow widget width */
     max-width: 100%;
   }
-  .page-intro__text {
+  .page-intro :global(.scroll-darken) {
     font-size: var(--fs-intro);     /* 36 / 32 / 24 */
     line-height: var(--lh-intro);
     max-width: 1100px;   /* live declares 1100px, not the 1140px container */

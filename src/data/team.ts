@@ -23,7 +23,11 @@ export const team: TeamMember[] = [
   {
     name: 'Adrien d’Ormesson',
     role: 'Co-Founder and Director',
-    bio: 'Adrien brings extensive investment and transaction experience across the energy transition and industrial decarbonisation sectors. Before co-founding Maxwell, he was a Senior Investment Manager at Foresight Group, where he helped expand the firm’s infrastructure mandate into renewables, carbon management, and industrial efficiency. He began his career in investment banking in London before moving into real assets, where he developed a focus on complex, high-impact projects.',
+    bio: [
+      'Adrien brings extensive investment and transaction experience across the energy transition and industrial decarbonisation sectors.',
+      'Before co-founding Maxwell, he was a Senior Investment Manager at Foresight Group, where he helped expand the firm’s infrastructure mandate into renewables, carbon management, and industrial efficiency.',
+      'He began his career in investment banking in London before moving into real assets, where he developed a focus on complex, high-impact projects.',
+    ],
     image: 'Photo-couleur-Adrien.jpeg',
   },
   {
