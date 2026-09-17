@@ -16,11 +16,15 @@ const chars = [...text];
 </p>
 
 <style>
+  /* Live's own pair of colours are the defaults; a host band that rests on a
+     different ink can set --darken-to (and --darken-from) on any ancestor. */
   .scroll-darken :global(span) {
-    color: var(--c-hairline);        /* live: #c7c7c7 */
+    color: var(--darken-from, var(--c-hairline));   /* live: #c7c7c7 */
     transition: color 0.55s ease;
   }
-  .scroll-darken :global(span.is-lit) { color: var(--c-near-black); }  /* #222222 */
+  .scroll-darken :global(span.is-lit) {
+    color: var(--darken-to, var(--c-near-black));   /* live: #222222 */
+  }
 </style>
 
 <script>

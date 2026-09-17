@@ -17,7 +17,7 @@ export interface ContentBlock {
 
 export const ourServices = {
   eyebrow: "Our services",
-  intro: "Maxwell Advisory supports companies at every stage of their growth journey, helping founders and management teams transition from early-stage funding to infrastructure-scale investment. Our expertise in the energy transition and industrial sectors ensures our clients can access the capital and strategic guidance they need to scale successfully.",
+  intro: "We take energy transition and infrastructure businesses across the gap between early-stage funding and infrastructure-scale capital. That means preparing projects for investment, raising the equity and the debt behind them, and running the sale when the time comes.",
   blocks: [
     {
       heading: 'Development Support',
