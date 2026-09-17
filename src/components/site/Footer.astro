@@ -75,14 +75,16 @@ const footerGroups = [
     justify-content: space-between;
     gap: var(--space-lg);
   }
-  /* Three groups spread across the full width; they wrap two-per-row on mobile.
-     No row gap — live's rows are exactly one 37.5px leading tall. */
+  /* Three EVEN columns filling the space left of the mark, each group aligned
+     to its own column's left edge. Live spread content-width groups with
+     space-between, which left the columns starting at uneven intervals
+     because the link labels are different lengths. */
   .site-footer__nav {
     flex: 1;
-    display: flex;
-    flex-wrap: nowrap;   /* live keeps one row down to 768 */
-    justify-content: space-between;
-    gap: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: start;
+    gap: 0 20px;   /* no row gap — live's rows are one 37.5px leading tall */
   }
   .site-footer__nav ul { margin: 0; }
   .site-footer__nav a {
@@ -138,8 +140,7 @@ const footerGroups = [
   /* Live keeps all four groups in one row down to 768 (measured at
      x 25/209/371/525); on mobile they wrap to two per row. */
   @media (max-width: 767px) {
-    .site-footer__nav { flex-wrap: wrap; gap: 0; }
-    .site-footer__nav ul { flex: 0 0 50%; }
+    .site-footer__nav { grid-template-columns: repeat(2, 1fr); gap: 0; }
   }
 
   /* live: 30px below the menu, and a 20px gap BETWEEN the two wordmark lines
