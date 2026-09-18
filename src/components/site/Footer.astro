@@ -140,7 +140,11 @@ const footerGroups = [
   /* Live keeps all four groups in one row down to 768 (measured at
      x 25/209/371/525); on mobile they wrap to two per row. */
   @media (max-width: 767px) {
-    .site-footer__nav { grid-template-columns: repeat(2, 1fr); gap: 0; }
+    /* One group per row, and each group's two links side by side, so the pairs
+       that read DOWN the desktop columns read ACROSS on a phone: three rows of
+       two rather than two rows of two followed by two singles. */
+    .site-footer__nav { grid-template-columns: 1fr; gap: 0; }
+    .site-footer__nav ul { display: grid; grid-template-columns: repeat(2, 1fr); column-gap: 20px; }
   }
 
   /* live: 30px below the menu, and a 20px gap BETWEEN the two wordmark lines
