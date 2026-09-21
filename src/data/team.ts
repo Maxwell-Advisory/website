@@ -28,7 +28,7 @@ export const team: TeamMember[] = [
       'Before co-founding Maxwell, he was a Senior Investment Manager at Foresight Group, where he helped expand the firm’s infrastructure mandate into renewables, carbon management, and industrial efficiency.',
       'He began his career in investment banking in London before moving into real assets, where he developed a focus on complex, high-impact projects.',
     ],
-    image: 'Photo-couleur-Adrien.jpeg',
+    image: 'headshot-Adrien.jpg',
   },
   {
     name: 'Joe Davis',
@@ -38,11 +38,12 @@ export const team: TeamMember[] = [
       'Before founding Maxwell, he held senior roles at Foresight Group and the Pensions Infrastructure Platform, leading investments across energy generation, energy storage and flexibility, transport and social infrastructure sectors.',
       'His blend of advisory and buy-side experience has shaped a pragmatic and hands-on investment approach focused on capital-intensive climate businesses.',
     ],
-    image: 'Photo-couleur-Joe.jpeg',
+    image: 'headshot-Joe.jpg',
   },
   {
     name: 'Grégoire Schimpff',
     role: 'Head of Debt Advisory',
     bio: 'PLACEHOLDER — biography to follow. Replace this paragraph, and add a portrait to src/assets/images/ and name it in the `image` field, when they are ready.',
+    image: 'headshot-Gregoire.jpg',
   },
 ];
