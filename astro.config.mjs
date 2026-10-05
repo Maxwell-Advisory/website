@@ -1,16 +1,16 @@
 import { defineConfig } from 'astro/config';
 
-const base = process.env.BASE_PATH || '/website';
+const base = process.env.BASE_PATH || '/';
 /** Astro prepends `base` to a redirect's SOURCE but not to its DESTINATION,
  *  so the target has to carry it or the redirect lands on a 404. */
 const to = (path) => `${base.replace(/\/$/, '')}${path}`;
 
-// On GitHub Pages the site lives at https://<user>.github.io/<repo>/, so `base`
-// is "/<repo>". When it moves to maxwelladvisory.eu (a root domain), set `base`
-// to "/" and `site` to the real domain — or override both at build time with
-// the BASE_PATH and SITE_URL environment variables.
+// The site is served from the root of maxwelladvisory.eu (GitHub Pages with a
+// custom domain), so `base` is "/". To build for a sub-path instead (e.g. the
+// project-pages URL https://<org>.github.io/<repo>/), override both at build
+// time with the BASE_PATH and SITE_URL environment variables.
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://maxwell-advisory.github.io',
+  site: process.env.SITE_URL || 'https://maxwelladvisory.eu',
   base,
   trailingSlash: 'always',
   build: { format: 'directory' },

@@ -19,7 +19,7 @@ run it; this file is the working context that isn't obvious from the code.
 
 - **GitHub:** `Maxwell-Advisory/website` (org: Maxwell-Advisory; Joe = `Joe16534187`).
 - **Hosting:** GitHub Pages via Actions; Pages Source = "GitHub Actions".
-- **Live:** https://maxwell-advisory.github.io/website/ — base path `/website`.
+- **Live:** https://maxwelladvisory.eu/ (custom domain on GitHub Pages), base path `/`.
 - **Branch:** work is on `rebuild-clean`. `main` still holds the old chunk-based
   build; `rebuild-clean` replaces it wholesale.
 

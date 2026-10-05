@@ -4,13 +4,13 @@ A static [Astro](https://astro.build) site, hand-authored from scratch. No
 WordPress, no page builder, no database, no build-time content fetching — the
 whole site is the source in `src/`.
 
-**Live:** https://maxwell-advisory.github.io/website/
+**Live:** https://maxwelladvisory.eu/
 
 ## Running it
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321/website/
+npm run dev      # http://localhost:4321/
 npm run build    # static output into dist/
 npm run preview  # serve the built dist/
 ```
@@ -77,9 +77,14 @@ there and it applies everywhere.
 GitHub Actions builds and publishes to GitHub Pages on every push to `main`
 (`.github/workflows/deploy.yml`). Pages "Source" is set to **GitHub Actions**.
 
-`astro.config.mjs` sets `base: '/website'` for the project-pages URL. When the
-site moves to the root domain, set `base` to `/` and `site` to the real domain —
-or override them at build time with `BASE_PATH` and `SITE_URL`.
+The custom domain `maxwelladvisory.eu` is set in the repo's Pages settings and
+verified at organisation level (keep the `_github-pages-challenge-Maxwell-Advisory`
+TXT record in DNS). DNS is managed in the o2switch cPanel Zone Editor: four apex
+`A` records to GitHub Pages and `www` as a `CNAME` to `maxwell-advisory.github.io`.
+
+`astro.config.mjs` sets `base: '/'` and `site: 'https://maxwelladvisory.eu'`.
+To build for a sub-path instead, override them at build time with `BASE_PATH`
+and `SITE_URL`.
 
 ## Windows note
 

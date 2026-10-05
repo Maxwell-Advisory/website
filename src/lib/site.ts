@@ -3,7 +3,7 @@
 // Change the nav here and Header + Footer update together.
 // ---------------------------------------------------------------------------
 
-/** Prefix an internal path with the configured base (e.g. "/website"). */
+/** Prefix an internal path with the configured base ("/" in production). */
 export function url(path = '/'): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   const clean = path.startsWith('/') ? path : `/${path}`;
