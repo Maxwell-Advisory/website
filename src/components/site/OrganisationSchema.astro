@@ -1,0 +1,39 @@
+---
+// Structured data for the homepage: who the firm is (Organization) and what
+// the site is called (WebSite). It helps search engines show "Maxwell Advisory"
+// as the site name and tell the firm apart from other organisations called
+// Maxwell. Details come from siteMeta in src/lib/site.ts and src/data/team.ts.
+import { siteMeta } from '../../lib/site.ts';
+import { team } from '../../data/team.ts';
+
+const home = new URL(import.meta.env.BASE_URL, Astro.site).href;
+const abs = (path: string) => new URL(path.replace(/^\//, ''), home).href;
+
+const organisation = {
+  '@type': 'Organization',
+  '@id': `${home}#organization`,
+  name: siteMeta.name,
+  url: home,
+  logo: abs(siteMeta.logo),
+  image: abs(siteMeta.shareImage.path),
+  description: siteMeta.description,
+  email: siteMeta.email,
+  address: { '@type': 'PostalAddress', ...siteMeta.address },
+  founder: team
+    .filter((m) => /founder/i.test(m.role))
+    .map((m) => ({ '@type': 'Person', name: m.name, jobTitle: m.role })),
+  ...(siteMeta.sameAs.length ? { sameAs: siteMeta.sameAs } : {}),
+};
+
+const website = {
+  '@type': 'WebSite',
+  '@id': `${home}#website`,
+  name: siteMeta.name,
+  url: home,
+  inLanguage: 'en-GB',
+  publisher: { '@id': organisation['@id'] },
+};
+
+const schema = { '@context': 'https://schema.org', '@graph': [organisation, website] };
+---
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

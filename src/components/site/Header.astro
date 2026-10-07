@@ -7,12 +7,12 @@ import { Image } from 'astro:assets';
 import { primaryNav, url, siteMeta } from '../../lib/site.ts';
 import { image } from '../../lib/images.ts';
 
-interface Props { overlay?: boolean; onDark?: boolean; lightMark?: boolean; }
-const { overlay = false, onDark = false, lightMark = false } = Astro.props;
+interface Props { overlay?: boolean; onDark?: boolean; lightMark?: boolean; darkToggle?: boolean; }
+const { overlay = false, onDark = false, lightMark = false, darkToggle = false } = Astro.props;
 const logo = image('ASSETS-MAXWELLadvisory-40-1-1024x78.png');
 const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
 ---
-<header class:list={["site-header", overlay && "site-header--overlay", onDark && "site-header--on-dark", lightMark && "site-header--light-mark"]} id="top">
+<header class:list={["site-header", overlay && "site-header--overlay", onDark && "site-header--on-dark", lightMark && "site-header--light-mark", darkToggle && "site-header--dark-toggle"]} id="top">
   <div class="site-header__bar container">
     <a class="site-header__logo" href={url('/')} aria-label={`${siteMeta.name} — home`}>
       <Image src={logo} alt={siteMeta.name} />
@@ -145,6 +145,15 @@ const icon = image('ASSETS-MAXWELLadvisory-26-1.png');
     /* live's mobile header measures 36px at 375 == a 28px mark + 2vw padding */
     .site-header__toggle { min-height: 28px; }
     .site-header__toggle-burger { display: block; mix-blend-mode: difference; color: var(--c-white); }
+    /* The difference blend above never reaches the page: the header is
+       positioned with a z-index, so it is its own stacking context and the
+       burger blends against the header's transparent box, staying white. On a
+       white first band (team) it disappears, so those pages opt in to a grey
+       burger that sits with the darkened wordmark. */
+    .site-header--dark-toggle .site-header__toggle-burger {
+      mix-blend-mode: normal;
+      color: var(--c-ink-muted);
+    }
   }
 
   /* --- Overlay menu (port of live popup id 50) --------------------------- */

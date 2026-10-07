@@ -15,17 +15,19 @@ npm run build    # static output into dist/
 npm run preview  # serve the built dist/
 ```
 
-Astro is the only dependency.
+Astro is the only dependency (its bundled image library, sharp, also generates
+the icons and share image).
 
 ## Layout
 
 ```
 src/
-  pages/        one file per route (8 routes)
+  pages/        one file per page (7 pages plus 404.astro; two legacy
+                redirects are set in astro.config.mjs)
   layouts/      Site.astro — the document shell, header and footer
   components/
     site/       shared: Header, Footer, PageIntro, PageTitle, Prose,
-                CtaBanner, ReadMore, ScrollDarken, TypeReveal
+                CtaBanner, ReadMore, ScrollDarken
     home/       homepage sections: Hero, IntroStatement, ServiceAccordion,
                 SectorStrip, StatCounters
   data/         the editable content (see below)
@@ -52,8 +54,7 @@ follows.
 | `src/data/stats.ts` | homepage "Our data" counters |
 | `src/data/team.ts` | the /team carousel |
 | `src/data/trackRecord.ts` | the /track-record grid and its panels |
-| `src/data/forCompanies.ts` | /for-companies copy |
-| `src/data/forInvestors.ts` | /for-investors copy |
+| `src/data/ourServices.ts` | /our-services copy (the old /for-companies and /for-investors paths redirect here) |
 
 One-off copy lives directly in the relevant `src/pages/*.astro`. The two legal
 pages read their body from `src/legal/*.html`.
@@ -64,6 +65,35 @@ Put the file in `src/assets/images/` and refer to it **by filename** from a data
 file or a page. `src/lib/images.ts` maps the name to the processed asset and
 **fails the build** if it is missing, so a typo never ships as a 404. Astro
 generates the responsive WebP variants.
+
+### Search and sharing
+
+- **Page titles and descriptions:** each page passes `title` to `Site.astro`,
+  and the document title becomes "Title | Maxwell Advisory" (the homepage sets
+  its full title with `documentTitle`). Meta descriptions are listed by path in
+  `pageDescriptions` in `src/lib/site.ts`; keep each under about 155
+  characters.
+- **Organisation details** (address, email, logo, official profiles) live in
+  `siteMeta` in `src/lib/site.ts` and feed the homepage structured data
+  (`src/components/site/OrganisationSchema.astro`). Official profiles, such as
+  the LinkedIn company page, are listed in `sameAs` there.
+- **Sitemap:** `src/pages/sitemap.xml.ts` builds `/sitemap.xml` from the page
+  files, so new pages are included automatically. It is referenced from
+  `public/robots.txt`.
+- **Icons and share image** are generated at build time from the logo and hero
+  photo in `src/assets/images/` (`src/lib/brandImages.ts`, served by the
+  matching endpoints in `src/pages/`): `favicon.ico`, `favicon-32.png`,
+  `apple-touch-icon.png`, `logo.png` (structured data) and `og-image.jpg`
+  (1200x630, used for link previews on LinkedIn and elsewhere). Change the
+  source assets and they update on the next build.
+- **404:** `src/pages/404.astro` builds `404.html`, which GitHub Pages serves
+  for any missing path. It is marked `noindex`.
+
+### Header colours
+
+Per-page header colours (white over the hero photo, a pale wordmark on dark
+bands, a grey mobile burger on white bands) are set with props on `Site.astro`.
+`CLAUDE.md` lists them and which pages use each.
 
 ### Design tokens
 

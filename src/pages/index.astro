@@ -5,17 +5,18 @@ import IntroStatement from '../components/home/IntroStatement.astro';
 import ServiceAccordion from '../components/home/ServiceAccordion.astro';
 import SectorStrip from '../components/home/SectorStrip.astro';
 import StatCounters from '../components/home/StatCounters.astro';
+import OrganisationSchema from '../components/site/OrganisationSchema.astro';
 import { siteMeta } from '../lib/site.ts';
 
 const introText =
   'Maxwell Advisory helps capex-intensive climate businesses align projects with infrastructure investor requirements and run capital raises to secure long-term investment';
 ---
 <Site
-  title="Bridging climate companies and infrastructure investors"
-  description={siteMeta.tagline}
+  documentTitle="Maxwell Advisory | Energy transition capital advisory"
   overlayHeader
   headerOnDark
 >
+  <OrganisationSchema slot="head" />
   <Hero
     title="Bridging climate companies and infrastructure investors"
     tagline={siteMeta.tagline}

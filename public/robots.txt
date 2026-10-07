@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://maxwelladvisory.eu/sitemap.xml

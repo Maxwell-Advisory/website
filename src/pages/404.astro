@@ -1,0 +1,42 @@
+---
+// Not-found page. GitHub Pages serves dist/404.html for any path that does not
+// exist, with a 404 status. Kept out of search results and the sitemap.
+import Site from '../layouts/Site.astro';
+import PageTitle from '../components/site/PageTitle.astro';
+import { primaryNav, url } from '../lib/site.ts';
+---
+<Site title="Page not found" description="This page does not exist." noindex overlayHeader headerDarkToggle>
+  <PageTitle title="Page not found" />
+  <section class="not-found">
+    <p>The page you were looking for has moved or no longer exists. These pages may help:</p>
+    <ul role="list">
+      {primaryNav.map((link) => (
+        <li><a href={url(link.href)}>{link.label}</a></li>
+      ))}
+    </ul>
+  </section>
+</Site>
+
+<style>
+  .not-found {
+    max-width: 1100px;
+    margin-inline: auto;
+    padding: 70px var(--container-pad) 120px;
+    text-align: center;
+    color: var(--c-ink);
+  }
+  .not-found ul {
+    margin-block-start: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 40px;
+  }
+  .not-found a {
+    color: var(--c-ink-muted);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .not-found a:hover,
+  .not-found a:focus-visible { color: var(--c-ink); }
+</style>

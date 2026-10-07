@@ -6,15 +6,20 @@
 import '../styles/global.css';
 import Header from '../components/site/Header.astro';
 import Footer from '../components/site/Footer.astro';
-import { siteMeta } from '../lib/site.ts';
+import { siteMeta, pageDescriptions } from '../lib/site.ts';
 // Vite resolves these to fingerprinted, base-correct URLs — used for preloads.
 import bookFont from '../assets/fonts/ppneuemontreal-book.woff';
 import mediumFont from '../assets/fonts/ppneuemontreal-medium.woff';
 
 interface Props {
+  /** Page name; the document title becomes "<title> | Maxwell Advisory". */
   title?: string;
+  /** Replaces the whole document title (the homepage uses this). */
+  documentTitle?: string;
   description?: string;
   lang?: string;
+  /** Keep the page out of search results and the sitemap (e.g. the 404). */
+  noindex?: boolean;
   /** Class on <body>, e.g. a per-page hook for backgrounds. */
   bodyClass?: string;
   /** Header sits ON the first section rather than above it — true for the
@@ -26,21 +31,34 @@ interface Props {
   /** Wordmark rendered pale instead of dark — for pages whose first band is
       dark (track-record's slate, contact's photo), as live does. */
   headerLightMark?: boolean;
+  /** Mobile burger rendered grey instead of white, for pages whose first band
+      is white (team), where a white burger would be invisible. */
+  headerDarkToggle?: boolean;
 }
 
 const {
   title,
-  description = siteMeta.tagline,
-  lang = 'en',
+  documentTitle,
+  description: descriptionProp,
+  lang = 'en-GB',
+  noindex = false,
   bodyClass,
   // Live pulls the first section up under its header on every page, so the
   // section colour runs to the very top. Overlay is therefore the default.
   overlayHeader = true,
   headerOnDark = false,
   headerLightMark = false,
+  headerDarkToggle = false,
 } = Astro.props;
 
-const fullTitle = title ? `${title} — ${siteMeta.name}` : siteMeta.name;
+// Page path without the base, e.g. "/team/", to look up its description.
+const pagePath = '/' + Astro.url.pathname.slice(import.meta.env.BASE_URL.replace(/\/$/, '').length).replace(/^\//, '');
+const description = descriptionProp ?? pageDescriptions[pagePath] ?? siteMeta.description;
+const fullTitle = documentTitle ?? (title ? `${title} | ${siteMeta.name}` : siteMeta.name);
+const canonical = Astro.url.href;
+// Absolute URLs: social platforms and search engines do not resolve relative ones.
+const abs = (path: string) => new URL(path.replace(/^\//, ''), new URL(import.meta.env.BASE_URL, Astro.site)).href;
+const shareImage = abs(siteMeta.shareImage.path);
 
 // Preloaded so the brand font is used on first paint (no cold-cache FOUT).
 const fontPreloads = [bookFont, mediumFont];
@@ -52,18 +70,31 @@ const fontPreloads = [bookFont, mediumFont];
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={Astro.url.href} />
+    {noindex
+      ? <meta name="robots" content="noindex" />
+      : <link rel="canonical" href={canonical} />}
+    <link rel="icon" href={abs('/favicon.ico')} sizes="48x48" />
+    <link rel="icon" href={abs('/favicon-32.png')} type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href={abs('/apple-touch-icon.png')} />
     {fontPreloads.map((f) => (
       <link rel="preload" as="font" type="font/woff" crossorigin href={f} />
     ))}
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteMeta.name} />
+    <meta property="og:locale" content={siteMeta.locale} />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:width" content={String(siteMeta.shareImage.width)} />
+    <meta property="og:image:height" content={String(siteMeta.shareImage.height)} />
+    <meta property="og:image:alt" content={siteMeta.name} />
+    <meta name="twitter:card" content="summary_large_image" />
     <slot name="head" />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
-    <Header overlay={overlayHeader} onDark={headerOnDark} lightMark={headerLightMark} />
+    <Header overlay={overlayHeader} onDark={headerOnDark} lightMark={headerLightMark} darkToggle={headerDarkToggle} />
     <main id="main" class:list={['site-main', overlayHeader && 'site-main--pulled']}>
       <slot />
     </main>

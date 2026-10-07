@@ -23,8 +23,23 @@ export default defineConfig({
   // both carry inbound links and search ranking. The pages are now one page at
   // /our-services/, so keep the old paths alive rather than 404ing them.
   // On a static build Astro emits a small meta-refresh page at each path.
+  //
+  // The other old WordPress pages were thin stubs that were not ported. They
+  // were indexable, so send them to the nearest page that now covers them: the
+  // sector pages to the homepage (which carries the sector strip), the
+  // individual profiles to /team/, and WordPress's duplicate /homepage/ to /.
   redirects: {
     '/for-companies/': to('/our-services/'),
     '/for-investors/': to('/our-services/'),
+    '/homepage/': to('/'),
+    '/sectors/circular-economy/': to('/'),
+    '/sectors/clean-transport/': to('/'),
+    '/sectors/green-gases/': to('/'),
+    '/sectors/grids/': to('/'),
+    '/sectors/industrial-decarbonisation/': to('/'),
+    '/sectors/renewables/': to('/'),
+    '/sectors/storage/': to('/'),
+    '/team/adrien-dormesson/': to('/team/'),
+    '/team/joe-davis/': to('/team/'),
   },
 });
