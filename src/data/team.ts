@@ -9,6 +9,9 @@
 //   image – filename in src/assets/images/; omit it and the card renders a
 //           neutral placeholder block instead of a photograph (all three
 //           members currently have one)
+//   linkedin – full URL of the person's LinkedIn profile; omit it and the
+//           card simply shows no LinkedIn icon. Also listed in the homepage's
+//           structured data (src/components/site/OrganisationSchema.astro).
 // ---------------------------------------------------------------------------
 
 export interface TeamMember {
@@ -18,6 +21,8 @@ export interface TeamMember {
   bio: string | string[];
   /** filename in src/assets/images/. Omit to render a neutral placeholder. */
   image?: string;
+  /** full LinkedIn profile URL. Omit and no icon is shown. */
+  linkedin?: string;
 }
 
 export const team: TeamMember[] = [
@@ -30,6 +35,7 @@ export const team: TeamMember[] = [
       'He began his career in investment banking in London before moving into real assets, where he developed a focus on complex, high-impact projects.',
     ],
     image: 'headshot-Adrien.jpg',
+    linkedin: 'https://www.linkedin.com/in/adrien-d-ormesson-445b559a/',
   },
   {
     name: 'Joe Davis',
@@ -40,6 +46,7 @@ export const team: TeamMember[] = [
       'His blend of advisory and buy-side experience has shaped a pragmatic and hands-on investment approach focused on capital-intensive climate businesses.',
     ],
     image: 'headshot-Joe.jpg',
+    linkedin: 'https://www.linkedin.com/in/josephdavis2/',
   },
   {
     name: 'Grégoire Schimpff',
@@ -49,5 +56,6 @@ export const team: TeamMember[] = [
       'Before joining Maxwell, he held roles at Jefferies, Kepler Cheuvreux, HSBC and Société Générale where he developed a broad network of lenders and investors. His experience includes designing and implementing tailored capital structures and financing platforms, as well as structuring complex financing solutions to support capital-intensive businesses through growth and strategic development.',
     ],
     image: 'headshot-Gregoire.jpg',
+    linkedin: 'https://www.linkedin.com/in/gregoireschimpff/',
   },
 ];

@@ -9,6 +9,15 @@ import { team } from '../../data/team.ts';
 const home = new URL(import.meta.env.BASE_URL, Astro.site).href;
 const abs = (path: string) => new URL(path.replace(/^\//, ''), home).href;
 
+// A team member as a schema.org Person, with their LinkedIn profile if known.
+const person = (m: (typeof team)[number]) => ({
+  '@type': 'Person',
+  name: m.name,
+  jobTitle: m.role,
+  ...(m.linkedin ? { sameAs: [m.linkedin] } : {}),
+});
+const isFounder = (m: (typeof team)[number]) => /founder/i.test(m.role);
+
 const organisation = {
   '@type': 'Organization',
   '@id': `${home}#organization`,
@@ -19,9 +28,8 @@ const organisation = {
   description: siteMeta.description,
   email: siteMeta.email,
   address: { '@type': 'PostalAddress', ...siteMeta.address },
-  founder: team
-    .filter((m) => /founder/i.test(m.role))
-    .map((m) => ({ '@type': 'Person', name: m.name, jobTitle: m.role })),
+  founder: team.filter(isFounder).map(person),
+  employee: team.filter((m) => !isFounder(m)).map(person),
   ...(siteMeta.sameAs.length ? { sameAs: siteMeta.sameAs } : {}),
 };
 

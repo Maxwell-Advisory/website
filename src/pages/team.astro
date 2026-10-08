@@ -38,7 +38,24 @@ const motif = image('Calque_1.png');
               <div class="member__photo member__photo--placeholder" aria-hidden="true"></div>
             )}
             <h2 class="member__name">{m.name}</h2>
-            <p class="member__role">{m.role}</p>
+            <div class="member__meta">
+              <p class="member__role">{m.role}</p>
+              {m.linkedin && (
+                <a
+                  class="member__linkedin"
+                  href={m.linkedin}
+                  target="_blank"
+                  rel="noopener"
+                  aria-label={`${m.name} on LinkedIn (opens in a new tab)`}
+                  draggable="false"
+                >
+                  {/* LinkedIn "in" mark */}
+                  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/>
+                  </svg>
+                </a>
+              )}
+            </div>
             <div class="member__bio">
               {(Array.isArray(m.bio) ? m.bio : [m.bio]).map((para) => <p>{para}</p>)}
             </div>
@@ -139,7 +156,26 @@ const motif = image('Calque_1.png');
     line-height: 25px;
     color: var(--c-ink-muted);
   }
+  /* Role and LinkedIn icon share one line, the icon after the role. */
+  .member__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
   .member__role { font-size: 13px; line-height: 19.5px; color: var(--c-ink-muted); }
+  .member__linkedin {
+    display: inline-flex;
+    padding: 4px;          /* a larger target than the 18px mark itself */
+    margin: -4px;
+    color: var(--c-ink-muted);
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .member__linkedin:hover,
+  .member__linkedin:focus-visible { color: var(--c-near-black); }
+  .member__linkedin svg { display: block; }
+  @media (prefers-reduced-motion: reduce) {
+    .member__linkedin { transition: none; }
+  }
   /* live insets the bio from the photo edge (335 wide in a 384 slide) */
   /* the card's own 20px gap is right between photo, name and role, but too
      loose between paragraphs of the same biography */
@@ -170,7 +206,7 @@ const motif = image('Calque_1.png');
     .team__carousel { padding: 0; }
     .team__track { gap: 18px; --peek: 40px; }
     .member { flex-basis: calc(100% - 18px - var(--peek)); }
-    .member__name, .member__role, .member__bio { padding-inline: var(--container-pad); }
+    .member__name, .member__meta, .member__bio { padding-inline: var(--container-pad); }
   }
 </style>
 
@@ -207,6 +243,8 @@ const motif = image('Calque_1.png');
           const c = el.cloneNode(true) as HTMLElement;
           c.dataset.clone = '';
           c.setAttribute('aria-hidden', 'true');   // the same people, said once
+          // ...and tabbed through once: links inside a clone are not focusable
+          c.querySelectorAll('a').forEach((a) => a.setAttribute('tabindex', '-1'));
           track.appendChild(c);
         }
       }
@@ -231,24 +269,42 @@ const motif = image('Calque_1.png');
     const sync = () => run(onScreen && !document.hidden);
 
     // --- drag still works, and simply moves the same offset ---------------
-    let startX = 0, startOffset = 0, dragging = false;
+    // A press only becomes a drag once it has moved a few pixels. Until then it
+    // is a click, so the LinkedIn links work; capturing the pointer on press
+    // would send the click to the carousel instead of the link.
+    const DRAG_START = 6;        // px of travel before a press counts as a drag
+    let startX = 0, startOffset = 0, pressed = false, dragging = false, swallowClick = false;
     vp.addEventListener('pointerdown', (e) => {
-      dragging = true; held = true;
+      if (e.button !== 0) return;
+      pressed = true; held = true;   // hold still, so the target doesn't slide away
       startX = e.clientX; startOffset = offset;
-      vp.setPointerCapture(e.pointerId);
-      vp.classList.add('is-dragging');
     });
     vp.addEventListener('pointermove', (e) => {
-      if (dragging) offset = startOffset - (e.clientX - startX);
+      if (!pressed) return;
+      const dx = e.clientX - startX;
+      if (!dragging && Math.abs(dx) >= DRAG_START) {
+        dragging = true;
+        vp.setPointerCapture(e.pointerId);
+        vp.classList.add('is-dragging');
+      }
+      if (dragging) offset = startOffset - dx;
     });
     const end = () => {
-      if (!dragging) return;
-      dragging = false;
-      vp.classList.remove('is-dragging');
+      if (!pressed) return;
+      pressed = false;
+      if (dragging) {
+        dragging = false;
+        swallowClick = true;           // a drag that ends on a link is not a click
+        setTimeout(() => { swallowClick = false; }, 0);
+        vp.classList.remove('is-dragging');
+      }
       held = hovering;
     };
     vp.addEventListener('pointerup', end);
     vp.addEventListener('pointercancel', end);
+    vp.addEventListener('click', (e) => {
+      if (swallowClick) { e.preventDefault(); e.stopPropagation(); swallowClick = false; }
+    }, true);
     vp.addEventListener('dragstart', (e) => e.preventDefault());
 
     // Hold while a reader is actually reading. Hover-hold only where hovering
@@ -258,7 +314,17 @@ const motif = image('Calque_1.png');
       vp.addEventListener('pointerenter', () => { hovering = true; held = true; });
       vp.addEventListener('pointerleave', () => { hovering = false; if (!dragging) held = false; });
     }
-    vp.addEventListener('focusin', () => { held = true; });
+    // Tabbing to a LinkedIn link holds the drift and brings that card into
+    // view. The viewport clips rather than scrolls, so any scroll the browser
+    // applies to reveal the focus is undone and expressed as offset instead.
+    vp.addEventListener('focusin', (e) => {
+      held = true;
+      vp.scrollLeft = 0;
+      const card = (e.target as HTMLElement).closest('.member');
+      if (!card) return;
+      const v = vp.getBoundingClientRect(), c = card.getBoundingClientRect();
+      if (c.left < v.left || c.right > v.right) offset += c.left - v.left - 10;
+    });
     vp.addEventListener('focusout', () => { held = hovering; });
 
     document.addEventListener('visibilitychange', sync);
