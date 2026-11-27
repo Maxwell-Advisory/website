@@ -94,7 +94,6 @@ const fontPreloads = [bookFont, mediumFont];
     <meta property="og:image:alt" content={siteMeta.name} />
     <meta name="twitter:card" content="summary_large_image" />
     <slot name="head" />
-    <Analytics />
   </head>
   <body class={bodyClass}>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -103,6 +102,11 @@ const fontPreloads = [bookFont, mediumFont];
       <slot />
     </main>
     <Footer />
+    {/* Must stay in <body>: it renders a <vercel-analytics> custom element,
+        and any non-head element in <head> makes the browser start <body>
+        early, pushing the stylesheets after it and causing a flash of
+        unstyled page on load. */}
+    <Analytics />
   </body>
 </html>
 
